@@ -7,17 +7,22 @@ using NotesRepository.Areas.Identity.Data;
 using Microsoft.AspNetCore.Components.Authorization;
 using NotesRepository.Areas.Identity;
 using Npgsql;
+using Blazored.Toast;
 
 var builder = WebApplication.CreateBuilder(args);
+
 var connectionString = builder.Configuration.GetConnectionString("ApplicationDbContextConnection"); 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-     options.UseSqlServer(connectionString));
-builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
+builder.Services.AddDbContextFactory<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+
+builder.Services
+    .AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
 //Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>>();
+builder.Services.AddBlazoredToast();
 
 var app = builder.Build();
  
