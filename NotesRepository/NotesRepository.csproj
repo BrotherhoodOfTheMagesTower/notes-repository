@@ -28,9 +28,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Data\Models\" />
-    <Folder Include="Data\Enums\" />
     <Folder Include="Data\Constants\" />
+    <Folder Include="Data\Enums\" />
     <Folder Include="Services\" />
     <Folder Include="Repositories\" />
   </ItemGroup>
