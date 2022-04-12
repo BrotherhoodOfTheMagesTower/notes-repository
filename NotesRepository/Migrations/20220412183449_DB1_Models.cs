@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace NotesRepository.Migrations
 {
-    public partial class DB_V1Models : Migration
+    public partial class DB1_Models : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -61,12 +61,6 @@ namespace NotesRepository.Migrations
                 type: "nvarchar(max)",
                 nullable: true);
 
-            migrationBuilder.AddColumn<Guid>(
-                name: "NoteId",
-                table: "User",
-                type: "uniqueidentifier",
-                nullable: true);
-
             migrationBuilder.AddPrimaryKey(
                 name: "PK_User",
                 table: "User",
@@ -76,41 +70,19 @@ namespace NotesRepository.Migrations
                 name: "Directory",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DirectoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Directory", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Event",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Content = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    RemainderAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    StartAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EndAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Event", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Event_User_UserId",
-                        column: x => x.UserId,
-                        principalTable: "User",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                    table.PrimaryKey("PK_Directory", x => x.DirectoryId);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Note",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    NoteId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Content = table.Column<string>(type: "nvarchar(max)", maxLength: 8000, nullable: false),
                     IconName = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -123,18 +95,12 @@ namespace NotesRepository.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Note", x => x.Id);
+                    table.PrimaryKey("PK_Note", x => x.NoteId);
                     table.ForeignKey(
                         name: "FK_Note_Directory_DirectoryId",
                         column: x => x.DirectoryId,
                         principalTable: "Directory",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Note_Event_Id",
-                        column: x => x.Id,
-                        principalTable: "Event",
-                        principalColumn: "Id",
+                        principalColumn: "DirectoryId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Note_User_EditedById",
@@ -149,28 +115,79 @@ namespace NotesRepository.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CollaboratorsNotes",
+                columns: table => new
+                {
+                    ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    NoteId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CollaboratorsNotes", x => new { x.ApplicationUserId, x.NoteId });
+                    table.ForeignKey(
+                        name: "FK_CollaboratorsNotes_Note_NoteId",
+                        column: x => x.NoteId,
+                        principalTable: "Note",
+                        principalColumn: "NoteId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CollaboratorsNotes_User_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
+                        principalTable: "User",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Event",
+                columns: table => new
+                {
+                    EventId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    RemainderAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    StartAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Event", x => x.EventId);
+                    table.ForeignKey(
+                        name: "FK_Event_Note_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Note",
+                        principalColumn: "NoteId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Event_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Image",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ImageId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     FileUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     NoteId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Image", x => x.Id);
+                    table.PrimaryKey("PK_Image", x => x.ImageId);
                     table.ForeignKey(
                         name: "FK_Image_Note_NoteId",
                         column: x => x.NoteId,
                         principalTable: "Note",
-                        principalColumn: "Id",
+                        principalColumn: "NoteId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_User_NoteId",
-                table: "User",
+                name: "IX_CollaboratorsNotes_NoteId",
+                table: "CollaboratorsNotes",
                 column: "NoteId");
 
             migrationBuilder.CreateIndex(
@@ -229,13 +246,6 @@ namespace NotesRepository.Migrations
                 principalTable: "User",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_User_Note_NoteId",
-                table: "User",
-                column: "NoteId",
-                principalTable: "Note",
-                principalColumn: "Id");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -256,9 +266,11 @@ namespace NotesRepository.Migrations
                 name: "FK_AspNetUserTokens_User_UserId",
                 table: "AspNetUserTokens");
 
-            migrationBuilder.DropForeignKey(
-                name: "FK_User_Note_NoteId",
-                table: "User");
+            migrationBuilder.DropTable(
+                name: "CollaboratorsNotes");
+
+            migrationBuilder.DropTable(
+                name: "Event");
 
             migrationBuilder.DropTable(
                 name: "Image");
@@ -269,23 +281,12 @@ namespace NotesRepository.Migrations
             migrationBuilder.DropTable(
                 name: "Directory");
 
-            migrationBuilder.DropTable(
-                name: "Event");
-
             migrationBuilder.DropPrimaryKey(
                 name: "PK_User",
                 table: "User");
 
-            migrationBuilder.DropIndex(
-                name: "IX_User_NoteId",
-                table: "User");
-
             migrationBuilder.DropColumn(
                 name: "AvatarUrl",
-                table: "User");
-
-            migrationBuilder.DropColumn(
-                name: "NoteId",
                 table: "User");
 
             migrationBuilder.RenameTable(

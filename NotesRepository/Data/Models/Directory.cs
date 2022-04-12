@@ -2,12 +2,19 @@
 
 namespace NotesRepository.Data.Models
 {
-    public class NoteDirectory
+    public class Directory
     {
+        public Directory(Guid? directoryId, string name, ICollection<Note>? notes = null)
+        {
+            DirectoryId = directoryId ?? Guid.NewGuid();
+            Name = name;
+            Notes = notes;
+        }
+
         /// <summary>
         /// Unique ID of the directory
         /// </summary>
-        public Guid Id { get; set; }
+        public Guid DirectoryId { get; set; }
 
         /// <summary>
         /// Name of the directory

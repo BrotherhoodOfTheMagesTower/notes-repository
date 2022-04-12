@@ -12,8 +12,8 @@ using NotesRepository.Data;
 namespace NotesRepository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220412163646_DB_V1-Models")]
-    partial class DB_V1Models
+    [Migration("20220412183449_DB1_Models")]
+    partial class DB1_Models
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -205,9 +205,6 @@ namespace NotesRepository.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.Property<Guid?>("NoteId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
 
@@ -237,15 +234,43 @@ namespace NotesRepository.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
+                    b.ToTable("User", (string)null);
+                });
+
+            modelBuilder.Entity("NotesRepository.Data.Models.CollaboratorsNotes", b =>
+                {
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<Guid>("NoteId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ApplicationUserId", "NoteId");
+
                     b.HasIndex("NoteId");
 
-                    b.ToTable("User", (string)null);
+                    b.ToTable("CollaboratorsNotes");
+                });
+
+            modelBuilder.Entity("NotesRepository.Data.Models.Directory", b =>
+                {
+                    b.Property<Guid>("DirectoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.HasKey("DirectoryId");
+
+                    b.ToTable("Directory", (string)null);
                 });
 
             modelBuilder.Entity("NotesRepository.Data.Models.Event", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<Guid>("EventId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Content")
@@ -266,7 +291,7 @@ namespace NotesRepository.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("Id");
+                    b.HasKey("EventId");
 
                     b.HasIndex("UserId");
 
@@ -275,7 +300,7 @@ namespace NotesRepository.Migrations
 
             modelBuilder.Entity("NotesRepository.Data.Models.Image", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("ImageId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -290,7 +315,7 @@ namespace NotesRepository.Migrations
                     b.Property<Guid>("NoteId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("Id");
+                    b.HasKey("ImageId");
 
                     b.HasIndex("NoteId");
 
@@ -299,7 +324,8 @@ namespace NotesRepository.Migrations
 
             modelBuilder.Entity("NotesRepository.Data.Models.Note", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("NoteId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Content")
@@ -335,7 +361,7 @@ namespace NotesRepository.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.HasKey("Id");
+                    b.HasKey("NoteId");
 
                     b.HasIndex("DirectoryId");
 
@@ -344,22 +370,6 @@ namespace NotesRepository.Migrations
                     b.HasIndex("OwnerId");
 
                     b.ToTable("Note", (string)null);
-                });
-
-            modelBuilder.Entity("NotesRepository.Data.Models.NoteDirectory", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Directory", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -413,20 +423,40 @@ namespace NotesRepository.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("NotesRepository.Areas.Identity.Data.ApplicationUser", b =>
+            modelBuilder.Entity("NotesRepository.Data.Models.CollaboratorsNotes", b =>
                 {
-                    b.HasOne("NotesRepository.Data.Models.Note", null)
-                        .WithMany("Collaborators")
-                        .HasForeignKey("NoteId");
+                    b.HasOne("NotesRepository.Areas.Identity.Data.ApplicationUser", "Collaborator")
+                        .WithMany("CollaboratorsNotes")
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("NotesRepository.Data.Models.Note", "SharedNote")
+                        .WithMany("CollaboratorsNotes")
+                        .HasForeignKey("NoteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Collaborator");
+
+                    b.Navigation("SharedNote");
                 });
 
             modelBuilder.Entity("NotesRepository.Data.Models.Event", b =>
                 {
+                    b.HasOne("NotesRepository.Data.Models.Note", "Note")
+                        .WithOne("Event")
+                        .HasForeignKey("NotesRepository.Data.Models.Event", "EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("NotesRepository.Areas.Identity.Data.ApplicationUser", "User")
                         .WithMany("Events")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Note");
 
                     b.Navigation("User");
                 });
@@ -444,7 +474,7 @@ namespace NotesRepository.Migrations
 
             modelBuilder.Entity("NotesRepository.Data.Models.Note", b =>
                 {
-                    b.HasOne("NotesRepository.Data.Models.NoteDirectory", "Directory")
+                    b.HasOne("NotesRepository.Data.Models.Directory", "Directory")
                         .WithMany("Notes")
                         .HasForeignKey("DirectoryId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -453,12 +483,6 @@ namespace NotesRepository.Migrations
                     b.HasOne("NotesRepository.Areas.Identity.Data.ApplicationUser", "EditedBy")
                         .WithMany()
                         .HasForeignKey("EditedById");
-
-                    b.HasOne("NotesRepository.Data.Models.Event", "Event")
-                        .WithOne("Note")
-                        .HasForeignKey("NotesRepository.Data.Models.Note", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
 
                     b.HasOne("NotesRepository.Areas.Identity.Data.ApplicationUser", "Owner")
                         .WithMany("Notes")
@@ -470,33 +494,30 @@ namespace NotesRepository.Migrations
 
                     b.Navigation("EditedBy");
 
-                    b.Navigation("Event");
-
                     b.Navigation("Owner");
                 });
 
             modelBuilder.Entity("NotesRepository.Areas.Identity.Data.ApplicationUser", b =>
                 {
+                    b.Navigation("CollaboratorsNotes");
+
                     b.Navigation("Events");
 
                     b.Navigation("Notes");
                 });
 
-            modelBuilder.Entity("NotesRepository.Data.Models.Event", b =>
+            modelBuilder.Entity("NotesRepository.Data.Models.Directory", b =>
                 {
-                    b.Navigation("Note");
+                    b.Navigation("Notes");
                 });
 
             modelBuilder.Entity("NotesRepository.Data.Models.Note", b =>
                 {
-                    b.Navigation("Collaborators");
+                    b.Navigation("CollaboratorsNotes");
+
+                    b.Navigation("Event");
 
                     b.Navigation("Images");
-                });
-
-            modelBuilder.Entity("NotesRepository.Data.Models.NoteDirectory", b =>
-                {
-                    b.Navigation("Notes");
                 });
 #pragma warning restore 612, 618
         }

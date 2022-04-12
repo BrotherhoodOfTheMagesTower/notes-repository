@@ -30,10 +30,10 @@ namespace NotesRepository.Areas.Identity.Data
         /// </summary>
         public ICollection<Note>? Notes { get; set; }
 
-        ///// <summary>
-        ///// Collection of notes, that were shared with user
-        ///// </summary>
-        //public ICollection<Note>? SharedNotes { get; set; }
+        /// <summary>
+        /// Collection of notes, that were shared with user
+        /// </summary>
+        public ICollection<CollaboratorsNotes>? CollaboratorsNotes { get; set; }
 
         /// <summary>
         /// Collection of events created by user

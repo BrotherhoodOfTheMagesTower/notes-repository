@@ -5,10 +5,21 @@ namespace NotesRepository.Data.Models
 {
     public class Event
     {
+        public Event(Guid? eventId, string content, DateTime startAt, DateTime endAt, ApplicationUser user, DateTime? remainderAt = null, Note? note = null)
+        {
+            EventId = eventId ?? Guid.NewGuid();
+            Content = content;
+            RemainderAt = remainderAt;
+            StartAt = startAt;
+            EndAt = endAt;
+            User = user;
+            Note = note;
+        }
+
         /// <summary>
         /// Unique ID of the event
         /// </summary>
-        public Guid Id { get; set; }
+        public Guid EventId { get; set; }
 
         /// <summary>
         /// Content of the event

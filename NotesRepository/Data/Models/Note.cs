@@ -5,10 +5,21 @@ namespace NotesRepository.Data.Models
 {
     public class Note
     {
+        public Note(Guid? noteId, string title, string content, string iconName, ApplicationUser owner, Directory? directory)
+        {
+            NoteId = noteId ?? Guid.NewGuid();
+            Title = title;
+            Content = content;
+            IconName = iconName;
+            CreatedAt = DateTime.Now;
+            Owner = owner;
+            Directory = directory; //TODO: implement method, which get's from the database the default directory and change this line to Directory = directory ?? service.GetDefaultDirectory()
+        }
+
         /// <summary>
         /// Unique ID of the note
         /// </summary>
-        public Guid Id { get; set; }
+        public Guid NoteId { get; set; }
 
         /// <summary>
         /// Title of the note (amount of characters between 3 and 50)
@@ -52,12 +63,12 @@ namespace NotesRepository.Data.Models
         /// <summary>
         /// Users, which were added as collaborators to the note
         /// </summary>
-        public ICollection<ApplicationUser>? Collaborators { get; set; }
+        public ICollection<CollaboratorsNotes>? CollaboratorsNotes { get; set; }
 
         /// <summary>
         /// Directory assigned to the note
         /// </summary>
-        public NoteDirectory Directory { get; set; }
+        public Directory Directory { get; set; }
 
         /// <summary>
         /// Collection of Images assigned to the note (optional)

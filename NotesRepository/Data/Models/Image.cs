@@ -2,10 +2,18 @@
 {
     public class Image
     {
+        public Image(Guid? imageId, string name, string fileUrl, Note note)
+        {
+            ImageId = imageId ?? Guid.NewGuid();
+            Name = name;
+            FileUrl = fileUrl;
+            Note = note;
+        }
+
         /// <summary>
         /// Unique ID of the image
         /// </summary>
-        public Guid Id { get; set; }
+        public Guid ImageId { get; set; }
 
         /// <summary>
         /// Name of the image

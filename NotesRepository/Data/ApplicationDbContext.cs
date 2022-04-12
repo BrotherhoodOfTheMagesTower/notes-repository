@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using NotesRepository.Areas.Identity.Data;
 using NotesRepository.Data.Models;
+using Directory = NotesRepository.Data.Models.Directory;
 
 namespace NotesRepository.Data;
 
@@ -16,9 +17,10 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 
     DbSet<ApplicationUser> Users;
     DbSet<Note> Notes;
-    DbSet<NoteDirectory> NoteDirectories;
+    DbSet<Directory> Directories;
     DbSet<Image> Images;
     DbSet<Event> Events;
+    DbSet<CollaboratorsNotes> CollaboratorsNotes;
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -26,7 +28,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 
         builder.Entity<ApplicationUser>().ToTable("User");
         builder.Entity<Note>().ToTable("Note");
-        builder.Entity<NoteDirectory>().ToTable("Directory");
+        builder.Entity<Directory>().ToTable("Directory");
         builder.Entity<Image>().ToTable("Image");
         builder.Entity<Event>().ToTable("Event");
 
@@ -40,9 +42,18 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             .WithMany(n => n.Notes)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.Entity<Note>()
-            .HasMany(c => c.Collaborators);
-            //.WithMany(s => s.SharedNotes)
+        // collaborators
+        builder.Entity<CollaboratorsNotes>()
+            .HasKey(t => new { t.ApplicationUserId, t.NoteId });
+        builder.Entity<CollaboratorsNotes>()
+            .HasOne(cn => cn.SharedNote)
+            .WithMany(c => c.CollaboratorsNotes)
+            .HasForeignKey(n => n.NoteId);
+        builder.Entity<CollaboratorsNotes>()
+            .HasOne(cn => cn.Collaborator)
+            .WithMany(c => c.CollaboratorsNotes)
+            .HasForeignKey(n => n.ApplicationUserId)
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.Entity<Image>()
             .HasOne(n => n.Note)
@@ -55,6 +66,6 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         builder.Entity<Event>()
             .HasOne(n => n.Note)
             .WithOne(e => e.Event)
-            .HasForeignKey<Note>(n => n.Id);
+            .HasForeignKey<Event>(n => n.EventId);
     }
 }
