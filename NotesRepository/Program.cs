@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using NotesRepository.Areas.Identity;
 using Npgsql;
 using Blazored.Toast;
+using NotesRepository.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +23,7 @@ builder.Services
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>>();
+builder.Services.AddScoped<INoteRepository, NoteRepository>();
 builder.Services.AddBlazoredToast();
 
 var app = builder.Build();

@@ -2,6 +2,8 @@
 {
     public class Image
     {
+        public Image() { }
+
         public Image(Guid? imageId, string name, string fileUrl, Note note)
         {
             ImageId = imageId ?? Guid.NewGuid();

@@ -4,7 +4,9 @@ namespace NotesRepository.Data.Models
 {
     public class Directory
     {
-        public Directory(Guid? directoryId, string name, ICollection<Note>? notes = null)
+        public Directory() { }
+
+        public Directory(string name, Guid? directoryId = null, ICollection<Note>? notes = null)
         {
             DirectoryId = directoryId ?? Guid.NewGuid();
             Name = name;

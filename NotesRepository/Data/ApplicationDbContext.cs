@@ -15,12 +15,12 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
     }
 
-    DbSet<ApplicationUser> Users;
-    DbSet<Note> Notes;
-    DbSet<Directory> Directories;
-    DbSet<Image> Images;
-    DbSet<Event> Events;
-    DbSet<CollaboratorsNotes> CollaboratorsNotes;
+    public DbSet<ApplicationUser> Users { get; set; }
+    public DbSet<Note> Notes { get; set; }
+    public DbSet<Directory> Directories { get; set; }
+    public DbSet<Image> Images { get; set; }
+    public DbSet<Event> Events { get; set; }
+    public DbSet<CollaboratorsNotes> CollaboratorsNotes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

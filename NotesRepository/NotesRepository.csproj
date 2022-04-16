@@ -31,7 +31,6 @@
     <Folder Include="Data\Constants\" />
     <Folder Include="Data\Enums\" />
     <Folder Include="Services\" />
-    <Folder Include="Repositories\" />
   </ItemGroup>
 
 </Project>

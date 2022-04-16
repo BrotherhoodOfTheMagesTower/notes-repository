@@ -5,6 +5,8 @@ namespace NotesRepository.Data.Models
 {
     public class Note
     {
+        public Note() { }
+
         public Note(Guid? noteId, string title, string content, string iconName, ApplicationUser owner, Directory? directory)
         {
             NoteId = noteId ?? Guid.NewGuid();
