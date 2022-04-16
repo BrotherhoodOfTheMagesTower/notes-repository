@@ -162,10 +162,18 @@ namespace Tests
             var result = await nr.GetAllNotesAsync();
 
             // Assert
-            var notesFromDb = await _context.Notes.ToListAsync();
-            result.Should().BeEquivalentTo(notesFromDb);
-
+            var notesFromDb = await _context.Notes
+                    .Include(d => d.Directory)
+                    .Include(o => o.Owner)
+                    .Include(i => i.Images)
+                    .Include(e => e.EditedBy)
+                    .Include(ev => ev.Event)
+                    .Include(c => c.CollaboratorsNotes)
+                    .ToListAsync();
             await nr.DeleteNotesAsync(notes);
+            Assert.NotNull(result);
+            Assert.Equal(result.Select(x => x.NoteId), notes.Select(x => x.NoteId));
+            result.Should().AllBeAssignableTo<Note>();
         }
         
         [Fact(DisplayName = "User is able to get a note by id from the database")]

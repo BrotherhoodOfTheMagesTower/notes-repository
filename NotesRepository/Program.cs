@@ -1,12 +1,8 @@
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using NotesRepository.Data;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NotesRepository.Areas.Identity.Data;
 using Microsoft.AspNetCore.Components.Authorization;
 using NotesRepository.Areas.Identity;
-using Npgsql;
 using Blazored.Toast;
 using NotesRepository.Repositories;
 

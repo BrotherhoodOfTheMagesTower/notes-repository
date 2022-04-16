@@ -116,7 +116,14 @@ namespace NotesRepository.Repositories
         {
             using (var ctx = _factory.CreateDbContext())
             {
-                return await ctx.Notes.ToListAsync();
+                return await ctx.Notes
+                    .Include(d => d.Directory)
+                    .Include(o => o.Owner)
+                    .Include(i => i.Images)
+                    .Include(e => e.EditedBy)
+                    .Include(ev => ev.Event)
+                    .Include(c => c.CollaboratorsNotes)
+                    .ToListAsync();
             }
         }
 
@@ -129,7 +136,14 @@ namespace NotesRepository.Repositories
         {
             using (var ctx = _factory.CreateDbContext())
             {
-                return await ctx.Notes.FirstOrDefaultAsync(i => i.NoteId == noteId);
+                return await ctx.Notes
+                    .Include(d => d.Directory)
+                    .Include(o => o.Owner)
+                    .Include(i => i.Images)
+                    .Include(e => e.EditedBy)
+                    .Include(ev => ev.Event)
+                    .Include(c => c.CollaboratorsNotes)
+                    .FirstOrDefaultAsync(i => i.NoteId == noteId);
             }
         }
 
@@ -142,7 +156,14 @@ namespace NotesRepository.Repositories
         {
             using (var ctx = _factory.CreateDbContext())
             {
-                return await ctx.Notes.FirstOrDefaultAsync(i => i.Title == title);
+                return await ctx.Notes
+                    .Include(d => d.Directory)
+                    .Include(o => o.Owner)
+                    .Include(i => i.Images)
+                    .Include(e => e.EditedBy)
+                    .Include(ev => ev.Event)
+                    .Include(c => c.CollaboratorsNotes)
+                    .FirstOrDefaultAsync(i => i.Title == title);
             }
         }
     }
