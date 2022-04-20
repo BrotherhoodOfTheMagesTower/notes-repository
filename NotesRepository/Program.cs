@@ -6,6 +6,8 @@ using NotesRepository.Areas.Identity;
 using Blazored.Toast;
 using NotesRepository.Repositories;
 
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("ApplicationDbContextConnection"); 
@@ -20,6 +22,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>>();
 builder.Services.AddScoped<INoteRepository, NoteRepository>();
+builder.Services.AddScoped<ICollaboratorsNotesRepository, CollaboratorsNotesRepository>();
 builder.Services.AddBlazoredToast();
 
 var app = builder.Build();
