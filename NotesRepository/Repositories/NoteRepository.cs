@@ -31,7 +31,7 @@ namespace NotesRepository.Repositories
         /// <summary>
         /// Adds multiple notes entities to the database
         /// </summary>
-        /// <param name="note"></param>
+        /// <param name="notes">Note entities</param>
         /// <returns>true if notes were successfully added; otherwise false</returns>
         public async Task<bool> AddNotesAsync(ICollection<Note> notes)
         {
@@ -96,7 +96,7 @@ namespace NotesRepository.Repositories
         /// <summary>
         /// Updates the note entity in the database
         /// </summary>
-        /// <param name="note"></param>
+        /// <param name="note">The note entity</param>
         /// <returns>true if note was successfully updated; otherwise false</returns>
         public async Task<bool> UpdateNoteAsync(Note note)
         {
@@ -130,6 +130,7 @@ namespace NotesRepository.Repositories
         /// <summary>
         /// Gets all notes from the database, that are assigned to specific user 
         /// </summary>
+        /// <param name="userId">The unique ID of User, whose notes will be returned</param>
         /// <returns>A collection of notes assigned to particulat user, that are currently stored in the database</returns>
         public async Task<ICollection<Note>> GetAllUserNotesAsync(string userId)
         {
@@ -150,7 +151,7 @@ namespace NotesRepository.Repositories
         /// <summary>
         /// Gets the note from the database by noteId
         /// </summary>
-        /// <param name="noteId"></param>
+        /// <param name="noteId">The unique ID of note</param>
         /// <returns>A note entity if it exists in the db; otherwise null</returns>
         public async Task<Note?> GetNoteByIdAsync(Guid noteId)
         {
@@ -170,7 +171,7 @@ namespace NotesRepository.Repositories
         /// <summary>
         /// Gets the note from the database by title
         /// </summary>
-        /// <param name="title"></param>
+        /// <param name="title">The title of note</param>
         /// <returns>A note entity if it exists in the db; otherwise null</returns>
         public async Task<Note?> GetNoteByTitleAsync(string title)
         {
