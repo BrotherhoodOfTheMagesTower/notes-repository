@@ -128,6 +128,26 @@ namespace NotesRepository.Repositories
         }
 
         /// <summary>
+        /// Gets all notes from the database, that are assigned to specific user 
+        /// </summary>
+        /// <returns>A collection of notes assigned to particulat user, that are currently stored in the database</returns>
+        public async Task<ICollection<Note>> GetAllUserNotesAsync(string userId)
+        {
+            using (var ctx = _factory.CreateDbContext())
+            {
+                return await ctx.Notes
+                    .Where(n => n.Owner.Id == userId)
+                    .Include(d => d.Directory)
+                    .Include(o => o.Owner)
+                    .Include(i => i.Images)
+                    .Include(e => e.EditedBy)
+                    .Include(ev => ev.Event)
+                    .Include(c => c.CollaboratorsNotes)
+                    .ToListAsync();
+            }
+        }
+
+        /// <summary>
         /// Gets the note from the database by noteId
         /// </summary>
         /// <param name="noteId"></param>

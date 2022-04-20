@@ -175,7 +175,32 @@ namespace Tests
             Assert.Equal(result.Select(x => x.NoteId), notes.Select(x => x.NoteId));
             result.Should().AllBeAssignableTo<Note>();
         }
-        
+
+        [Fact(DisplayName = "User is able to get all of his notes from the database")]
+        public async Task GetAllUserNotes()
+        {
+            // Arrange
+            var nr = new NoteRepository(new NoteRepositoryShould());
+            var user = new ApplicationUser { FirstName = "Hugo", LastName = "Ko³³¹taj", Id = Guid.NewGuid().ToString() };
+            var notes = new List<Note>()
+            {
+                new Note(null, "Test note 1", "for GetAllNotes()", "def-ico", user, new Directory("Default")),
+                new Note(null, "Test note 2", "for GetAllNotes()", "def-ico", user, new Directory("Default")),
+                new Note(null, "Test note 3", "for GetAllNotes()", "def-ico", new ApplicationUser(), new Directory("Default"))
+            };
+            await nr.AddNotesAsync(notes);
+
+            // Act
+            var result = await nr.GetAllUserNotesAsync(user.Id);
+
+            // Assert
+            await nr.DeleteNotesAsync(notes);
+            Assert.NotNull(result);
+            result.Should().AllBeAssignableTo<Note>();
+            result.Should().HaveCount(2);
+            result.Should().Contain(x => x.Owner.Id == user.Id);
+        }
+
         [Fact(DisplayName = "User is able to get a note by id from the database")]
         public async Task GetNotesById()
         {

@@ -5,6 +5,7 @@ namespace NotesRepository.Repositories
     public interface INoteRepository
     {
         Task<ICollection<Note>> GetAllNotesAsync();
+        Task<ICollection<Note>> GetAllUserNotesAsync(string userId);
         Task<Note?> GetNoteByIdAsync(Guid noteId);
         Task<Note?> GetNoteByTitleAsync(string title);
         Task<bool> AddNoteAsync(Note note);
