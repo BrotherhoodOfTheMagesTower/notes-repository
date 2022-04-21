@@ -20,7 +20,7 @@ namespace Tests
         public UserRepositoryShould()
         {
             _options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase("In memory database")
+                .UseInMemoryDatabase("In memory database - ApplicationUser")
                 .Options;
             _context = CreateDbContext();
         }
