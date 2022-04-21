@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace NotesRepository.Migrations
 {
-    public partial class DB1_Models : Migration
+    public partial class DB1_RelationBetweenUsersAndDirectory_And_SubDirectories : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -71,11 +71,23 @@ namespace NotesRepository.Migrations
                 columns: table => new
                 {
                     DirectoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    SubDirectoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Directory", x => x.DirectoryId);
+                    table.ForeignKey(
+                        name: "FK_Directory_Directory_SubDirectoryId",
+                        column: x => x.SubDirectoryId,
+                        principalTable: "Directory",
+                        principalColumn: "DirectoryId");
+                    table.ForeignKey(
+                        name: "FK_Directory_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -91,7 +103,10 @@ namespace NotesRepository.Migrations
                     EditedById = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     OwnerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     DirectoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    IsCurrentlyEdited = table.Column<bool>(type: "bit", nullable: false)
+                    IsCurrentlyEdited = table.Column<bool>(type: "bit", nullable: false),
+                    IsMarkedAsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsPinned = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -189,6 +204,16 @@ namespace NotesRepository.Migrations
                 name: "IX_CollaboratorsNotes_NoteId",
                 table: "CollaboratorsNotes",
                 column: "NoteId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Directory_SubDirectoryId",
+                table: "Directory",
+                column: "SubDirectoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Directory_UserId",
+                table: "Directory",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Event_UserId",

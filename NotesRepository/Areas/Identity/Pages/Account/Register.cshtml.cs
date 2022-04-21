@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using NotesRepository.Areas.Identity.Data;
+using Directory = NotesRepository.Data.Models.Directory;
 
 namespace NotesRepository.Areas.Identity.Pages.Account
 {
@@ -169,7 +170,9 @@ namespace NotesRepository.Areas.Identity.Pages.Account
         {
             try
             {
-                return Activator.CreateInstance<ApplicationUser>();
+                var user = Activator.CreateInstance<ApplicationUser>();
+                user.Directories = new List<Directory> { new Directory("Default", user) };
+                return user;
             }
             catch
             {

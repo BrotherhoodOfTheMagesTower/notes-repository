@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using NotesRepository.Data.Models;
 using System.ComponentModel.DataAnnotations;
+using Directory = NotesRepository.Data.Models.Directory;
 
 namespace NotesRepository.Areas.Identity.Data
 {
@@ -39,5 +40,10 @@ namespace NotesRepository.Areas.Identity.Data
         /// Collection of events created by user
         /// </summary>
         public ICollection<Event>? Events { get; set; }
+
+        /// <summary>
+        /// Collection of directories, that a user has
+        /// </summary>
+        public ICollection<Directory>? Directories { get; set; }
     }
 }

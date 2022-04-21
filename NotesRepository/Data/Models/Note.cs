@@ -86,5 +86,20 @@ namespace NotesRepository.Data.Models
         /// Event, to which the note is assigned (optional)
         /// </summary>
         public Event? Event { get; set; }
+
+        /// <summary>
+        /// Value that determines if the note was marked as deleted
+        /// </summary>
+        public bool IsMarkedAsDeleted { get; set; } = false;
+
+        /// <summary>
+        /// Date and time when the note was marked as deleted
+        /// </summary>
+        public DateTime DeletedAt { get; set; }
+
+        /// <summary>
+        /// Determines, wheter the note is pinned or not
+        /// </summary>
+        public bool IsPinned { get; set; } = false;
     }
 }

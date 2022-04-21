@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using NotesRepository.Areas.Identity.Data;
+using System.ComponentModel.DataAnnotations;
 
 namespace NotesRepository.Data.Models
 {
@@ -6,11 +7,12 @@ namespace NotesRepository.Data.Models
     {
         public Directory() { }
 
-        public Directory(string name, Guid? directoryId = null, ICollection<Note>? notes = null)
+        public Directory(string name, ApplicationUser user, Guid? directoryId = null, ICollection<Note>? notes = null)
         {
             DirectoryId = directoryId ?? Guid.NewGuid();
             Name = name;
             Notes = notes;
+            User= user;
         }
 
         /// <summary>
@@ -29,5 +31,15 @@ namespace NotesRepository.Data.Models
         /// Collection of Notes assigned to the directory (optional)
         /// </summary>
         public ICollection<Note>? Notes { get; set; }
+        
+        /// <summary>
+        /// User, that the directory belongs to
+        /// </summary>
+        public ApplicationUser User { get; set; }
+
+        /// <summary>
+        /// Collection of subdirectiories (optional)
+        /// </summary>
+        public ICollection<Directory>? SubDirectories { get; set; }
     }
 }

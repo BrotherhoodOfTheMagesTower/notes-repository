@@ -12,8 +12,8 @@ using NotesRepository.Data;
 namespace NotesRepository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220412183449_DB1_Models")]
-    partial class DB1_Models
+    [Migration("20220421113959_DB1_RelationBetweenUsersAndDirectory_And_SubDirectories")]
+    partial class DB1_RelationBetweenUsersAndDirectory_And_SubDirectories
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -263,7 +263,18 @@ namespace NotesRepository.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
+                    b.Property<Guid?>("SubDirectoryId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("DirectoryId");
+
+                    b.HasIndex("SubDirectoryId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Directory", (string)null);
                 });
@@ -336,6 +347,9 @@ namespace NotesRepository.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime>("DeletedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid>("DirectoryId")
                         .HasColumnType("uniqueidentifier");
 
@@ -350,6 +364,12 @@ namespace NotesRepository.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsCurrentlyEdited")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsMarkedAsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPinned")
                         .HasColumnType("bit");
 
                     b.Property<string>("OwnerId")
@@ -442,6 +462,21 @@ namespace NotesRepository.Migrations
                     b.Navigation("SharedNote");
                 });
 
+            modelBuilder.Entity("NotesRepository.Data.Models.Directory", b =>
+                {
+                    b.HasOne("NotesRepository.Data.Models.Directory", null)
+                        .WithMany("SubDirectories")
+                        .HasForeignKey("SubDirectoryId");
+
+                    b.HasOne("NotesRepository.Areas.Identity.Data.ApplicationUser", "User")
+                        .WithMany("Directories")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("NotesRepository.Data.Models.Event", b =>
                 {
                     b.HasOne("NotesRepository.Data.Models.Note", "Note")
@@ -501,6 +536,8 @@ namespace NotesRepository.Migrations
                 {
                     b.Navigation("CollaboratorsNotes");
 
+                    b.Navigation("Directories");
+
                     b.Navigation("Events");
 
                     b.Navigation("Notes");
@@ -509,6 +546,8 @@ namespace NotesRepository.Migrations
             modelBuilder.Entity("NotesRepository.Data.Models.Directory", b =>
                 {
                     b.Navigation("Notes");
+
+                    b.Navigation("SubDirectories");
                 });
 
             modelBuilder.Entity("NotesRepository.Data.Models.Note", b =>

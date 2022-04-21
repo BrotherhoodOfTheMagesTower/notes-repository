@@ -35,12 +35,23 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         builder.Entity<Note>()
             .HasOne(u => u.Owner)
             .WithMany(n => n.Notes)
-            .OnDelete(DeleteBehavior.NoAction);
+            .OnDelete(DeleteBehavior.NoAction); // should be changed to CASCADE!
 
         builder.Entity<Note>()
             .HasOne(d => d.Directory)
             .WithMany(n => n.Notes)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<Directory>()
+            .HasOne(u => u.User)
+            .WithMany(d => d.Directories)
+            .OnDelete(DeleteBehavior.NoAction); // should be changed to CASCADE!
+
+        builder.Entity<Directory>()
+            .HasMany(s => s.SubDirectories)
+            .WithOne()
+            .HasForeignKey("SubDirectoryId");
+
 
         // collaborators
         builder.Entity<CollaboratorsNotes>()
