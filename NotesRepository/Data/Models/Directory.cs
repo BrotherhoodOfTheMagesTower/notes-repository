@@ -7,7 +7,7 @@ namespace NotesRepository.Data.Models
     {
         public Directory() { }
 
-        public Directory(string name, ApplicationUser user, Guid? directoryId = null, ICollection<Note>? notes = null)
+        public Directory(string name, ApplicationUser? user, Guid? directoryId = null, ICollection<Note>? notes = null)
         {
             DirectoryId = directoryId ?? Guid.NewGuid();
             Name = name;
@@ -35,7 +35,7 @@ namespace NotesRepository.Data.Models
         /// <summary>
         /// User, that the directory belongs to
         /// </summary>
-        public ApplicationUser User { get; set; }
+        public ApplicationUser? User { get; set; }
 
         /// <summary>
         /// Collection of subdirectiories (optional)
