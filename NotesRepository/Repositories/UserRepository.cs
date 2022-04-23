@@ -24,7 +24,7 @@ namespace NotesRepository.Repositories
             }
         }
 
-        public async Task<bool> DeleteUserByIdAsync(Guid userId)
+        public async Task<bool> DeleteUserByIdAsync(string userId)
         {
             using (var ctx = _factory.CreateDbContext())
             {
@@ -63,7 +63,7 @@ namespace NotesRepository.Repositories
             }
         }
 
-        public async Task<ApplicationUser?> GetUserByIdAsync(Guid userId)
+        public async Task<ApplicationUser?> GetUserByIdAsync(string userId)
         {
             using (var ctx = _factory.CreateDbContext())
             {

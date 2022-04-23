@@ -14,5 +14,8 @@ namespace NotesRepository.Repositories
         Task<bool> DeleteNoteAsync(Note note);
         Task<bool> DeleteNotesAsync(ICollection<Note> notes);
         Task<bool> DeleteNoteByIdAsync(Guid noteId);
+        Task<List<Note>> SearchNoteByTitleAndContentAsync(string searchText);
+        Task<bool> SetNoteAsCurrentlyEditedAsync(Guid noteId);
+        Task<bool> SetNoteAsCurrentlyNotEditedAsync(Guid noteId);
     }
 }

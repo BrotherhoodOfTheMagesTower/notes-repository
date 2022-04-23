@@ -57,7 +57,7 @@ namespace NotesRepository.Repositories
                 return result > 0;
             }
         }
-        
+
         /// <summary>
         /// Removes multiple notes entities from the database
         /// </summary>
@@ -185,6 +185,63 @@ namespace NotesRepository.Repositories
                     .Include(ev => ev.Event)
                     .Include(c => c.CollaboratorsNotes)
                     .FirstOrDefaultAsync(i => i.Title == title);
+            }
+        }
+
+        /// <summary>
+        /// Gets all notes, which title or content contains the searchText
+        /// </summary>
+        /// <param name="searchText">The phrase that user has provided</param>
+        /// <returns>A list of note entities if the phrase does match</returns>
+        public async Task<List<Note>> SearchNoteByTitleAndContentAsync(string searchText)
+        {
+            using (var ctx = _factory.CreateDbContext())
+            {
+                return await ctx.Notes
+                    .Where(t => t.Title.Contains(searchText) || t.Content.Contains(searchText))
+                    .ToListAsync();
+            }
+        }
+
+        /// <summary>
+        /// Marks the note as currently edited
+        /// </summary>
+        /// <param name="noteId">The unique ID of note</param>
+        /// <returns>true if note was successfully set as currently edited; otherwise false</returns>
+        public async Task<bool> SetNoteAsCurrentlyEditedAsync(Guid noteId)
+        {
+            using (var ctx = _factory.CreateDbContext())
+            {
+                var note = await ctx.Notes.SingleOrDefaultAsync(x => x.NoteId == noteId);
+                if (note is not null)
+                {
+                    note.IsCurrentlyEdited = true;
+                    ctx.Update(note);
+                    var result = await ctx.SaveChangesAsync();
+                    return result > 0;
+                }
+                return false;
+            }
+        }
+        
+        /// <summary>
+        /// Marks the note as currently not edited
+        /// </summary>
+        /// <param name="noteId">The unique ID of note</param>
+        /// <returns>true if note was successfully set as currently not edited; otherwise false</returns>
+        public async Task<bool> SetNoteAsCurrentlyNotEditedAsync(Guid noteId)
+        {
+            using (var ctx = _factory.CreateDbContext())
+            {
+                var note = await ctx.Notes.SingleOrDefaultAsync(x => x.NoteId == noteId);
+                if (note is not null)
+                {
+                    note.IsCurrentlyEdited = false;
+                    ctx.Update(note);
+                    var result = await ctx.SaveChangesAsync();
+                    return result > 0;
+                }
+                return false;
             }
         }
     }

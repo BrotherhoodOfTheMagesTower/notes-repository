@@ -1,4 +1,5 @@
 ﻿using NotesRepository.Areas.Identity.Data;
+using NotesRepository.Repositories;
 using System.ComponentModel.DataAnnotations;
 
 namespace NotesRepository.Data.Models
@@ -7,7 +8,7 @@ namespace NotesRepository.Data.Models
     {
         public Note() { }
 
-        public Note(Guid? noteId, string title, string content, string iconName, ApplicationUser owner, Directory? directory)
+        public Note(Guid? noteId, string title, string content, string iconName, ApplicationUser owner, Directory directory)
         {
             NoteId = noteId ?? Guid.NewGuid();
             Title = title;
@@ -15,7 +16,7 @@ namespace NotesRepository.Data.Models
             IconName = iconName;
             CreatedAt = DateTime.Now;
             Owner = owner;
-            Directory = directory; //TODO: implement method, which get's from the database the default directory and change this line to Directory = directory ?? service.GetDefaultDirectory()
+            Directory = directory;
         }
 
         /// <summary>

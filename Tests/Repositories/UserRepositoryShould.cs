@@ -47,7 +47,7 @@ namespace Tests
             var users = await _context.Users.ToListAsync();
             Assert.True(result);
             Assert.Equal(users.FirstOrDefault(u => u.FirstName == "Frodo")!.FirstName, user.FirstName);
-            result = await ur.DeleteUserByIdAsync(new Guid(user.Id));
+            result = await ur.DeleteUserByIdAsync(user.Id);
         }
 
         [Fact(DisplayName = "System is able to delete a user from the database")]
@@ -63,7 +63,7 @@ namespace Tests
             var users = await _context.Users.ToListAsync();
 
             // Act
-            var result = await ur.DeleteUserByIdAsync(new Guid(user.Id));
+            var result = await ur.DeleteUserByIdAsync(user.Id);
             var usersAfterDelete = await _context.Users.ToListAsync();
 
             // Assert
@@ -84,13 +84,13 @@ namespace Tests
             await ur.AddUserAsync(user);
 
             // Act
-            var result = await ur.GetUserByIdAsync(new Guid(user.Id));
+            var result = await ur.GetUserByIdAsync(user.Id);
 
             // Assert
             Assert.NotNull(result);
             Assert.Equal(user.Id, result!.Id);
             result.Should().BeAssignableTo<ApplicationUser>();
-            await ur.DeleteUserByIdAsync(new Guid(user.Id));
+            await ur.DeleteUserByIdAsync(user.Id);
         }
 
         [Fact(DisplayName = "System is able to get user by e-mail from the database")]
@@ -113,7 +113,7 @@ namespace Tests
             Assert.NotNull(result);
             Assert.Equal(user.Email, result!.Email);
             result.Should().BeAssignableTo<ApplicationUser>();
-            await ur.DeleteUserByIdAsync(new Guid(user.Id));
+            await ur.DeleteUserByIdAsync(user.Id);
         }
 
         [Fact(DisplayName = "System is able to return all users from the database")]
@@ -152,7 +152,7 @@ namespace Tests
 
             foreach (var user in result)
             {
-                await ur.DeleteUserByIdAsync(new Guid(user.Id));
+                await ur.DeleteUserByIdAsync(user.Id);
             }
         }
 
@@ -192,7 +192,7 @@ namespace Tests
 
             foreach (var user in result)
             {
-                await ur.DeleteUserByIdAsync(new Guid(user.Id));
+                await ur.DeleteUserByIdAsync(user.Id);
             }
         }
 
@@ -231,7 +231,7 @@ namespace Tests
 
             foreach (var user in result)
             {
-                await ur.DeleteUserByIdAsync(new Guid(user.Id));
+                await ur.DeleteUserByIdAsync(user.Id);
             }
         }
     }

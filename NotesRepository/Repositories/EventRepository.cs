@@ -120,9 +120,10 @@ namespace NotesRepository.Repositories
             using (var ctx = _factory.CreateDbContext())
             {
                 return await ctx.Events
+                    .Where(i => i.EventId == eventId)
                     .Include(n => n.Note)
                     .Include(u => u.User)
-                    .FirstOrDefaultAsync(i => i.EventId == eventId);
+                    .FirstOrDefaultAsync();
             }
         }
 

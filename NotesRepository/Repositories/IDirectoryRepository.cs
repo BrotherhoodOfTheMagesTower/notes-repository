@@ -9,6 +9,7 @@ namespace NotesRepository.Repositories
         Task<ICollection<Directory>> GetAllDirectoriesAsync();
         Task<Directory?> GetDirectoryByIdAsync(Guid directoryId);
         Task<Directory?> GetDirectoryByNameAsync(string name);
+        Task<Directory?> GetDefaultDirectoryForParticularUserAsync(string userId);
         Task<ICollection<Directory>> GetAllDirectoriesForParticularUserAsync(string userId);
         Task<ICollection<Directory>?> GetAllSubDirectoriesOfParticularDirectory(Guid directoryId);
         Task<bool> AddDirectoryAsync(Directory directory);

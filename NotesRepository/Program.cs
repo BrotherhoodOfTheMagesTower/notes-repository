@@ -5,8 +5,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using NotesRepository.Areas.Identity;
 using Blazored.Toast;
 using NotesRepository.Repositories;
-
-
+using NotesRepository.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +22,12 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>>();
 builder.Services.AddScoped<INoteRepository, NoteRepository>();
 builder.Services.AddScoped<ICollaboratorsNotesRepository, CollaboratorsNotesRepository>();
+builder.Services.AddScoped<IDirectoryRepository, DirectoryRepository>();
+builder.Services.AddScoped<IImageRepository, ImageRepository>();
+builder.Services.AddScoped<IEventRepository, EventRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+builder.Services.AddScoped<NoteService>();
 builder.Services.AddBlazoredToast();
 
 var app = builder.Build();

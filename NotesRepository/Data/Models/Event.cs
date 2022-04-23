@@ -48,7 +48,7 @@ namespace NotesRepository.Data.Models
         /// <summary>
         /// User, which created the event
         /// </summary>
-        public ApplicationUser User { get; set; }
+        public ApplicationUser User { get; set; } //TODO: enable nullable, in order to be able to attach the event to note
 
         /// <summary>
         /// Note, which is assigned to the event
