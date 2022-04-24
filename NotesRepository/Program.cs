@@ -6,6 +6,7 @@ using NotesRepository.Areas.Identity;
 using Blazored.Toast;
 using NotesRepository.Repositories;
 using NotesRepository.Services;
+using NotesRepository.Data.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,12 +21,12 @@ builder.Services
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>>();
-builder.Services.AddScoped<INoteRepository, NoteRepository>();
-builder.Services.AddScoped<ICollaboratorsNotesRepository, CollaboratorsNotesRepository>();
-builder.Services.AddScoped<IDirectoryRepository, DirectoryRepository>();
-builder.Services.AddScoped<IImageRepository, ImageRepository>();
-builder.Services.AddScoped<IEventRepository, EventRepository>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<NoteRepository>();
+builder.Services.AddScoped<CollaboratorsNotesRepository>();
+builder.Services.AddScoped<DirectoryRepository>();
+builder.Services.AddScoped<ImageRepository>();
+builder.Services.AddScoped<EventRepository>();
+builder.Services.AddScoped<UserRepository>();
 
 builder.Services.AddScoped<NoteService>();
 builder.Services.AddBlazoredToast();

@@ -55,7 +55,7 @@ namespace Tests.Services
             Assert.NotNull(result);
             Assert.Equal(result!.NoteId, note.NoteId);
         }
-        
+
         [Fact(DisplayName = "Be able to get all user notes by user ID")]
         public async Task GetAllUserNotesById()
         {
@@ -77,7 +77,7 @@ namespace Tests.Services
             Assert.NotNull(results);
             Assert.Equal(results.Select(x => x.NoteId), notes.Select(x => x.NoteId));
         }
-        
+
         [Fact(DisplayName = "Be able to get a note by title")]
         public async Task GetNoteByTitle()
         {
@@ -94,7 +94,7 @@ namespace Tests.Services
             Assert.NotNull(result);
             Assert.Equal(result!.NoteId, note.NoteId);
         }
-        
+
         [Fact(DisplayName = "Be able to get note by searching (title & content)")]
         public async Task SearchNotesByTitleAndContent()
         {
@@ -127,7 +127,7 @@ namespace Tests.Services
             multipleContentMatchResult.Should().HaveCount(3);
             notMatchResult.Should().BeEmpty();
         }
-        
+
         [Fact(DisplayName = "Be able to add a note to the database")]
         public async Task AddNote()
         {
@@ -144,7 +144,7 @@ namespace Tests.Services
             Assert.True(result);
             Assert.Single(notes);
         }
-        
+
         [Fact(DisplayName = "Be able to add multiple notes to the database")]
         public async Task AddMultipleNotes()
         {
@@ -165,7 +165,7 @@ namespace Tests.Services
             var result = await ns.GetAllUserNotesByIdAsync(usr.Id);
             result.Should().HaveCount(3);
         }
-        
+
         [Fact(DisplayName = "Be able to update a note")]
         public async Task UpdateNote()
         {
@@ -184,7 +184,7 @@ namespace Tests.Services
             noteFromDb.Should().NotBeNull();
             noteFromDb!.Title.Should().Be("Edited note");
         }
-        
+
         [Fact(DisplayName = "Be able to delete a note")]
         public async Task DeleteNote()
         {
@@ -201,7 +201,7 @@ namespace Tests.Services
             var noteFromDb = await ns.GetNoteByIdAsync(note.NoteId);
             noteFromDb.Should().BeNull();
         }
-        
+
         [Fact(DisplayName = "Be able to delete a note by ID")]
         public async Task DeleteNoteById()
         {
@@ -218,7 +218,7 @@ namespace Tests.Services
             var noteFromDb = await ns.GetNoteByIdAsync(note.NoteId);
             noteFromDb.Should().BeNull();
         }
-        
+
         [Fact(DisplayName = "Be able to delete notes")]
         public async Task DeleteNotes()
         {
@@ -240,7 +240,7 @@ namespace Tests.Services
             var noteFromDb = await ns.GetAllUserNotesByIdAsync(usr.Id);
             noteFromDb.Should().BeEmpty();
         }
-        
+
         [Fact(DisplayName = "Be able to delete notes by ID")]
         public async Task DeleteNotesById()
         {
@@ -263,7 +263,7 @@ namespace Tests.Services
             var noteFromDb = await ns.GetAllUserNotesByIdAsync(usr.Id);
             noteFromDb.Should().BeEmpty();
         }
-        
+
         [Fact(DisplayName = "Be able to set note as currently edited")]
         public async Task SetNoteAsCurrentlyEdited()
         {
@@ -358,7 +358,7 @@ namespace Tests.Services
             noteFromDb.Should().NotBeNull();
             noteFromDb!.IsPinned!.Should().BeTrue();
         }
-        
+
         [Fact(DisplayName = "Be able to attach event to a note")]
         public async Task AttachEventToNoteAsync()
         {
@@ -378,7 +378,7 @@ namespace Tests.Services
             noteFromDb.Should().NotBeNull();
             noteFromDb!.Event!.Should().Be(ev);
         }
-        
+
         [Fact(DisplayName = "Be able to edit note content")]
         public async Task EditNoteContent()
         {
@@ -396,7 +396,7 @@ namespace Tests.Services
             noteFromDb.Should().NotBeNull();
             noteFromDb!.Content!.Should().Be("new");
         }
-        
+
         [Fact(DisplayName = "Be able to edit note title")]
         public async Task EditNoteTitle()
         {
@@ -414,7 +414,7 @@ namespace Tests.Services
             noteFromDb.Should().NotBeNull();
             noteFromDb!.Title!.Should().Be("fresh");
         }
-        
+
         [Fact(DisplayName = "Be able to change note directory")]
         public async Task ChangeNoteDirectory()
         {
@@ -425,9 +425,12 @@ namespace Tests.Services
             await ns.AddNoteAsync(note);
             var dir = new Directory("new", null);
             await _dr.AddDirectoryAsync(dir);
-
+            dir.User = usr;
+            await _dr.UpdateDirectoryAsync(dir);
+            note.Directory = dir;
+            note.Directory.Notes = new List<Note> { note };
             // Act
-            await ns.ChangeNoteDirectoryAsync(note.NoteId, dir.DirectoryId);
+            await ns.ChangeNoteDirectoryAsync(/*note.NoteId, dir.DirectoryId*/note);
 
             // Assert
             var noteFromDb = await ns.GetNoteByIdAsync(note.NoteId);

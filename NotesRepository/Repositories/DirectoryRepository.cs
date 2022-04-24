@@ -189,9 +189,10 @@ namespace NotesRepository.Repositories
             using (var ctx = _factory.CreateDbContext())
             {
                 return await ctx.Directories
+                    .Where(d => d.DirectoryId == directoryId)
                     .Include(n => n.Notes)
                     .Include(s => s.SubDirectories)
-                    .FirstOrDefaultAsync(i => i.DirectoryId == directoryId);
+                    .SingleOrDefaultAsync();
             }
         }
 
