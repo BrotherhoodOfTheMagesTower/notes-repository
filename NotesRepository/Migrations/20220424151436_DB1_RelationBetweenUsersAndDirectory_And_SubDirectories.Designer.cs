@@ -12,7 +12,7 @@ using NotesRepository.Data;
 namespace NotesRepository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220421113959_DB1_RelationBetweenUsersAndDirectory_And_SubDirectories")]
+    [Migration("20220424151436_DB1_RelationBetweenUsersAndDirectory_And_SubDirectories")]
     partial class DB1_RelationBetweenUsersAndDirectory_And_SubDirectories
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -481,9 +481,7 @@ namespace NotesRepository.Migrations
                 {
                     b.HasOne("NotesRepository.Data.Models.Note", "Note")
                         .WithOne("Event")
-                        .HasForeignKey("NotesRepository.Data.Models.Event", "EventId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("NotesRepository.Data.Models.Event", "EventId");
 
                     b.HasOne("NotesRepository.Areas.Identity.Data.ApplicationUser", "User")
                         .WithMany("Events")

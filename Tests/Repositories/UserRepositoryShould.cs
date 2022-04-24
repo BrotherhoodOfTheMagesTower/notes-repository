@@ -12,7 +12,7 @@ using FluentAssertions;
 
 namespace Tests
 {
-    public class UserRepositoryShould : IDbContextFactory<ApplicationDbContext>
+    public class UserRepositoryShould
     {
         private readonly ApplicationDbContext _context;
         private DbContextOptions<ApplicationDbContext> _options;
@@ -22,19 +22,14 @@ namespace Tests
             _options = new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseInMemoryDatabase("In memory database - ApplicationUser")
                 .Options;
-            _context = CreateDbContext();
-        }
-
-        public ApplicationDbContext CreateDbContext()
-        {
-            return new ApplicationDbContext(_options);
+            _context = new ApplicationDbContext(_options);
         }
 
         [Fact(DisplayName = "System is able to add a user to the database")]
         public async Task AddUser()
         {
             // Arrange
-            var ur = new UserRepository(new UserRepositoryShould());
+            var ur = new UserRepository(_context);
             var user = new ApplicationUser()
             {
                 FirstName = "Frodo"
@@ -54,7 +49,7 @@ namespace Tests
         public async Task DeleteUser()
         {
             // Arrange
-            var ur = new UserRepository(new UserRepositoryShould());
+            var ur = new UserRepository(_context);
             var user = new ApplicationUser()
             {
                 FirstName = "Frodo"
@@ -75,7 +70,7 @@ namespace Tests
         public async Task GetUserById()
         {
             // Arrange
-            var ur = new UserRepository(new UserRepositoryShould());
+            var ur = new UserRepository(_context);
             var user = new ApplicationUser()
             {
                 FirstName = "Frodo",
@@ -97,7 +92,7 @@ namespace Tests
         public async Task GetUserByEmail()
         {
             // Arrange
-            var ur = new UserRepository(new UserRepositoryShould());
+            var ur = new UserRepository(_context);
             var user = new ApplicationUser()
             {
                 FirstName = "Frodo",
@@ -120,7 +115,7 @@ namespace Tests
         public async Task GetAllUsers()
         {
             // Arrange
-            var ur = new UserRepository(new UserRepositoryShould());
+            var ur = new UserRepository(_context);
             var usersData = new List<(string, string, string)>
             {
                 ("Frodo", "Baggins", "shire@o2.pl"),
@@ -160,7 +155,7 @@ namespace Tests
         public async Task GetUsersByUsername()
         {
             // Arrange
-            var ur = new UserRepository(new UserRepositoryShould());
+            var ur = new UserRepository(_context);
             var usersData = new List<(string, string, string)>
             {
                 ("Tony", "Hawk", "ProSkater@gmail.com"),
@@ -200,7 +195,7 @@ namespace Tests
         public async Task GetUsersByFirstAndLastName()
         {
             // Arrange
-            var ur = new UserRepository(new UserRepositoryShould());
+            var ur = new UserRepository(_context);
             var usersData = new List<(string, string, string)>
             {
                 ("Jan", "Kowalski", "KowalskiJan@gmail.com"),

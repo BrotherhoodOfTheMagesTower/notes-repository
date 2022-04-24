@@ -23,20 +23,24 @@ namespace Tests.Services
         private readonly EventRepository _er;
         private readonly DirectoryRepository _dr;
         private readonly ImageRepository _ir;
-        private readonly Mock<IDbContextFactory<ApplicationDbContext>> _mockDbFactory;
+        private readonly ApplicationDbContext ctx;
+        private DbContextOptions<ApplicationDbContext> _options;
 
         public NoteServiceShould()
         {
-            _mockDbFactory = new Mock<IDbContextFactory<ApplicationDbContext>>();
-            _mockDbFactory.Setup(f => f.CreateDbContext())
-                .Returns(() => new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase("In memory test - NoteService")
-                    .Options));
-            _nr = new NoteRepository(_mockDbFactory.Object);
-            _ur = new UserRepository(_mockDbFactory.Object);
-            _er = new EventRepository(_mockDbFactory.Object);
-            _dr = new DirectoryRepository(_mockDbFactory.Object);
-            _ir = new ImageRepository(_mockDbFactory.Object);
+            _options = new DbContextOptionsBuilder<ApplicationDbContext>()
+                .UseInMemoryDatabase("In memory database - NoteService")
+                .Options;
+            ctx = CreateDbContext();
+            _nr = new NoteRepository(ctx);
+            _ur = new UserRepository(ctx);
+            _er = new EventRepository(ctx);
+            _dr = new DirectoryRepository(ctx);
+            _ir = new ImageRepository(ctx);
+        }
+        public ApplicationDbContext CreateDbContext()
+        {
+            return new ApplicationDbContext(_options);
         }
 
         [Fact(DisplayName = "Be able to get a note by ID")]
@@ -367,7 +371,7 @@ namespace Tests.Services
             var usr = new ApplicationUser();
             var note = new Note(null, "Tst", "AttachEventToNote()", "def-ico", usr, new Directory("Default", usr));
             await ns.AddNoteAsync(note);
-            var ev = new Event(Guid.NewGuid(), "Con", DateTime.Now, DateTime.Now.AddMinutes(2), new ApplicationUser());
+            var ev = new Event(Guid.NewGuid(), "Con", DateTime.Now, DateTime.Now.AddMinutes(2), usr);
             await _er.AddEventAsync(ev);
 
             // Act
@@ -423,19 +427,36 @@ namespace Tests.Services
             var usr = new ApplicationUser();
             var note = new Note(null, "Tst", "ChangeNoteDirectory()", "def-ico", usr, new Directory("Default", usr));
             await ns.AddNoteAsync(note);
-            var dir = new Directory("new", null);
+            var dir = new Directory("new", usr);
             await _dr.AddDirectoryAsync(dir);
-            dir.User = usr;
-            await _dr.UpdateDirectoryAsync(dir);
-            note.Directory = dir;
-            note.Directory.Notes = new List<Note> { note };
+
             // Act
-            await ns.ChangeNoteDirectoryAsync(/*note.NoteId, dir.DirectoryId*/note);
+            await ns.ChangeNoteDirectoryAsync(note.NoteId, dir.DirectoryId);
 
             // Assert
             var noteFromDb = await ns.GetNoteByIdAsync(note.NoteId);
             noteFromDb.Should().NotBeNull();
             noteFromDb!.Directory!.DirectoryId.Should().Be(dir.DirectoryId);
+        }
+        
+        [Fact(DisplayName = "Be able to change note owner")]
+        public async Task ChangeNoteOwner()
+        {
+            //Arrange
+            var ns = new NoteService(_nr, _ur, _er, _dr, _ir);
+            var usr = new ApplicationUser();
+            var note = new Note(null, "Tst", "ChangeNoteDirectory()", "def-ico", usr, new Directory("Default", usr));
+            await ns.AddNoteAsync(note);
+            var newUser = new ApplicationUser();
+            await _ur.AddUserAsync(newUser);
+            note.Owner = newUser;
+            // Act
+            await _nr.UpdateNoteAsync(note);
+
+            // Assert
+            var noteFromDb = await ns.GetNoteByIdAsync(note.NoteId);
+            noteFromDb.Should().NotBeNull();
+            noteFromDb!.Owner!.Id.Should().Be(newUser.Id);
         }
     }
 }

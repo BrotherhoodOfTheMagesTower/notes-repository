@@ -265,6 +265,7 @@ namespace NotesRepository.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("DirectoryId");
@@ -468,7 +469,8 @@ namespace NotesRepository.Migrations
                     b.HasOne("NotesRepository.Areas.Identity.Data.ApplicationUser", "User")
                         .WithMany("Directories")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
@@ -477,9 +479,7 @@ namespace NotesRepository.Migrations
                 {
                     b.HasOne("NotesRepository.Data.Models.Note", "Note")
                         .WithOne("Event")
-                        .HasForeignKey("NotesRepository.Data.Models.Event", "EventId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("NotesRepository.Data.Models.Event", "EventId");
 
                     b.HasOne("NotesRepository.Areas.Identity.Data.ApplicationUser", "User")
                         .WithMany("Events")

@@ -6,11 +6,11 @@ namespace NotesRepository.Repositories
 {
     public class EventRepository : IEventRepository
     {
-        private readonly IDbContextFactory<ApplicationDbContext> _factory;
+        private readonly ApplicationDbContext ctx;
 
-        public EventRepository(IDbContextFactory<ApplicationDbContext> factory)
+        public EventRepository(ApplicationDbContext context)
         {
-            _factory = factory;
+            ctx = context;
         }
 
         /// <summary>
@@ -20,12 +20,9 @@ namespace NotesRepository.Repositories
         /// <returns>True when event was successfully added if not - false</returns>
         public async Task<bool> AddEventAsync(Event calendarEvent)
         {
-            using (var ctx = _factory.CreateDbContext())
-            {
-                await ctx.Events.AddAsync(calendarEvent);
-                var result = await ctx.SaveChangesAsync();
-                return result > 0;
-            }
+            await ctx.Events.AddAsync(calendarEvent);
+            var result = await ctx.SaveChangesAsync();
+            return result > 0;
         }
 
         /// <summary>
@@ -35,12 +32,9 @@ namespace NotesRepository.Repositories
         /// <returns>True when event was successfully deletet from database, if not - false</returns>
         public async Task<bool> DeleteEventAsync(Event calendarEvent)
         {
-            using (var ctx = _factory.CreateDbContext())
-            {
-                ctx.Events.Remove(calendarEvent);
-                var result = await ctx.SaveChangesAsync();
-                return result > 0;
-            }
+            ctx.Events.Remove(calendarEvent);
+            var result = await ctx.SaveChangesAsync();
+            return result > 0;
         }
 
         /// <summary>
@@ -50,12 +44,9 @@ namespace NotesRepository.Repositories
         /// <returns>True when events were successfully delete</returns>
         public async Task<bool> DeleteEventsAsync(ICollection<Event> events)
         {
-            using (var ctx = _factory.CreateDbContext())
-            {
-                ctx.Events.RemoveRange(events);
-                var result = await ctx.SaveChangesAsync();
-                return result > 0;
-            }
+            ctx.Events.RemoveRange(events);
+            var result = await ctx.SaveChangesAsync();
+            return result > 0;
         }
 
         /// <summary>
@@ -65,17 +56,14 @@ namespace NotesRepository.Repositories
         /// <returns>True when event was successfully deletet from database, if not - false</returns>
         public async Task<bool> DeleteEventByIdAsync(Guid eventId)
         {
-            using (var ctx = _factory.CreateDbContext())
+            var evet = await ctx.Events.FirstOrDefaultAsync(x => x.EventId == eventId);
+            if (evet is not null)
             {
-                var evet = await ctx.Events.FirstOrDefaultAsync(x => x.EventId == eventId);
-                if (evet is not null)
-                {
-                    ctx.Events.Remove(evet);
-                    var result = await ctx.SaveChangesAsync();
-                    return result > 0;
-                }
-                return false;
+                ctx.Events.Remove(evet);
+                var result = await ctx.SaveChangesAsync();
+                return result > 0;
             }
+            return false;
         }
 
         /// <summary>
@@ -84,13 +72,10 @@ namespace NotesRepository.Repositories
         /// <returns>A collection of events stored in the database</returns>
         public async Task<ICollection<Event>> GetAllEventsAsync()
         {
-            using (var ctx = _factory.CreateDbContext())
-            {
-                return await ctx.Events
-                    .Include(n => n.Note)
-                    .Include(u => u.User)
-                    .ToListAsync();
-            }
+            return await ctx.Events
+                .Include(n => n.Note)
+                .Include(u => u.User)
+                .ToListAsync();
         }
 
         /// <summary>
@@ -100,14 +85,11 @@ namespace NotesRepository.Repositories
         /// <returns>A collection of user's events stored in the database</returns>
         public async Task<ICollection<Event>> GetAllUserEventsAsync(string userId)
         {
-            using (var ctx = _factory.CreateDbContext())
-            {
-                return await ctx.Events
-                    .Where(e => e.User.Id == userId)
-                    .Include(n => n.Note)
-                    .Include(u => u.User)
-                    .ToListAsync();
-            }
+            return await ctx.Events
+                .Where(e => e.User.Id == userId)
+                .Include(n => n.Note)
+                .Include(u => u.User)
+                .ToListAsync();
         }
 
         /// <summary>
@@ -117,14 +99,11 @@ namespace NotesRepository.Repositories
         /// <returns>A event if it exists in the database-otherwise null</returns>
         public async Task<Event?> GetEventByIdAsync(Guid eventId)
         {
-            using (var ctx = _factory.CreateDbContext())
-            {
-                return await ctx.Events
-                    .Where(i => i.EventId == eventId)
-                    .Include(n => n.Note)
-                    .Include(u => u.User)
-                    .FirstOrDefaultAsync();
-            }
+            return await ctx.Events
+                .Where(i => i.EventId == eventId)
+                .Include(n => n.Note)
+                .Include(u => u.User)
+                .SingleOrDefaultAsync();
         }
 
         /// <summary>
@@ -134,14 +113,11 @@ namespace NotesRepository.Repositories
         /// <returns>A collection of events which has a pattern in their content</returns>
         public async Task<ICollection<Event>> GetEventsByContentAsync(string content)
         {
-            using (var ctx = _factory.CreateDbContext())
-            {
-                return await ctx.Events
-                    .Where(e => e.Content.Contains(content))
-                    .Include(n => n.Note)
-                    .Include(u => u.User)
-                    .ToListAsync();
-            }
+            return await ctx.Events
+                .Where(e => e.Content.Contains(content))
+                .Include(n => n.Note)
+                .Include(u => u.User)
+                .ToListAsync();
         }
 
         /// <summary>
@@ -151,14 +127,11 @@ namespace NotesRepository.Repositories
         /// <returns>A collection of events which start at given day stored in the database</returns>
         public async Task<ICollection<Event>> GetEventsByDateAsync(DateTime date)
         {
-            using (var ctx = _factory.CreateDbContext())
-            {
-                return await ctx.Events
-                    .Where(e => e.StartAt == date)
-                    .Include(n => n.Note)
-                    .Include(u => u.User)
-                    .ToListAsync();
-            }
+            return await ctx.Events
+                .Where(e => e.StartAt == date)
+                .Include(n => n.Note)
+                .Include(u => u.User)
+                .ToListAsync();
         }
 
         /// <summary>
@@ -168,12 +141,9 @@ namespace NotesRepository.Repositories
         /// <returns>True if note was successfully updated</returns>
         public async Task<bool> UpdateEventAsync(Event calendarEvent)
         {
-            using (var ctx = _factory.CreateDbContext())
-            {
-                ctx.Events.Update(calendarEvent);
-                var result = await ctx.SaveChangesAsync();
-                return result > 0;
-            }
+            ctx.Events.Update(calendarEvent);
+            var result = await ctx.SaveChangesAsync();
+            return result > 0;
         }
     }
 }

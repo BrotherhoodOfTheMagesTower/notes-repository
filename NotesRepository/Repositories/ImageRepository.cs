@@ -6,11 +6,11 @@ namespace NotesRepository.Repositories
 {
     public class ImageRepository : IImageRepository
     {
-        private readonly IDbContextFactory<ApplicationDbContext> _factory;
+        private readonly ApplicationDbContext ctx;
 
-        public ImageRepository(IDbContextFactory<ApplicationDbContext> factory)
+        public ImageRepository(ApplicationDbContext context)
         {
-            _factory = factory;
+            ctx = context;
         }
 
         /// <summary>
@@ -20,12 +20,9 @@ namespace NotesRepository.Repositories
         /// <returns>True if image was successfully added, otherwise false.</returns>
         public async Task<bool> AddImageAsync(Image image)
         {
-            using (var ctx = _factory.CreateDbContext())
-            {
-                await ctx.Images.AddAsync(image);
-                var result = await ctx.SaveChangesAsync();
-                return result > 0;
-            }
+            await ctx.Images.AddAsync(image);
+            var result = await ctx.SaveChangesAsync();
+            return result > 0;
         }
 
         /// <summary>
@@ -35,12 +32,9 @@ namespace NotesRepository.Repositories
         /// <returns>True if images were successfully added, otherwise false.</returns>
         public async Task<bool> AddImagesAsync(ICollection<Image> images)
         {
-            using (var ctx = _factory.CreateDbContext())
-            {
-                await ctx.Images.AddRangeAsync(images);
-                var result = await ctx.SaveChangesAsync();
-                return result > 0;
-            }
+            await ctx.Images.AddRangeAsync(images);
+            var result = await ctx.SaveChangesAsync();
+            return result > 0;
         }
 
         /// <summary>
@@ -50,12 +44,9 @@ namespace NotesRepository.Repositories
         /// <returns>True if image was successfully deleted, otherwise false.</returns>
         public async Task<bool> DeleteImageAsync(Image image)
         {
-            using (var ctx = _factory.CreateDbContext())
-            {
-                ctx.Images.Remove(image);
-                var result = await ctx.SaveChangesAsync();
-                return result > 0;
-            }
+            ctx.Images.Remove(image);
+            var result = await ctx.SaveChangesAsync();
+            return result > 0;
         }
 
         /// <summary>
@@ -65,17 +56,14 @@ namespace NotesRepository.Repositories
         /// <returns>True if image was successfully deleted, otherwise false.</returns>
         public async Task<bool> DeleteImageByIdAsync(Guid imageId)
         {
-            using (var ctx = _factory.CreateDbContext())
+            var image = await ctx.Images.FirstOrDefaultAsync(x => x.ImageId == imageId);
+            if (image is not null)
             {
-                var image = await ctx.Images.FirstOrDefaultAsync(x => x.ImageId == imageId);
-                if (image is not null)
-                {
-                    ctx.Images.Remove(image);
-                    var result = await ctx.SaveChangesAsync();
-                    return result > 0;
-                }
-                return false;
+                ctx.Images.Remove(image);
+                var result = await ctx.SaveChangesAsync();
+                return result > 0;
             }
+            return false;
         }
 
         /// <summary>
@@ -85,12 +73,9 @@ namespace NotesRepository.Repositories
         /// <returns>True if images were successfully deleted, otherwise false.</returns>
         public async Task<bool> DeleteImagesAsync(ICollection<Image> images)
         {
-            using (var ctx = _factory.CreateDbContext())
-            {
-                ctx.Images.RemoveRange(images);
-                var result = await ctx.SaveChangesAsync();
-                return result > 0;
-            }
+            ctx.Images.RemoveRange(images);
+            var result = await ctx.SaveChangesAsync();
+            return result > 0;
         }
 
         /// <summary>
@@ -99,12 +84,9 @@ namespace NotesRepository.Repositories
         /// <returns>all images</returns>
         public async Task<ICollection<Image>> GetAllImagesAsync()
         {
-            using (var ctx = _factory.CreateDbContext())
-            {
-                return await ctx.Images
-                    .Include(n => n.Note)
-                    .ToListAsync();
-            }
+            return await ctx.Images
+                .Include(n => n.Note)
+                .ToListAsync();
         }
 
         /// <summary>
@@ -114,13 +96,10 @@ namespace NotesRepository.Repositories
         /// <returns>images from a chosen note</returns>
         public async Task<ICollection<Image>> GetAllNoteImages(Note note)
         {
-            using (var ctx = _factory.CreateDbContext())
-            {
-                return await ctx.Images
-                    .Include(d => d.Note)
-                    .Where(n => n.Note == note)
-                    .ToListAsync();
-            }
+            return await ctx.Images
+                .Include(d => d.Note)
+                .Where(n => n.Note == note)
+                .ToListAsync();
         }
 
         /// <summary>
@@ -130,14 +109,11 @@ namespace NotesRepository.Repositories
         /// <returns>user images</returns>
         public async Task<ICollection<Image>> GetAllUserImagesAsync(string userId)
         {
-            using (var ctx = _factory.CreateDbContext())
-            {
-                return await ctx.Images
-                    .Include(d => d.Note)
-                    .Include(d => d.Note.Owner)
-                    .Where(n => n.Note.Owner.Id == userId)
-                    .ToListAsync();
-            }
+            return await ctx.Images
+                .Include(d => d.Note)
+                .Include(d => d.Note.Owner)
+                .Where(n => n.Note.Owner.Id == userId)
+                .ToListAsync();
         }
 
         /// <summary>
@@ -147,12 +123,9 @@ namespace NotesRepository.Repositories
         /// <returns>Image if exists, otherwise null</returns>
         public async Task<Image?> GetImageByIdAsync(Guid imageId)
         {
-            using (var ctx = _factory.CreateDbContext())
-            {
-                return await ctx.Images
-                    .Include(n => n.Note)
-                    .FirstOrDefaultAsync(i => i.ImageId == imageId);
-            }
+            return await ctx.Images
+                .Include(n => n.Note)
+                .FirstOrDefaultAsync(i => i.ImageId == imageId);
         }
 
         /// <summary>
@@ -162,12 +135,9 @@ namespace NotesRepository.Repositories
         /// <returns>Image if exists, otherwise null.</returns>
         public async Task<Image?> GetImageByUrlAsync(string imageUrl)
         {
-            using (var ctx = _factory.CreateDbContext())
-            {
-                return await ctx.Images
-                    .Include(n => n.Note)
-                    .FirstOrDefaultAsync(i => i.FileUrl == imageUrl);
-            }
+            return await ctx.Images
+                .Include(n => n.Note)
+                .FirstOrDefaultAsync(i => i.FileUrl == imageUrl);
         }
 
         /// <summary>
@@ -177,12 +147,9 @@ namespace NotesRepository.Repositories
         /// <returns>True if image was successfully updated, otherwise false.</returns>
         public async Task<bool> UpdateImageAsync(Image image)
         {
-            using (var ctx = _factory.CreateDbContext())
-            {
-                ctx.Images.Update(image);
-                var result = await ctx.SaveChangesAsync();
-                return result > 0;
-            }
+            ctx.Images.Update(image);
+            var result = await ctx.SaveChangesAsync();
+            return result > 0;
         }
     }
 }

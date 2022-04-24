@@ -1,16 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NotesRepository.Data;
 using NotesRepository.Data.Models;
+using Directory = NotesRepository.Data.Models.Directory;
 
 namespace NotesRepository.Repositories
 {
     public class NoteRepository : INoteRepository
     {
-        private readonly IDbContextFactory<ApplicationDbContext> _factory;
+        private readonly ApplicationDbContext ctx;
 
-        public NoteRepository(IDbContextFactory<ApplicationDbContext> factory)
+        public NoteRepository(ApplicationDbContext context)
         {
-            _factory = factory;
+            ctx = context;
         }
 
         /// <summary>
@@ -20,12 +21,9 @@ namespace NotesRepository.Repositories
         /// <returns>true if note was successfully added; otherwise false</returns>
         public async Task<bool> AddNoteAsync(Note note)
         {
-            using (var ctx = _factory.CreateDbContext())
-            {
-                await ctx.Notes.AddAsync(note);
-                var result = await ctx.SaveChangesAsync();
-                return result > 0;
-            }
+            await ctx.Notes.AddAsync(note);
+            var result = await ctx.SaveChangesAsync();
+            return result > 0;
         }
 
         /// <summary>
@@ -35,12 +33,9 @@ namespace NotesRepository.Repositories
         /// <returns>true if notes were successfully added; otherwise false</returns>
         public async Task<bool> AddNotesAsync(ICollection<Note> notes)
         {
-            using (var ctx = _factory.CreateDbContext())
-            {
-                await ctx.Notes.AddRangeAsync(notes);
-                var result = await ctx.SaveChangesAsync();
-                return result > 0;
-            }
+            await ctx.Notes.AddRangeAsync(notes);
+            var result = await ctx.SaveChangesAsync();
+            return result > 0;
         }
 
         /// <summary>
@@ -50,12 +45,9 @@ namespace NotesRepository.Repositories
         /// <returns>true if note was successfully removed; otherwise false</returns>
         public async Task<bool> DeleteNoteAsync(Note note)
         {
-            using (var ctx = _factory.CreateDbContext())
-            {
-                ctx.Notes.Remove(note);
-                var result = await ctx.SaveChangesAsync();
-                return result > 0;
-            }
+            ctx.Notes.Remove(note);
+            var result = await ctx.SaveChangesAsync();
+            return result > 0;
         }
 
         /// <summary>
@@ -65,12 +57,9 @@ namespace NotesRepository.Repositories
         /// <returns>true if notes were successfully removed; otherwise false</returns>
         public async Task<bool> DeleteNotesAsync(ICollection<Note> notes)
         {
-            using (var ctx = _factory.CreateDbContext())
-            {
-                ctx.Notes.RemoveRange(notes);
-                var result = await ctx.SaveChangesAsync();
-                return result > 0;
-            }
+            ctx.Notes.RemoveRange(notes);
+            var result = await ctx.SaveChangesAsync();
+            return result > 0;
         }
 
         /// <summary>
@@ -80,17 +69,14 @@ namespace NotesRepository.Repositories
         /// <returns>true if note was successfully removed; otherwise false</returns>
         public async Task<bool> DeleteNoteByIdAsync(Guid noteId)
         {
-            using (var ctx = _factory.CreateDbContext())
+            var note = await ctx.Notes.FirstOrDefaultAsync(x => x.NoteId == noteId);
+            if (note is not null)
             {
-                var note = await ctx.Notes.FirstOrDefaultAsync(x => x.NoteId == noteId);
-                if (note is not null)
-                {
-                    ctx.Notes.Remove(note);
-                    var result = await ctx.SaveChangesAsync();
-                    return result > 0;
-                }
-                return false;
+                ctx.Notes.Remove(note);
+                var result = await ctx.SaveChangesAsync();
+                return result > 0;
             }
+            return false;
         }
 
         /// <summary>
@@ -100,12 +86,9 @@ namespace NotesRepository.Repositories
         /// <returns>true if note was successfully updated; otherwise false</returns>
         public async Task<bool> UpdateNoteAsync(Note note)
         {
-            using (var ctx = _factory.CreateDbContext())
-            {
-                ctx.Notes.Update(note);
-                var result = await ctx.SaveChangesAsync();
-                return result > 0;
-            }
+            ctx.Notes.Update(note);
+            var result = await ctx.SaveChangesAsync();
+            return result > 0;
         }
 
         /// <summary>
@@ -114,17 +97,14 @@ namespace NotesRepository.Repositories
         /// <returns>A collection of notes currently stored in the database</returns>
         public async Task<ICollection<Note>> GetAllNotesAsync()
         {
-            using (var ctx = _factory.CreateDbContext())
-            {
-                return await ctx.Notes
-                    .Include(d => d.Directory)
-                    .Include(o => o.Owner)
-                    .Include(i => i.Images)
-                    .Include(e => e.EditedBy)
-                    .Include(ev => ev.Event)
-                    .Include(c => c.CollaboratorsNotes)
-                    .ToListAsync();
-            }
+            return await ctx.Notes
+                .Include(d => d.Directory)
+                .Include(o => o.Owner)
+                .Include(i => i.Images)
+                .Include(e => e.EditedBy)
+                .Include(ev => ev.Event)
+                .Include(c => c.CollaboratorsNotes)
+                .ToListAsync();
         }
 
         /// <summary>
@@ -134,18 +114,15 @@ namespace NotesRepository.Repositories
         /// <returns>A collection of notes assigned to particulat user, that are currently stored in the database</returns>
         public async Task<ICollection<Note>> GetAllUserNotesAsync(string userId)
         {
-            using (var ctx = _factory.CreateDbContext())
-            {
-                return await ctx.Notes
-                    .Where(n => n.Owner.Id == userId)
-                    .Include(d => d.Directory)
-                    .Include(o => o.Owner)
-                    .Include(i => i.Images)
-                    .Include(e => e.EditedBy)
-                    .Include(ev => ev.Event)
-                    .Include(c => c.CollaboratorsNotes)
-                    .ToListAsync();
-            }
+            return await ctx.Notes
+                .Where(n => n.Owner.Id == userId)
+                .Include(d => d.Directory)
+                .Include(o => o.Owner)
+                .Include(i => i.Images)
+                .Include(e => e.EditedBy)
+                .Include(ev => ev.Event)
+                .Include(c => c.CollaboratorsNotes)
+                .ToListAsync();
         }
 
         /// <summary>
@@ -155,17 +132,14 @@ namespace NotesRepository.Repositories
         /// <returns>A note entity if it exists in the db; otherwise null</returns>
         public async Task<Note?> GetNoteByIdAsync(Guid noteId)
         {
-            using (var ctx = _factory.CreateDbContext())
-            {
-                return await ctx.Notes
-                    .Include(d => d.Directory)
-                    .Include(o => o.Owner)
-                    .Include(i => i.Images)
-                    .Include(e => e.EditedBy)
-                    .Include(ev => ev.Event)
-                    .Include(c => c.CollaboratorsNotes)
-                    .FirstOrDefaultAsync(i => i.NoteId == noteId);
-            }
+            return await ctx.Notes
+                .Include(d => d.Directory)
+                .Include(o => o.Owner)
+                .Include(i => i.Images)
+                .Include(e => e.EditedBy)
+                .Include(ev => ev.Event)
+                .Include(c => c.CollaboratorsNotes)
+                .FirstOrDefaultAsync(i => i.NoteId == noteId);
         }
 
         /// <summary>
@@ -175,17 +149,14 @@ namespace NotesRepository.Repositories
         /// <returns>A note entity if it exists in the db; otherwise null</returns>
         public async Task<Note?> GetNoteByTitleAsync(string title)
         {
-            using (var ctx = _factory.CreateDbContext())
-            {
-                return await ctx.Notes
-                    .Include(d => d.Directory)
-                    .Include(o => o.Owner)
-                    .Include(i => i.Images)
-                    .Include(e => e.EditedBy)
-                    .Include(ev => ev.Event)
-                    .Include(c => c.CollaboratorsNotes)
-                    .FirstOrDefaultAsync(i => i.Title == title);
-            }
+            return await ctx.Notes
+                .Include(d => d.Directory)
+                .Include(o => o.Owner)
+                .Include(i => i.Images)
+                .Include(e => e.EditedBy)
+                .Include(ev => ev.Event)
+                .Include(c => c.CollaboratorsNotes)
+                .FirstOrDefaultAsync(i => i.Title == title);
         }
 
         /// <summary>
@@ -195,12 +166,9 @@ namespace NotesRepository.Repositories
         /// <returns>A list of note entities if the phrase does match</returns>
         public async Task<List<Note>> SearchNoteByTitleAndContentAsync(string searchText)
         {
-            using (var ctx = _factory.CreateDbContext())
-            {
-                return await ctx.Notes
-                    .Where(t => t.Title.Contains(searchText) || t.Content.Contains(searchText))
-                    .ToListAsync();
-            }
+            return await ctx.Notes
+                .Where(t => t.Title.Contains(searchText) || t.Content.Contains(searchText))
+                .ToListAsync();
         }
 
         /// <summary>
@@ -210,20 +178,17 @@ namespace NotesRepository.Repositories
         /// <returns>true if note was successfully set as currently edited; otherwise false</returns>
         public async Task<bool> SetNoteAsCurrentlyEditedAsync(Guid noteId)
         {
-            using (var ctx = _factory.CreateDbContext())
+            var note = await ctx.Notes.SingleOrDefaultAsync(x => x.NoteId == noteId);
+            if (note is not null)
             {
-                var note = await ctx.Notes.SingleOrDefaultAsync(x => x.NoteId == noteId);
-                if (note is not null)
-                {
-                    note.IsCurrentlyEdited = true;
-                    ctx.Update(note);
-                    var result = await ctx.SaveChangesAsync();
-                    return result > 0;
-                }
-                return false;
+                note.IsCurrentlyEdited = true;
+                ctx.Update(note);
+                var result = await ctx.SaveChangesAsync();
+                return result > 0;
             }
+            return false;
         }
-        
+
         /// <summary>
         /// Marks the note as currently not edited
         /// </summary>
@@ -231,18 +196,15 @@ namespace NotesRepository.Repositories
         /// <returns>true if note was successfully set as currently not edited; otherwise false</returns>
         public async Task<bool> SetNoteAsCurrentlyNotEditedAsync(Guid noteId)
         {
-            using (var ctx = _factory.CreateDbContext())
+            var note = await ctx.Notes.SingleOrDefaultAsync(x => x.NoteId == noteId);
+            if (note is not null)
             {
-                var note = await ctx.Notes.SingleOrDefaultAsync(x => x.NoteId == noteId);
-                if (note is not null)
-                {
-                    note.IsCurrentlyEdited = false;
-                    ctx.Update(note);
-                    var result = await ctx.SaveChangesAsync();
-                    return result > 0;
-                }
-                return false;
+                note.IsCurrentlyEdited = false;
+                ctx.Update(note);
+                var result = await ctx.SaveChangesAsync();
+                return result > 0;
             }
+            return false;
         }
     }
 }

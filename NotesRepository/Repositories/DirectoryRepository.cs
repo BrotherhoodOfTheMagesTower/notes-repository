@@ -6,11 +6,11 @@ namespace NotesRepository.Repositories
 {
     public class DirectoryRepository : IDirectoryRepository
     {
-        private readonly IDbContextFactory<ApplicationDbContext> _factory;
+        private readonly ApplicationDbContext ctx;
 
-        public DirectoryRepository(IDbContextFactory<ApplicationDbContext> factory)
+        public DirectoryRepository(ApplicationDbContext context)
         {
-            _factory = factory;
+            ctx = context;
         }
 
         /// <summary>
@@ -20,12 +20,9 @@ namespace NotesRepository.Repositories
         /// <returns>true if directory was successfully added; otherwise false</returns>
         public async Task<bool> AddDirectoryAsync(Directory directory)
         {
-            using (var ctx = _factory.CreateDbContext())
-            {
-                await ctx.Directories.AddAsync(directory);
-                var result = await ctx.SaveChangesAsync();
-                return result > 0;
-            }
+            await ctx.Directories.AddAsync(directory);
+            var result = await ctx.SaveChangesAsync();
+            return result > 0;
         }
 
         /// <summary>
@@ -37,22 +34,19 @@ namespace NotesRepository.Repositories
         /// <returns>true if subdirectory was successfully added; otherwise false</returns>
         public async Task<bool> AttachSubDirectoryToParticularDirectoryAsync(Directory subDirectory, Guid directoryId)
         {
-            using (var ctx = _factory.CreateDbContext())
+            var dir = await ctx.Directories.FirstOrDefaultAsync(x => x.DirectoryId == directoryId);
+            if (dir is not null)
             {
-                var dir = await ctx.Directories.FirstOrDefaultAsync(x => x.DirectoryId == directoryId);
-                if (dir is not null)
-                {
-                    if (dir.SubDirectories is not null)
-                        dir.SubDirectories.Add(subDirectory);
-                    else
-                        dir.SubDirectories = new List<Directory> { subDirectory };
+                if (dir.SubDirectories is not null)
+                    dir.SubDirectories.Add(subDirectory);
+                else
+                    dir.SubDirectories = new List<Directory> { subDirectory };
 
-                    ctx.Directories.Update(dir);    
-                    var result = await ctx.SaveChangesAsync();
-                    return result > 0;
-                }
-                return false;
+                ctx.Directories.Update(dir);
+                var result = await ctx.SaveChangesAsync();
+                return result > 0;
             }
+            return false;
         }
 
         /// <summary>
@@ -70,12 +64,9 @@ namespace NotesRepository.Repositories
         /// <returns>true if directories were successfully removed; otherwise false</returns>
         public async Task<bool> DeleteDirectoriesAsync(ICollection<Directory> directories)
         {
-            using (var ctx = _factory.CreateDbContext())
-            {
-                ctx.Directories.RemoveRange(directories);
-                var result = await ctx.SaveChangesAsync();
-                return result > 0;
-            }
+            ctx.Directories.RemoveRange(directories);
+            var result = await ctx.SaveChangesAsync();
+            return result > 0;
         }
 
         /// <summary>
@@ -85,12 +76,9 @@ namespace NotesRepository.Repositories
         /// <returns>true if directory was successfully removed; otherwise false</returns>
         public async Task<bool> DeleteDirectoryAsync(Directory directory)
         {
-            using (var ctx = _factory.CreateDbContext())
-            {
-                ctx.Directories.Remove(directory);
-                var result = await ctx.SaveChangesAsync();
-                return result > 0;
-            }
+            ctx.Directories.Remove(directory);
+            var result = await ctx.SaveChangesAsync();
+            return result > 0;
         }
 
         /// <summary>
@@ -100,17 +88,14 @@ namespace NotesRepository.Repositories
         /// <returns>true if directory was successfully removed; otherwise false</returns>
         public async Task<bool> DeleteDirectoryByIdAsync(Guid directoryId)
         {
-            using (var ctx = _factory.CreateDbContext())
+            var directory = await ctx.Directories.FirstOrDefaultAsync(x => x.DirectoryId == directoryId);
+            if (directory is not null)
             {
-                var directory = await ctx.Directories.FirstOrDefaultAsync(x => x.DirectoryId == directoryId);
-                if (directory is not null)
-                {
-                    ctx.Directories.Remove(directory);
-                    var result = await ctx.SaveChangesAsync();
-                    return result > 0;
-                }
-                return false;
+                ctx.Directories.Remove(directory);
+                var result = await ctx.SaveChangesAsync();
+                return result > 0;
             }
+            return false;
         }
 
         /// <summary>
@@ -121,24 +106,21 @@ namespace NotesRepository.Repositories
         /// <returns>true if subdirectory was successfully removed; otherwise false</returns>
         public async Task<bool> DeleteSubDirectoryByIdForParticularDirectoryAsync(Guid subDirectoryId, Guid directoryId)
         {
-            using (var ctx = _factory.CreateDbContext())
+            var directory = await GetDirectoryByIdAsync(directoryId);
+            if (directory is not null)
             {
-                var directory = await GetDirectoryByIdAsync(directoryId);
-                if (directory is not null)
+                if (directory.SubDirectories is not null)
                 {
-                    if (directory.SubDirectories is not null)
+                    var subDirectory = directory.SubDirectories.Where(s => s.DirectoryId == subDirectoryId).SingleOrDefault();
+                    if (subDirectory is not null)
                     {
-                        var subDirectory = directory.SubDirectories.Where(s => s.DirectoryId == subDirectoryId).SingleOrDefault();
-                        if (subDirectory is not null)
-                        {
-                            ctx.Directories.Remove(subDirectory);
-                            var result = await ctx.SaveChangesAsync();
-                            return result > 0;
-                        }
+                        ctx.Directories.Remove(subDirectory);
+                        var result = await ctx.SaveChangesAsync();
+                        return result > 0;
                     }
                 }
-                return false;
             }
+            return false;
         }
 
         /// <summary>
@@ -148,20 +130,17 @@ namespace NotesRepository.Repositories
         /// <returns>true if all subdirectories were successfully removed; otherwise false</returns>
         public async Task<bool> DeleteAllSubDirectoriesForParticularDirectoryAsync(Guid directoryId)
         {
-            using (var ctx = _factory.CreateDbContext())
+            var directory = await GetDirectoryByIdAsync(directoryId);
+            if (directory is not null)
             {
-                var directory = await GetDirectoryByIdAsync(directoryId);
-                if (directory is not null)
+                if (directory.SubDirectories is not null)
                 {
-                    if (directory.SubDirectories is not null)
-                    {
-                        ctx.Directories.RemoveRange(directory.SubDirectories);
-                        var result = await ctx.SaveChangesAsync();
-                        return result > 0;
-                    }
+                    ctx.Directories.RemoveRange(directory.SubDirectories);
+                    var result = await ctx.SaveChangesAsync();
+                    return result > 0;
                 }
-                return false;
             }
+            return false;
         }
 
         /// <summary>
@@ -170,13 +149,10 @@ namespace NotesRepository.Repositories
         /// <returns>A collection of directories currently stored in the database</returns>
         public async Task<ICollection<Directory>> GetAllDirectoriesAsync()
         {
-            using (var ctx = _factory.CreateDbContext())
-            {
-                return await ctx.Directories
-                    .Include(n => n.Notes)
-                    .Include(s => s.SubDirectories)
-                    .ToListAsync();
-            }
+            return await ctx.Directories
+                .Include(n => n.Notes)
+                .Include(s => s.SubDirectories)
+                .ToListAsync();
         }
 
         /// <summary>
@@ -186,14 +162,11 @@ namespace NotesRepository.Repositories
         /// <returns>A directory entity if it exists in the db; otherwise null</returns>
         public async Task<Directory?> GetDirectoryByIdAsync(Guid directoryId)
         {
-            using (var ctx = _factory.CreateDbContext())
-            {
-                return await ctx.Directories
-                    .Where(d => d.DirectoryId == directoryId)
-                    .Include(n => n.Notes)
-                    .Include(s => s.SubDirectories)
-                    .SingleOrDefaultAsync();
-            }
+            return await ctx.Directories
+                .Where(d => d.DirectoryId == directoryId)
+                .Include(n => n.Notes)
+                .Include(s => s.SubDirectories)
+                .SingleOrDefaultAsync();
         }
 
         /// <summary>
@@ -203,13 +176,10 @@ namespace NotesRepository.Repositories
         /// <returns>A directory entity if it exists in the db; otherwise null</returns>
         public async Task<Directory?> GetDirectoryByNameAsync(string name)
         {
-            using (var ctx = _factory.CreateDbContext())
-            {
-                return await ctx.Directories
-                    .Include(n => n.Notes)
-                    .Include(s => s.SubDirectories)
-                    .FirstOrDefaultAsync(i => i.Name == name);
-            }
+            return await ctx.Directories
+                .Include(n => n.Notes)
+                .Include(s => s.SubDirectories)
+                .FirstOrDefaultAsync(i => i.Name == name);
         }
 
         /// <summary>
@@ -219,14 +189,11 @@ namespace NotesRepository.Repositories
         /// <returns>A collection of directories from specific user</returns>
         public async Task<ICollection<Directory>> GetAllDirectoriesForParticularUserAsync(string userId)
         {
-            using (var ctx = _factory.CreateDbContext())
-            {
-                return await ctx.Directories
-                    .Where(u => u.User.Id == userId)
-                    .Include(n => n.Notes)
-                    .Include(s => s.SubDirectories)
-                    .ToListAsync();
-            }
+            return await ctx.Directories
+                .Where(u => u.User.Id == userId)
+                .Include(n => n.Notes)
+                .Include(s => s.SubDirectories)
+                .ToListAsync();
         }
 
         /// <summary>
@@ -236,16 +203,13 @@ namespace NotesRepository.Repositories
         /// <returns>A collection of subdirectories for specific directory</returns>
         public async Task<ICollection<Directory>?> GetAllSubDirectoriesOfParticularDirectory(Guid directoryId)
         {
-            using (var ctx = _factory.CreateDbContext())
-            {
-                return await ctx.Directories
-                    .Where(d => d.DirectoryId == directoryId)
-                    .Include(s => s.SubDirectories)
-                    .Select(d => d.SubDirectories)
-                    .SingleOrDefaultAsync();
-            }
+            return await ctx.Directories
+                .Where(d => d.DirectoryId == directoryId)
+                .Include(s => s.SubDirectories)
+                .Select(d => d.SubDirectories)
+                .SingleOrDefaultAsync();
         }
-        
+
         /// <summary>
         /// Gets the default directory for specific user
         /// </summary>
@@ -253,13 +217,10 @@ namespace NotesRepository.Repositories
         /// <returns>A collection of subdirectories for specific directory</returns>
         public async Task<Directory?> GetDefaultDirectoryForParticularUserAsync(string userId)
         {
-            using (var ctx = _factory.CreateDbContext())
-            {
-                return await ctx.Directories
-                    .Where(u => u.User.Id == userId)
-                    .Where(n => n.Name == "Default")
-                    .SingleOrDefaultAsync();
-            }
+            return await ctx.Directories
+                .Where(u => u.User.Id == userId)
+                .Where(n => n.Name == "Default")
+                .SingleOrDefaultAsync();
         }
 
         /// <summary>
@@ -269,12 +230,9 @@ namespace NotesRepository.Repositories
         /// <returns>True if directory was successfully updated; otherwise false</returns>
         public async Task<bool> UpdateDirectoryAsync(Directory directory)
         {
-            using (var ctx = _factory.CreateDbContext())
-            {
-                ctx.Directories.Update(directory);
-                var result = await ctx.SaveChangesAsync();
-                return result > 0;
-            }
+            ctx.Directories.Update(directory);
+            var result = await ctx.SaveChangesAsync();
+            return result > 0;
         }
 
         /// <summary>

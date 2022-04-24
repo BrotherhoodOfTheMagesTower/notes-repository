@@ -77,6 +77,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         builder.Entity<Event>()
             .HasOne(n => n.Note)
             .WithOne(e => e.Event)
+            .IsRequired(false)
             .HasForeignKey<Event>(n => n.EventId);
     }
 }

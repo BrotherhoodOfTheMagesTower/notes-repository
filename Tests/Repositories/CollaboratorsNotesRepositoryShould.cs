@@ -12,7 +12,7 @@ using FluentAssertions;
 
 namespace Tests
 {
-    public class CollaboratorsNotesRepositoryShould : IDbContextFactory<ApplicationDbContext>
+    public class CollaboratorsNotesRepositoryShould
     {
         private readonly ApplicationDbContext _context;
         private DbContextOptions<ApplicationDbContext> _options;
@@ -22,20 +22,14 @@ namespace Tests
             _options = new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseInMemoryDatabase("In memory database - CollaboratorsNotes")
                 .Options;
-            _context = CreateDbContext();
+            _context = new ApplicationDbContext(_options);
         }
-
-        public ApplicationDbContext CreateDbContext()
-        {
-            return new ApplicationDbContext(_options);
-        }
-
 
         [Fact(DisplayName = "User is able to add note to a collaborator")]
         public async Task AddNoteToCollaborator()
         {
             // Arrange
-            var cnr = new CollaboratorsNotesRepository(new CollaboratorsNotesRepositoryShould());
+            var cnr = new CollaboratorsNotesRepository(_context);
             var usr = new ApplicationUser();
             var collaborator = new CollaboratorsNotes(usr.Id, new Guid(), usr, new Note(null, "Test note", "for AddNote()", "def-ico", new ApplicationUser(), new Directory("Default", usr)));
 
@@ -53,7 +47,7 @@ namespace Tests
         public async Task AddNotesToCollaborator()
         {
             // Arrange
-            var cnr = new CollaboratorsNotesRepository(new CollaboratorsNotesRepositoryShould());
+            var cnr = new CollaboratorsNotesRepository(_context);
             var usr = new ApplicationUser();
             var collaborators = new List<CollaboratorsNotes>()
             {
@@ -77,7 +71,7 @@ namespace Tests
         {
 
             // Arrange
-            var cnr = new CollaboratorsNotesRepository(new CollaboratorsNotesRepositoryShould());
+            var cnr = new CollaboratorsNotesRepository(_context);
             var usr = new ApplicationUser();
             var collaborator = new CollaboratorsNotes(usr.Id, new Guid(), usr, new Note(null, "Test note", "for DeleteNote()", "def-ico", new ApplicationUser(), new Directory("Default", usr)));
             await cnr.AddNoteToCollaboratorAsync(collaborator);
@@ -96,7 +90,7 @@ namespace Tests
         public async Task DeleteNoteFromCollaboratorByIds()
         {
             // Arrange
-            var cnr = new CollaboratorsNotesRepository(new CollaboratorsNotesRepositoryShould());
+            var cnr = new CollaboratorsNotesRepository(_context);
             var usr = new ApplicationUser();
             var collaborator = new CollaboratorsNotes(usr.Id, new Guid(), new ApplicationUser(), new Note(null, "Test note", "for DeleteNoteByIds()", "def-ico", new ApplicationUser(), new Directory("Default", usr)));
             await cnr.AddNoteToCollaboratorAsync(collaborator);
@@ -114,7 +108,7 @@ namespace Tests
 
 
             // Arrange
-            var cnr = new CollaboratorsNotesRepository(new CollaboratorsNotesRepositoryShould());
+            var cnr = new CollaboratorsNotesRepository(_context);
             var usr = new ApplicationUser();
             var collaborators = new List<CollaboratorsNotes>()
             {
@@ -139,7 +133,7 @@ namespace Tests
           public async Task GetAllUsersRelatedToTheNote()
           {
               // Arrange
-              var cnr = new CollaboratorsNotesRepository(new CollaboratorsNotesRepositoryShould());
+              var cnr = new CollaboratorsNotesRepository(_context);
               var collaborators = new List<CollaboratorsNotes>()
               {
                   new CollaboratorsNotes(null, new Guid(), new ApplicationUser(), new Note()),

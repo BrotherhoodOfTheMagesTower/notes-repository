@@ -6,12 +6,11 @@ using NotesRepository.Areas.Identity;
 using Blazored.Toast;
 using NotesRepository.Repositories;
 using NotesRepository.Services;
-using NotesRepository.Data.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("ApplicationDbContextConnection"); 
-builder.Services.AddDbContextFactory<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+var connectionString = builder.Configuration.GetConnectionString("ApplicationDbContextConnection");
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
 
 builder.Services
     .AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
@@ -57,10 +56,7 @@ app.MapControllers();
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 
-using (var serviceScope = app.Services.GetService<IServiceScopeFactory>().CreateScope())
-{
-    var context = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    context.Database.Migrate();
-}
+var serviceProvider = app.Services?.GetService<IServiceScopeFactory>()?.CreateScope().ServiceProvider;
+serviceProvider!.GetService<ApplicationDbContext>()!.Database.Migrate();
 
 app.Run();

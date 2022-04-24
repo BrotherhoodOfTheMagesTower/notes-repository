@@ -170,8 +170,7 @@ namespace NotesRepository.Migrations
                         name: "FK_Event_Note_EventId",
                         column: x => x.EventId,
                         principalTable: "Note",
-                        principalColumn: "NoteId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "NoteId");
                     table.ForeignKey(
                         name: "FK_Event_User_UserId",
                         column: x => x.UserId,

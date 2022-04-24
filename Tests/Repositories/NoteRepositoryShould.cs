@@ -12,7 +12,7 @@ using FluentAssertions;
 
 namespace Tests
 {
-    public class NoteRepositoryShould : IDbContextFactory<ApplicationDbContext>
+    public class NoteRepositoryShould
     {
         private readonly ApplicationDbContext _context;
         private DbContextOptions<ApplicationDbContext> _options;
@@ -22,19 +22,14 @@ namespace Tests
             _options = new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseInMemoryDatabase("In memory database - Note")
                 .Options;
-            _context = CreateDbContext();
-        }
-
-        public ApplicationDbContext CreateDbContext()
-        {
-            return new ApplicationDbContext(_options);
+            _context = new ApplicationDbContext(_options);
         }
 
         [Fact(DisplayName = "User is able to add a note to the database")]
         public async Task AddNote()
         {
             // Arrange
-            var nr = new NoteRepository(new NoteRepositoryShould());
+            var nr = new NoteRepository(_context);
             var usr = new ApplicationUser();
             var note = new Note(null, "Test note", "for AddNote()", "def-ico", usr, new Directory("Default", usr));
 
@@ -52,7 +47,7 @@ namespace Tests
         public async Task AddMultipleNotes()
         {
             // Arrange
-            var nr = new NoteRepository(new NoteRepositoryShould());
+            var nr = new NoteRepository(_context);
             var usr = new ApplicationUser();
             var notes = new List<Note>()
             {
@@ -75,7 +70,7 @@ namespace Tests
         public async Task DeleteNote()
         {
             // Arrange
-            var nr = new NoteRepository(new NoteRepositoryShould());
+            var nr = new NoteRepository(_context);
             var usr = new ApplicationUser();
             var note = new Note(null, "Test note", "for DeleteNote()", "def-ico", usr, new Directory("Default", usr));
             await nr.AddNoteAsync(note);
@@ -93,7 +88,7 @@ namespace Tests
         public async Task DeleteNoteById()
         {
             // Arrange
-            var nr = new NoteRepository(new NoteRepositoryShould());
+            var nr = new NoteRepository(_context);
             var usr = new ApplicationUser();
             var note = new Note(null, "Test note", "for DeleteNoteById()", "def-ico", usr, new Directory("Default", usr));
             await nr.AddNoteAsync(note);
@@ -111,7 +106,7 @@ namespace Tests
         public async Task DeleteMultipleNotesB()
         {
             // Arrange
-            var nr = new NoteRepository(new NoteRepositoryShould());
+            var nr = new NoteRepository(_context);
             var usr = new ApplicationUser();
             var notes = new List<Note>()
             {
@@ -134,7 +129,7 @@ namespace Tests
         public async Task UpdateNote()
         {
             // Arrange
-            var nr = new NoteRepository(new NoteRepositoryShould());
+            var nr = new NoteRepository(_context);
             var usr = new ApplicationUser();
             var note = new Note(null, "Test note", "for UpdateNote() - not updated", "def-ico", usr, new Directory("Default", usr));
             await nr.AddNoteAsync(note);
@@ -155,7 +150,7 @@ namespace Tests
         public async Task GetAllNotes()
         {
             // Arrange
-            var nr = new NoteRepository(new NoteRepositoryShould());
+            var nr = new NoteRepository(_context);
             var usr = new ApplicationUser();
             var notes = new List<Note>()
             {
@@ -187,7 +182,7 @@ namespace Tests
         public async Task GetAllUserNotes()
         {
             // Arrange
-            var nr = new NoteRepository(new NoteRepositoryShould());
+            var nr = new NoteRepository(_context);
             var user = new ApplicationUser { FirstName = "Hugo", LastName = "Ko³³¹taj", Id = Guid.NewGuid().ToString() };
             var anotherUser = new ApplicationUser();
             var notes = new List<Note>()
@@ -213,7 +208,7 @@ namespace Tests
         public async Task GetNotesById()
         {
             // Arrange
-            var nr = new NoteRepository(new NoteRepositoryShould());
+            var nr = new NoteRepository(_context);
             var usr = new ApplicationUser();
             var note = new Note(null, "Test note", "for GetNotesById()", "def-ico", usr, new Directory("Default", usr));
             await nr.AddNoteAsync(note);
@@ -232,7 +227,7 @@ namespace Tests
         public async Task GetNoteByTitle()
         {
             // Arrange
-            var nr = new NoteRepository(new NoteRepositoryShould());
+            var nr = new NoteRepository(_context);
             var usr = new ApplicationUser();
             var note = new Note(null, "Test note", "for GetNoteByTitle()", "def-ico", usr, new Directory("Default", usr));
             await nr.AddNoteAsync(note);

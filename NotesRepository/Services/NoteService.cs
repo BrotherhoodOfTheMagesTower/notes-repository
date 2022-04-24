@@ -15,7 +15,7 @@ namespace NotesRepository.Services
         {
             _nr = noteRepository;
         }
-        
+
         public NoteService(NoteRepository noteRepository, UserRepository userRepository, EventRepository eventRepository, DirectoryRepository directoryRepository, ImageRepository imageRepository)
         {
             _nr = noteRepository;
@@ -100,10 +100,11 @@ namespace NotesRepository.Services
         
         public async Task<bool> AttachEventToNoteAsync(Guid eventId, Guid noteId)
         {
-            var note = await _nr.GetNoteByIdAsync(noteId);
             var _event = await _er.GetEventByIdAsync(eventId);
+            var note = await _nr.GetNoteByIdAsync(noteId);
             if (note is not null && _event is not null)
             {
+                await _er.DeleteEventAsync(_event);
                 note.Event = _event;
                 return await _nr.UpdateNoteAsync(note);
             }

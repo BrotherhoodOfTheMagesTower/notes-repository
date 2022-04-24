@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Tests
 {
-    public class ImageRepositoryShould : IDbContextFactory<ApplicationDbContext>
+    public class ImageRepositoryShould
     {
         private readonly ApplicationDbContext _context;
         private DbContextOptions<ApplicationDbContext> _options;
@@ -17,18 +17,14 @@ namespace Tests
             _options = new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseInMemoryDatabase("In memory database")
                 .Options;
-            _context = CreateDbContext();
-        }
-        public ApplicationDbContext CreateDbContext()
-        {
-            return new ApplicationDbContext(_options);
+            _context = new ApplicationDbContext(_options);
         }
 
         [Fact(DisplayName = "User is able to add an Image in the note")]
         public async Task AddImage()
         {
             // Arrange
-            var nr = new ImageRepository(new ImageRepositoryShould());
+            var nr = new ImageRepository(_context);
             var usr = new ApplicationUser();
             var image = new Image(null, "test image", "../resources/images", new Note(null, "Test note", "for AddNote()", "def-ico", usr, new Directory("Default", usr)));
 
