@@ -35,13 +35,13 @@ namespace Tests.Repositories
             var directory = new Directory("Directory name", usr);
 
             // Act
-            var result = await nr.AddDirectoryAsync(directory);
+            var result = await nr.AddAsync(directory);
 
             // Assert
             var directories = await _context.Directories.ToListAsync();
             Assert.True(result);
             Assert.Single(directories);
-            await nr.DeleteDirectoryAsync(directory);
+            await nr.DeleteAsync(directory);
         }
 
 
@@ -52,10 +52,10 @@ namespace Tests.Repositories
             var nr = new DirectoryRepository(_context);
             var usr = new ApplicationUser();
             var directory = new Directory("Directory name", usr);
-            await nr.AddDirectoryAsync(directory);
+            await nr.AddAsync(directory);
 
             // Act
-            var result = await nr.DeleteDirectoryAsync(directory);
+            var result = await nr.DeleteAsync(directory);
 
             // Assert
             var directories = await _context.Directories.ToListAsync();
@@ -70,10 +70,10 @@ namespace Tests.Repositories
             var nr = new DirectoryRepository(_context);
             var usr = new ApplicationUser();
             var directory = new Directory("Directory name", usr);
-            await nr.AddDirectoryAsync(directory);
+            await nr.AddAsync(directory);
 
             // Act
-            var result = await nr.DeleteDirectoryByIdAsync(directory.DirectoryId);
+            var result = await nr.DeleteByIdAsync(directory.DirectoryId);
 
             // Assert
             var directories = await _context.Directories.ToListAsync();
@@ -89,11 +89,11 @@ namespace Tests.Repositories
             var usr = new ApplicationUser();
             var usr2 = new ApplicationUser();
             var directory = new Directory("Directory name2", usr);
-            await nr.AddDirectoryAsync(directory);
+            await nr.AddAsync(directory);
             directory.Name = "Directory name - changed";
             directory.User = usr2;
             // Act
-            var result = await nr.UpdateDirectoryAsync(directory);
+            var result = await nr.UpdateAsync(directory);
 
             // Assert
             var directories = await _context.Directories.ToListAsync();
@@ -101,7 +101,7 @@ namespace Tests.Repositories
             Assert.Single(directories);
             Assert.Equal(directory.Name, directories.First(i => i.DirectoryId == directory.DirectoryId).Name);
             Assert.Equal(directory.User, directories.First(i => i.DirectoryId == directory.DirectoryId).User);
-            await nr.DeleteDirectoryAsync(directory);
+            await nr.DeleteAsync(directory);
         }
 
         [Fact(DisplayName = "User is able to get a directory by id from the database")]
@@ -111,16 +111,16 @@ namespace Tests.Repositories
             var nr = new DirectoryRepository(_context);
             var usr = new ApplicationUser();
             var directory = new Directory("Directory name", usr);
-            await nr.AddDirectoryAsync(directory);
+            await nr.AddAsync(directory);
 
             // Act
-            var result = await nr.GetDirectoryByIdAsync(directory.DirectoryId);
+            var result = await nr.GetByIdAsync(directory.DirectoryId);
 
             // Assert
             Assert.NotNull(result);
             Assert.Equal(directory.DirectoryId, result!.DirectoryId);
             result.Should().BeAssignableTo<Directory>();
-            await nr.DeleteDirectoryAsync(directory);
+            await nr.DeleteAsync(directory);
         }
 
         [Fact(DisplayName = "User is able to get a directory by name from the database")]
@@ -130,7 +130,7 @@ namespace Tests.Repositories
             var nr = new DirectoryRepository(_context);
             var usr = new ApplicationUser();
             var directory = new Directory("Directory name", usr);
-            await nr.AddDirectoryAsync(directory);
+            await nr.AddAsync(directory);
 
             // Act
             var result = await nr.GetDirectoryByNameAsync(directory.Name);
@@ -139,7 +139,7 @@ namespace Tests.Repositories
             Assert.NotNull(result);
             Assert.Equal(directory.DirectoryId, result!.DirectoryId);
             result.Should().BeAssignableTo<Directory>();
-            await nr.DeleteDirectoryAsync(directory);
+            await nr.DeleteAsync(directory);
         }
 
         [Fact(DisplayName = "User is able to get all subdirectories by directory id from the database")]
@@ -161,7 +161,7 @@ namespace Tests.Repositories
             directory.SubDirectories.Add(subDirectory2);
             directory.SubDirectories.Add(subDirectory3);
 
-            await nr.AddDirectoryAsync(directory);
+            await nr.AddAsync(directory);
 
         
             // Act
@@ -170,15 +170,15 @@ namespace Tests.Repositories
 
             // Assert
 
-            await nr.DeleteDirectoryAsync(directory);
+            await nr.DeleteAsync(directory);
 
             var directories = await _context.Directories.ToListAsync();
             directories.Should().HaveCount(3);
 
 
-            await nr.DeleteDirectoryAsync(subDirectory1);
-            await nr.DeleteDirectoryAsync(subDirectory2);
-            await nr.DeleteDirectoryAsync(subDirectory3);
+            await nr.DeleteAsync(subDirectory1);
+            await nr.DeleteAsync(subDirectory2);
+            await nr.DeleteAsync(subDirectory3);
             
 
        
@@ -204,18 +204,18 @@ namespace Tests.Repositories
             var directory3 = new Directory("Directory 3", usr2);
 
 
-            await nr.AddDirectoryAsync(directory1);
-            await nr.AddDirectoryAsync(directory2);
-            await nr.AddDirectoryAsync(directory3);
+            await nr.AddAsync(directory1);
+            await nr.AddAsync(directory2);
+            await nr.AddAsync(directory3);
 
             // Act
             var result = await nr.GetAllDirectoriesForParticularUserAsync(usr.Id);
 
 
             // Assert
-            await nr.DeleteDirectoryAsync(directory1);
-            await nr.DeleteDirectoryAsync(directory2);
-            await nr.DeleteDirectoryAsync(directory3);
+            await nr.DeleteAsync(directory1);
+            await nr.DeleteAsync(directory2);
+            await nr.DeleteAsync(directory3);
             Assert.NotNull(result);
             result.Should().AllBeAssignableTo<Directory>();
             result.Should().HaveCount(2);
@@ -232,22 +232,22 @@ namespace Tests.Repositories
             var directory1 = new Directory("Directory 1", usr);
             var subDirectory1 = new Directory("subDirectory 1", usr);
 
-            await nr.AddDirectoryAsync(directory1);
-            await nr.AddDirectoryAsync(subDirectory1);
+            await nr.AddAsync(directory1);
+            await nr.AddAsync(subDirectory1);
 
             // Act
             var result = await nr.AttachSubDirectoryToParticularDirectoryAsync(subDirectory1.DirectoryId, directory1.DirectoryId);  
             
             // Assert
             var directories = await _context.Directories.ToListAsync();
-            var dir = await nr.GetDirectoryByIdAsync(directory1.DirectoryId);
+            var dir = await nr.GetByIdAsync(directory1.DirectoryId);
             
             Assert.True(result);
             Assert.NotNull(dir);
             Assert.Equal(subDirectory1, directories.First(i => i.DirectoryId == directory1.DirectoryId).SubDirectories.First());
             Assert.Equal(subDirectory1.DirectoryId, dir.SubDirectories.First().DirectoryId);
-            await nr.DeleteDirectoryAsync(subDirectory1);
-            await nr.DeleteDirectoryAsync(directory1);
+            await nr.DeleteAsync(subDirectory1);
+            await nr.DeleteAsync(directory1);
 
             directories.Count.Should().Be(2);
             directories.Should().AllBeAssignableTo<Directory>();
@@ -274,7 +274,7 @@ namespace Tests.Repositories
             directory.SubDirectories.Add(subDirectory2);
             directory.SubDirectories.Add(subDirectory3);
 
-            await nr.AddDirectoryAsync(directory);
+            await nr.AddAsync(directory);
 
             // Act
             var result = await nr.DeleteAllSubDirectoriesForParticularDirectoryAsync(directory.DirectoryId);
@@ -286,7 +286,7 @@ namespace Tests.Repositories
             Assert.True(result);
             directories.Should().HaveCount(1);
             subDirectories.Should().HaveCount(0);
-            await nr.DeleteDirectoryAsync(directory);
+            await nr.DeleteAsync(directory);
 
 
         }

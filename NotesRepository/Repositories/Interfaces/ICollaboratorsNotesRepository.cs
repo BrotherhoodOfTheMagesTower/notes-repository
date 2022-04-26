@@ -1,11 +1,10 @@
 ﻿using NotesRepository.Data.Models;
 using NotesRepository.Areas.Identity.Data;
 
-namespace NotesRepository.Repositories
+namespace NotesRepository.Repositories.Interfaces
 {
     public interface ICollaboratorsNotesRepository
     {
-
         Task<bool> AddNoteToCollaboratorAsync(CollaboratorsNotes collaborator);
         Task<bool> AddNotesToCollaboratorAsync(ICollection<CollaboratorsNotes> collaborators);
         Task<bool> DeleteNoteFromCollaboratorAsync(Guid noteId, string appUserId);
@@ -13,8 +12,5 @@ namespace NotesRepository.Repositories
         Task<bool> DeleteNotesFromCollaboratorAsync(ICollection<CollaboratorsNotes> collaborators);
         Task<ICollection<CollaboratorsNotes>> GetAllNotesCanBeEditedByUserAsync(string appUserId);
         Task<ICollection<CollaboratorsNotes>> GetAllUsersRelatedToTheNoteAsync(Guid noteId);
-        
-
-
     }
 }
