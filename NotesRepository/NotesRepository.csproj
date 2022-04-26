@@ -33,4 +33,9 @@
     <Folder Include="Data\Enums\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Data\Constants\" />
+    <Folder Include="Data\Enums\" />
+  </ItemGroup>
+
 </Project>
