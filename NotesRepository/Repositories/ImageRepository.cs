@@ -82,13 +82,13 @@ namespace NotesRepository.Repositories
         /// <summary>
         /// Method gets all images that are in a note
         /// </summary>
-        /// <param name="note">note from which to return images</param>
+        /// <param name="noteId">The unique ID of note entity</param>
         /// <returns>images from a chosen note</returns>
-        public async Task<ICollection<Image>> GetAllNoteImages(Note note)
+        public async Task<ICollection<Image>> GetAllNoteImagesAsync(Guid noteId)
         {
             return await ctx.Images
+                .Where(n => n.Note.NoteId == noteId)
                 .Include(d => d.Note)
-                .Where(n => n.Note == note)
                 .ToListAsync();
         }
 
@@ -100,9 +100,9 @@ namespace NotesRepository.Repositories
         public async Task<ICollection<Image>> GetAllUserImagesAsync(string userId)
         {
             return await ctx.Images
+                .Where(n => n.Note.Owner.Id == userId)
                 .Include(d => d.Note)
                 .Include(d => d.Note.Owner)
-                .Where(n => n.Note.Owner.Id == userId)
                 .ToListAsync();
         }
 

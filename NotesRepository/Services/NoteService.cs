@@ -144,35 +144,5 @@ namespace NotesRepository.Services
             }
             return false;
         }
-        
-        public async Task<bool> AttachImageToNoteAsync(Guid noteId, Guid imageId)
-        {
-            var note = await _nr.GetByIdAsync(noteId);
-            var image = await _ir.GetByIdAsync(imageId);
-            if (note is not null && image is not null)
-            {
-                if (note.Images is null)
-                    note.Images = new List<Image> { image };
-                else
-                    note.Images.Add(image);
-                return await _nr.UpdateAsync(note);
-            }
-            return false;
-        }
-        
-        public async Task<bool> RemoveImageFromNoteAsync(Guid noteId, Guid imageId)
-        {
-            var note = await _nr.GetByIdAsync(noteId);
-            var image = await _ir.GetByIdAsync(imageId);
-            if (note is not null && image is not null)
-            {
-                if (note.Images is null)
-                    return false;
-                else
-                    note.Images.Remove(image);
-                return await _nr.UpdateAsync(note);
-            }
-            return false;
-        }
     }
 }

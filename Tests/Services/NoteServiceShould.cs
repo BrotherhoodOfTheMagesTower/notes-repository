@@ -29,7 +29,7 @@ namespace Tests.Services
         public NoteServiceShould()
         {
             _options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase("In memory database - NoteService")
+                .UseInMemoryDatabase(Guid.NewGuid().ToString())
                 .Options;
             ctx = CreateDbContext();
             _nr = new NoteRepository(ctx);
