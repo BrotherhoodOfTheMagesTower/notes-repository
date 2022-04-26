@@ -29,13 +29,13 @@ namespace Tests
             var image = new Image(null, "test image", "../resources/images", new Note(null, "Test note", "for AddNote()", "def-ico", usr, new Directory("Default", usr)));
 
             // Act
-            var result = await nr.AddImageAsync(image);
+            var result = await nr.AddAsync(image);
 
             // Assert
             var images = await _context.Images.ToListAsync();
             Assert.True(result);
             Assert.Single(images);
-            await nr.DeleteImageAsync(image);
+            await nr.DeleteAsync(image);
         }
 
     }

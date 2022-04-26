@@ -1,7 +1,7 @@
 ﻿using NotesRepository.Areas.Identity.Data;
 using NotesRepository.Data.Models;
 
-namespace NotesRepository.Repositories
+namespace NotesRepository.Repositories.Interfaces
 {
     public interface IUserRepository
     {

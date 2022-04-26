@@ -1,8 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NotesRepository.Data;
 using Directory = NotesRepository.Data.Models.Directory;
-namespace NotesRepository.Repositories
+using NotesRepository.Repositories.Interfaces;
 
+namespace NotesRepository.Repositories
 {
     public class DirectoryRepository : IDirectoryRepository
     {
@@ -18,7 +19,7 @@ namespace NotesRepository.Repositories
         /// </summary>
         /// <param name="directory">The directory entity</param>
         /// <returns>true if directory was successfully added; otherwise false</returns>
-        public async Task<bool> AddDirectoryAsync(Directory directory)
+        public async Task<bool> AddAsync(Directory directory)
         {
             await ctx.Directories.AddAsync(directory);
             var result = await ctx.SaveChangesAsync();
@@ -50,19 +51,11 @@ namespace NotesRepository.Repositories
         }
 
         /// <summary>
-        /// Adds a subDirectory entity to the database
-        /// </summary>
-        /// <param name="subDirectory">The subdirectory entity</param>
-        /// <returns>true if the subDirectory was successfully added; otherwise false</returns>
-        public async Task<bool> AddSubDirectoryAsync(Directory subDirectory)
-            => await AddDirectoryAsync(subDirectory);
-
-        /// <summary>
         /// Removes multiple directory entities from the database
         /// </summary>
         /// <param name="directories">directory entities</param>
         /// <returns>true if directories were successfully removed; otherwise false</returns>
-        public async Task<bool> DeleteDirectoriesAsync(ICollection<Directory> directories)
+        public async Task<bool> DeleteManyAsync(ICollection<Directory> directories)
         {
             ctx.Directories.RemoveRange(directories);
             var result = await ctx.SaveChangesAsync();
@@ -74,7 +67,7 @@ namespace NotesRepository.Repositories
         /// </summary>
         /// <param name="directory">The directory entity</param>
         /// <returns>true if directory was successfully removed; otherwise false</returns>
-        public async Task<bool> DeleteDirectoryAsync(Directory directory)
+        public async Task<bool> DeleteAsync(Directory directory)
         {
             ctx.Directories.Remove(directory);
             var result = await ctx.SaveChangesAsync();
@@ -86,7 +79,7 @@ namespace NotesRepository.Repositories
         /// </summary>
         /// <param name="directoryId">The unique id of a directory</param>
         /// <returns>true if directory was successfully removed; otherwise false</returns>
-        public async Task<bool> DeleteDirectoryByIdAsync(Guid directoryId)
+        public async Task<bool> DeleteByIdAsync(Guid directoryId)
         {
             var directory = await ctx.Directories.FirstOrDefaultAsync(x => x.DirectoryId == directoryId);
             if (directory is not null)
@@ -106,7 +99,7 @@ namespace NotesRepository.Repositories
         /// <returns>true if subdirectory was successfully removed; otherwise false</returns>
         public async Task<bool> DeleteSubDirectoryByIdForParticularDirectoryAsync(Guid subDirectoryId, Guid directoryId)
         {
-            var directory = await GetDirectoryByIdAsync(directoryId);
+            var directory = await GetByIdAsync(directoryId);
             if (directory is not null)
             {
                 if (directory.SubDirectories is not null)
@@ -130,7 +123,7 @@ namespace NotesRepository.Repositories
         /// <returns>true if all subdirectories were successfully removed; otherwise false</returns>
         public async Task<bool> DeleteAllSubDirectoriesForParticularDirectoryAsync(Guid directoryId)
         {
-            var directory = await GetDirectoryByIdAsync(directoryId);
+            var directory = await GetByIdAsync(directoryId);
             if (directory is not null)
             {
                 if (directory.SubDirectories is not null)
@@ -144,23 +137,11 @@ namespace NotesRepository.Repositories
         }
 
         /// <summary>
-        ///  Gets all directories from the database
-        /// </summary>
-        /// <returns>A collection of directories currently stored in the database</returns>
-        public async Task<ICollection<Directory>> GetAllDirectoriesAsync()
-        {
-            return await ctx.Directories
-                .Include(n => n.Notes)
-                .Include(s => s.SubDirectories)
-                .ToListAsync();
-        }
-
-        /// <summary>
         /// Gets a directory entity from the database by directoryId
         /// </summary>
         /// <param name="directoryId">The unique id of a directory</param>
         /// <returns>A directory entity if it exists in the db; otherwise null</returns>
-        public async Task<Directory?> GetDirectoryByIdAsync(Guid directoryId)
+        public async Task<Directory?> GetByIdAsync(Guid directoryId)
         {
             return await ctx.Directories
                 .Where(d => d.DirectoryId == directoryId)
@@ -228,19 +209,11 @@ namespace NotesRepository.Repositories
         /// </summary>
         /// <param name="directory">The directory entity</param>
         /// <returns>True if directory was successfully updated; otherwise false</returns>
-        public async Task<bool> UpdateDirectoryAsync(Directory directory)
+        public async Task<bool> UpdateAsync(Directory directory)
         {
             ctx.Directories.Update(directory);
             var result = await ctx.SaveChangesAsync();
             return result > 0;
         }
-
-        /// <summary>
-        /// Updates the subDirectory entity in the database
-        /// </summary>
-        /// <param name="subDirectory">The subDirectory entity</param>
-        /// <returns>True if subDirectory was successfully updated; otherwise false</returns>
-        public async Task<bool> UpdateSubDirectoryAsync(Directory subDirectory)
-            => await UpdateDirectoryAsync(subDirectory);
     }
 }

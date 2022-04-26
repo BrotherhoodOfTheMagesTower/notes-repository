@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NotesRepository.Data;
 using NotesRepository.Data.Models;
+using NotesRepository.Repositories.Interfaces;
 
 namespace NotesRepository.Repositories
 {
@@ -18,7 +19,7 @@ namespace NotesRepository.Repositories
         /// </summary>
         /// <param name="image">The image entity</param>
         /// <returns>True if image was successfully added, otherwise false.</returns>
-        public async Task<bool> AddImageAsync(Image image)
+        public async Task<bool> AddAsync(Image image)
         {
             await ctx.Images.AddAsync(image);
             var result = await ctx.SaveChangesAsync();
@@ -30,7 +31,7 @@ namespace NotesRepository.Repositories
         /// </summary>
         /// <param name="images">Images to be added to the database.</param>
         /// <returns>True if images were successfully added, otherwise false.</returns>
-        public async Task<bool> AddImagesAsync(ICollection<Image> images)
+        public async Task<bool> AddManyAsync(ICollection<Image> images)
         {
             await ctx.Images.AddRangeAsync(images);
             var result = await ctx.SaveChangesAsync();
@@ -42,7 +43,7 @@ namespace NotesRepository.Repositories
         /// </summary>
         /// <param name="image">Image to be deleted from DB.</param>
         /// <returns>True if image was successfully deleted, otherwise false.</returns>
-        public async Task<bool> DeleteImageAsync(Image image)
+        public async Task<bool> DeleteAsync(Image image)
         {
             ctx.Images.Remove(image);
             var result = await ctx.SaveChangesAsync();
@@ -54,7 +55,7 @@ namespace NotesRepository.Repositories
         /// </summary>
         /// <param name="imageId">Id of image to be deleted from DB.</param>
         /// <returns>True if image was successfully deleted, otherwise false.</returns>
-        public async Task<bool> DeleteImageByIdAsync(Guid imageId)
+        public async Task<bool> DeleteByIdAsync(Guid imageId)
         {
             var image = await ctx.Images.FirstOrDefaultAsync(x => x.ImageId == imageId);
             if (image is not null)
@@ -71,22 +72,11 @@ namespace NotesRepository.Repositories
         /// </summary>
         /// <param name="images">Images to be removed.</param>
         /// <returns>True if images were successfully deleted, otherwise false.</returns>
-        public async Task<bool> DeleteImagesAsync(ICollection<Image> images)
+        public async Task<bool> DeleteManyAsync(ICollection<Image> images)
         {
             ctx.Images.RemoveRange(images);
             var result = await ctx.SaveChangesAsync();
             return result > 0;
-        }
-
-        /// <summary>
-        /// Method gets all images from DB.
-        /// </summary>
-        /// <returns>all images</returns>
-        public async Task<ICollection<Image>> GetAllImagesAsync()
-        {
-            return await ctx.Images
-                .Include(n => n.Note)
-                .ToListAsync();
         }
 
         /// <summary>
@@ -121,7 +111,7 @@ namespace NotesRepository.Repositories
         /// </summary>
         /// <param name="imageId">id of image</param>
         /// <returns>Image if exists, otherwise null</returns>
-        public async Task<Image?> GetImageByIdAsync(Guid imageId)
+        public async Task<Image?> GetByIdAsync(Guid imageId)
         {
             return await ctx.Images
                 .Include(n => n.Note)
@@ -145,7 +135,7 @@ namespace NotesRepository.Repositories
         /// </summary>
         /// <param name="image">Image to be updated</param>
         /// <returns>True if image was successfully updated, otherwise false.</returns>
-        public async Task<bool> UpdateImageAsync(Image image)
+        public async Task<bool> UpdateAsync(Image image)
         {
             ctx.Images.Update(image);
             var result = await ctx.SaveChangesAsync();

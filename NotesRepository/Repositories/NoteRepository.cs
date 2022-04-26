@@ -2,6 +2,7 @@
 using NotesRepository.Data;
 using NotesRepository.Data.Models;
 using Directory = NotesRepository.Data.Models.Directory;
+using NotesRepository.Repositories.Interfaces;
 
 namespace NotesRepository.Repositories
 {
@@ -19,7 +20,7 @@ namespace NotesRepository.Repositories
         /// </summary>
         /// <param name="note">The note entity</param>
         /// <returns>true if note was successfully added; otherwise false</returns>
-        public async Task<bool> AddNoteAsync(Note note)
+        public async Task<bool> AddAsync(Note note)
         {
             await ctx.Notes.AddAsync(note);
             var result = await ctx.SaveChangesAsync();
@@ -31,7 +32,7 @@ namespace NotesRepository.Repositories
         /// </summary>
         /// <param name="notes">Note entities</param>
         /// <returns>true if notes were successfully added; otherwise false</returns>
-        public async Task<bool> AddNotesAsync(ICollection<Note> notes)
+        public async Task<bool> AddManyAsync(ICollection<Note> notes)
         {
             await ctx.Notes.AddRangeAsync(notes);
             var result = await ctx.SaveChangesAsync();
@@ -43,7 +44,7 @@ namespace NotesRepository.Repositories
         /// </summary>
         /// <param name="note">The note entity</param>
         /// <returns>true if note was successfully removed; otherwise false</returns>
-        public async Task<bool> DeleteNoteAsync(Note note)
+        public async Task<bool> DeleteAsync(Note note)
         {
             ctx.Notes.Remove(note);
             var result = await ctx.SaveChangesAsync();
@@ -55,7 +56,7 @@ namespace NotesRepository.Repositories
         /// </summary>
         /// <param name="note">The note entity</param>
         /// <returns>true if notes were successfully removed; otherwise false</returns>
-        public async Task<bool> DeleteNotesAsync(ICollection<Note> notes)
+        public async Task<bool> DeleteManyAsync(ICollection<Note> notes)
         {
             ctx.Notes.RemoveRange(notes);
             var result = await ctx.SaveChangesAsync();
@@ -67,7 +68,7 @@ namespace NotesRepository.Repositories
         /// </summary>
         /// <param name="noteId">The unique id of a note</param>
         /// <returns>true if note was successfully removed; otherwise false</returns>
-        public async Task<bool> DeleteNoteByIdAsync(Guid noteId)
+        public async Task<bool> DeleteByIdAsync(Guid noteId)
         {
             var note = await ctx.Notes.FirstOrDefaultAsync(x => x.NoteId == noteId);
             if (note is not null)
@@ -84,27 +85,11 @@ namespace NotesRepository.Repositories
         /// </summary>
         /// <param name="note">The note entity</param>
         /// <returns>true if note was successfully updated; otherwise false</returns>
-        public async Task<bool> UpdateNoteAsync(Note note)
+        public async Task<bool> UpdateAsync(Note note)
         {
             ctx.Notes.Update(note);
             var result = await ctx.SaveChangesAsync();
             return result > 0;
-        }
-
-        /// <summary>
-        /// Gets all notes from the database
-        /// </summary>
-        /// <returns>A collection of notes currently stored in the database</returns>
-        public async Task<ICollection<Note>> GetAllNotesAsync()
-        {
-            return await ctx.Notes
-                .Include(d => d.Directory)
-                .Include(o => o.Owner)
-                .Include(i => i.Images)
-                .Include(e => e.EditedBy)
-                .Include(ev => ev.Event)
-                .Include(c => c.CollaboratorsNotes)
-                .ToListAsync();
         }
 
         /// <summary>
@@ -130,7 +115,7 @@ namespace NotesRepository.Repositories
         /// </summary>
         /// <param name="noteId">The unique ID of note</param>
         /// <returns>A note entity if it exists in the db; otherwise null</returns>
-        public async Task<Note?> GetNoteByIdAsync(Guid noteId)
+        public async Task<Note?> GetByIdAsync(Guid noteId)
         {
             return await ctx.Notes
                 .Include(d => d.Directory)

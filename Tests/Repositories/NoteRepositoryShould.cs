@@ -34,13 +34,13 @@ namespace Tests
             var note = new Note(null, "Test note", "for AddNote()", "def-ico", usr, new Directory("Default", usr));
 
             // Act
-            var result = await nr.AddNoteAsync(note);
+            var result = await nr.AddAsync(note);
 
             // Assert
             var notes = await _context.Notes.ToListAsync();
             Assert.True(result);
             Assert.Single(notes);
-            await nr.DeleteNoteAsync(note);
+            await nr.DeleteAsync(note);
         }
 
         [Fact(DisplayName = "User is able to add multiple notes to the database")]
@@ -57,13 +57,13 @@ namespace Tests
             };
 
             // Act
-            var result = await nr.AddNotesAsync(notes);
+            var result = await nr.AddManyAsync(notes);
 
             // Assert
             var notesFromDb = await _context.Notes.ToListAsync();
             Assert.True(result);
             notesFromDb.Should().ContainItemsAssignableTo<Note>().And.HaveCount(3);
-            await nr.DeleteNotesAsync(notes);
+            await nr.DeleteManyAsync(notes);
         }
 
         [Fact(DisplayName = "User is able to delete a note from the database")]
@@ -73,10 +73,10 @@ namespace Tests
             var nr = new NoteRepository(_context);
             var usr = new ApplicationUser();
             var note = new Note(null, "Test note", "for DeleteNote()", "def-ico", usr, new Directory("Default", usr));
-            await nr.AddNoteAsync(note);
+            await nr.AddAsync(note);
 
             // Act
-            var result = await nr.DeleteNoteAsync(note);
+            var result = await nr.DeleteAsync(note);
 
             // Assert
             var notes = await _context.Notes.ToListAsync();
@@ -91,10 +91,10 @@ namespace Tests
             var nr = new NoteRepository(_context);
             var usr = new ApplicationUser();
             var note = new Note(null, "Test note", "for DeleteNoteById()", "def-ico", usr, new Directory("Default", usr));
-            await nr.AddNoteAsync(note);
+            await nr.AddAsync(note);
 
             // Act
-            var result = await nr.DeleteNoteByIdAsync(note.NoteId);
+            var result = await nr.DeleteByIdAsync(note.NoteId);
 
             // Assert
             var notes = await _context.Notes.ToListAsync();
@@ -114,10 +114,10 @@ namespace Tests
                 new Note(null, "Test note 2", "for AddMultipleNotes()", "def-ico", usr, new Directory("Default", usr)),
                 new Note(null, "Test note 3", "for AddMultipleNotes()", "def-ico", usr, new Directory("Default", usr))
             };
-            await nr.AddNotesAsync(notes);
+            await nr.AddManyAsync(notes);
 
             // Act
-            var result = await nr.DeleteNotesAsync(notes);
+            var result = await nr.DeleteManyAsync(notes);
 
             // Assert
             var notesFromDb = await _context.Notes.ToListAsync();
@@ -132,18 +132,18 @@ namespace Tests
             var nr = new NoteRepository(_context);
             var usr = new ApplicationUser();
             var note = new Note(null, "Test note", "for UpdateNote() - not updated", "def-ico", usr, new Directory("Default", usr));
-            await nr.AddNoteAsync(note);
+            await nr.AddAsync(note);
             note.Content = "for UpdateNote() - updated";
 
             // Act
-            var result = await nr.UpdateNoteAsync(note);
+            var result = await nr.UpdateAsync(note);
 
             // Assert
             var notes = await _context.Notes.ToListAsync();
             Assert.True(result);
             Assert.Single(notes);
             Assert.Equal(note.Content, notes.First(i => i.NoteId == note.NoteId).Content);
-            await nr.DeleteNoteAsync(note);
+            await nr.DeleteAsync(note);
         }
 
         [Fact(DisplayName = "User is able to get all notes from the database")]
@@ -158,10 +158,10 @@ namespace Tests
                 new Note(null, "Test note 2", "for GetAllNotes()", "def-ico", usr, new Directory("Default", usr)),
                 new Note(null, "Test note 3", "for GetAllNotes()", "def-ico", usr, new Directory("Default", usr))
             };
-            await nr.AddNotesAsync(notes);
+            await nr.AddManyAsync(notes);
 
             // Act
-            var result = await nr.GetAllNotesAsync();
+            var result = await nr.GetAllUserNotesAsync(usr.Id);
 
             // Assert
             var notesFromDb = await _context.Notes
@@ -172,7 +172,7 @@ namespace Tests
                     .Include(ev => ev.Event)
                     .Include(c => c.CollaboratorsNotes)
                     .ToListAsync();
-            await nr.DeleteNotesAsync(notes);
+            await nr.DeleteManyAsync(notes);
             Assert.NotNull(result);
             Assert.Equal(result.Select(x => x.NoteId), notes.Select(x => x.NoteId));
             result.Should().AllBeAssignableTo<Note>();
@@ -191,13 +191,13 @@ namespace Tests
                 new Note(null, "Test note 2", "for GetAllNotes()", "def-ico", user, new Directory("Default", user)),
                 new Note(null, "Test note 3", "for GetAllNotes()", "def-ico", anotherUser, new Directory("Default", anotherUser))
             };
-            await nr.AddNotesAsync(notes);
+            await nr.AddManyAsync(notes);
 
             // Act
             var result = await nr.GetAllUserNotesAsync(user.Id);
 
             // Assert
-            await nr.DeleteNotesAsync(notes);
+            await nr.DeleteManyAsync(notes);
             Assert.NotNull(result);
             result.Should().AllBeAssignableTo<Note>();
             result.Should().HaveCount(2);
@@ -211,16 +211,16 @@ namespace Tests
             var nr = new NoteRepository(_context);
             var usr = new ApplicationUser();
             var note = new Note(null, "Test note", "for GetNotesById()", "def-ico", usr, new Directory("Default", usr));
-            await nr.AddNoteAsync(note);
+            await nr.AddAsync(note);
 
             // Act
-            var result = await nr.GetNoteByIdAsync(note.NoteId);
+            var result = await nr.GetByIdAsync(note.NoteId);
 
             // Assert
             Assert.NotNull(result);
             Assert.Equal(note.NoteId, result!.NoteId);
             result.Should().BeAssignableTo<Note>();
-            await nr.DeleteNoteAsync(note);
+            await nr.DeleteAsync(note);
         }
 
         [Fact(DisplayName = "User is able to get a note by title from the database")]
@@ -230,7 +230,7 @@ namespace Tests
             var nr = new NoteRepository(_context);
             var usr = new ApplicationUser();
             var note = new Note(null, "Test note", "for GetNoteByTitle()", "def-ico", usr, new Directory("Default", usr));
-            await nr.AddNoteAsync(note);
+            await nr.AddAsync(note);
 
             // Act
             var result = await nr.GetNoteByTitleAsync("Test note");
@@ -239,7 +239,7 @@ namespace Tests
             Assert.NotNull(result);
             Assert.Equal(note.NoteId, result!.NoteId);
             result.Should().BeAssignableTo<Note>();
-            await nr.DeleteNoteAsync(note);
+            await nr.DeleteAsync(note);
         }
     }
 }
