@@ -8,6 +8,6 @@ namespace NotesRepository.Repositories.Interfaces
         Task<bool> DeleteManyAsync(ICollection<Image> images);
         Task<Image?> GetImageByUrlAsync(string imageUrl);
         Task<ICollection<Image>> GetAllUserImagesAsync(string userId);
-        Task<ICollection<Image>> GetAllNoteImages(Note note);
+        Task<ICollection<Image>> GetAllNoteImagesAsync(Guid noteId);
     }
 }
