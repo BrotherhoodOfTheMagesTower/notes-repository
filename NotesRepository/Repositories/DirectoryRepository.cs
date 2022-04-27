@@ -32,15 +32,16 @@ namespace NotesRepository.Repositories
         /// <param name="subDirectory">The subdirectory entity</param>
         /// <param name="directoryId">The unique ID of directory</param>
         /// <returns>true if subdirectory was successfully added; otherwise false</returns>
-        public async Task<bool> AttachSubDirectoryToParticularDirectoryAsync(Directory subDirectory, Guid directoryId)
+        public async Task<bool> AttachSubDirectoryToParticularDirectoryAsync(Guid subDirectoryId, Guid directoryId)
         {
             var dir = await ctx.Directories.FirstOrDefaultAsync(x => x.DirectoryId == directoryId);
+            var subDir = await ctx.Directories.FirstOrDefaultAsync(x => x.DirectoryId == subDirectoryId);
             if (dir is not null)
             {
                 if (dir.SubDirectories is not null)
-                    dir.SubDirectories.Add(subDirectory);
+                    dir.SubDirectories.Add(subDir);
                 else
-                    dir.SubDirectories = new List<Directory> { subDirectory };
+                    dir.SubDirectories = new List<Directory> { subDir };
 
                 ctx.Directories.Update(dir);
                 var result = await ctx.SaveChangesAsync();
@@ -54,8 +55,8 @@ namespace NotesRepository.Repositories
         /// </summary>
         /// <param name="subDirectory">The subdirectory entity</param>
         /// <returns>true if the subDirectory was successfully added; otherwise false</returns>
-        public async Task<bool> AddSubDirectoryAsync(Directory subDirectory)
-            => await AddDirectoryAsync(subDirectory);
+        //public async Task<bool> AddSubDirectoryAsync(Directory subDirectory)
+        //    => await AddDirectoryAsync(subDirectory);
 
         /// <summary>
         /// Removes multiple directory entities from the database
@@ -104,24 +105,24 @@ namespace NotesRepository.Repositories
         /// <param name="subDirectoryId">The unique ID of a subdirectory</param>
         /// <param name="directoryId">The unique ID of a directory</param>
         /// <returns>true if subdirectory was successfully removed; otherwise false</returns>
-        public async Task<bool> DeleteSubDirectoryByIdForParticularDirectoryAsync(Guid subDirectoryId, Guid directoryId)
-        {
-            var directory = await GetDirectoryByIdAsync(directoryId);
-            if (directory is not null)
-            {
-                if (directory.SubDirectories is not null)
-                {
-                    var subDirectory = directory.SubDirectories.Where(s => s.DirectoryId == subDirectoryId).SingleOrDefault();
-                    if (subDirectory is not null)
-                    {
-                        ctx.Directories.Remove(subDirectory);
-                        var result = await ctx.SaveChangesAsync();
-                        return result > 0;
-                    }
-                }
-            }
-            return false;
-        }
+        //public async Task<bool> DeleteSubDirectoryByIdForParticularDirectoryAsync(Guid subDirectoryId, Guid directoryId)
+        //{
+        //    var directory = await GetDirectoryByIdAsync(directoryId);
+        //    if (directory is not null)
+        //    {
+        //        if (directory.SubDirectories is not null)
+        //        {
+        //            var subDirectory = directory.SubDirectories.Where(s => s.DirectoryId == subDirectoryId).SingleOrDefault();
+        //            if (subDirectory is not null)
+        //            {
+        //                ctx.Directories.Remove(subDirectory);
+        //                var result = await ctx.SaveChangesAsync();
+        //                return result > 0;
+        //            }
+        //        }
+        //    }
+        //    return false;
+        //}
 
         /// <summary>
         /// Removes all subdirectory entities for particular directory
@@ -240,7 +241,6 @@ namespace NotesRepository.Repositories
         /// </summary>
         /// <param name="subDirectory">The subDirectory entity</param>
         /// <returns>True if subDirectory was successfully updated; otherwise false</returns>
-        public async Task<bool> UpdateSubDirectoryAsync(Directory subDirectory)
-            => await UpdateDirectoryAsync(subDirectory);
+
     }
 }
