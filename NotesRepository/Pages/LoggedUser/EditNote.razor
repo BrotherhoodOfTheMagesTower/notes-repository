@@ -1,0 +1,87 @@
+﻿@page "/editNote"
+
+@using Markdig
+
+@inject IToastService toastService;
+
+@if (content is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                <h3>Treść notatki</h3>
+                <textarea style="height: 700px; width: 700px; margin-bottom: 1rem;" @bind-value="content" @bind-value:event="oninput"></textarea>
+                <center>
+                    <button type="button" class="btn btn-primary" @onclick="saveNote">Zapisz notatkę</button>
+                </center>
+            </div>
+            <div class="col">
+                <h3>Podgląd</h3>
+                <div style="width: 700px; border-radius: 1px; border: 1px solid #000000; padding: 20px; overflow-y: scroll; height: 700px;">
+                    @((MarkupString)Markdown.ToHtml(content, pipeline))
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code 
+{
+    // TODO przykładowy template, potem musimy ładować te przez nas przygotowane
+    private string content = "";
+    private MarkdownPipeline pipeline;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        content = init(); // TODO wczytujemy z bazy danych albo przekazujemy je z frontu
+        pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build(); // Uruchomienie rozszerzeń markdown
+    }
+
+    private void saveNote()
+    {
+        if (content.Length <= 0)
+        {
+            toastService.ShowError("Your note is empty.", "OOPS!");
+        }
+        else
+        {
+            // TODO dostęp do bazy danych i wpisanie notatki
+            toastService.ShowSuccess("The note was saved.", "Congrats!");
+        }
+    }
+
+    private string init()
+    {
+        return @"Template
+~~Przekreślenie~~ tekstu
+
+---
+lub
+___
+
+> Akapit? Czy coś innego Xd
+
+[Mój Github](https://github.com/jacek13)
+
+> Lista:
+* element 1
+* element 2
+* element 3
+    * dzieli sie na pod element
+    * podelement prim
+
+> Lista numerowana:
+1. element 1
+2. element 2
+3. element 3
+
+`Jakis tekst`
+
+![zdjecie](https://avatars.githubusercontent.com/u/56163434?s=400&u=b60309cd30e98cc4c84079a406350c6d4b6f9c20&v=4)
+";
+    }
+}
