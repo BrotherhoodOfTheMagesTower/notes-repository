@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using NotesRepository.Areas.Identity.Data;
 using NotesRepository.Data;
@@ -40,7 +41,7 @@ namespace Tests.Services
             var usr = new ApplicationUser();
             var image = new Image
                 (null, "TestIMG", "www.zmitac.com", new Note(null, "DefNote", "", "", usr, new Directory("def", usr)));
-            await ims.AddImageAsync(image);
+            await ims.AddImageWithoutAzureUploadAsync(image);
 
             // Act
             var result = await ims.GetImageByIdAsync(image.ImageId);
@@ -58,7 +59,7 @@ namespace Tests.Services
             var usr = new ApplicationUser();
             var image = new Image
                 (null, "TestIMG", "www.zmitac.com", new Note(null, "DefNote", "", "", usr, new Directory("def", usr)));
-            await ims.AddImageAsync(image);
+            await ims.AddImageWithoutAzureUploadAsync(image);
 
             // Act
             var result = await ims.GetImageByUrlAsync("www.zmitac.com");
@@ -80,7 +81,7 @@ namespace Tests.Services
                 new Image(null, "TestIMG1", "www.zmitac.com", note),
                 new Image(null, "TestIMG2", "www.zmitac.com", note)
             };
-            await ims.AddImagesAsync(imagesToAdd);
+            await ims.AddImagesWithoutAzureUploadAsync(imagesToAdd);
 
             // Act
             var result = await ims.GetAllNoteImagesAsync(note.NoteId);
@@ -103,7 +104,7 @@ namespace Tests.Services
                 new Image(null, "TestIMG1", "www.zmitac.com", not1),
                 new Image(null, "TestIMG2", "www.zmitac.com", not2)
             };
-            await ims.AddImagesAsync(imagesToAdd);
+            await ims.AddImagesWithoutAzureUploadAsync(imagesToAdd);
 
             // Act
             var result = await ims.GetAllUserImagesAsync(usr.Id);
@@ -111,27 +112,6 @@ namespace Tests.Services
             // Assert
             Assert.NotNull(result);
             result.Should().HaveCount(2).And.Contain(imagesToAdd);
-        }
-        
-        [Fact(DisplayName = "Be able to update image")]
-        public async Task UpdateImage()
-        {
-            //Arrange
-            var ims = new ImageService(_ir);
-            var usr = new ApplicationUser();
-            var not1 = new Note(null, "DefNote1", "", "", usr, new Directory("def", usr));
-            var image = new Image(null, "TestIMG1", "www.zmitac.com", not1);
-            await ims.AddImageAsync(image);
-            image.Name = "Edited Name";
-
-            // Act
-            var result = await ims.UpdateImageAsync(image);
-
-            // Assert
-            Assert.True(result);
-            var img = await ims.GetImageByIdAsync(image.ImageId);
-            img.Should().NotBeNull();
-            img!.Name.Should().Be(image.Name);
         }
         
         [Fact(DisplayName = "Be able to delete image")]
@@ -142,10 +122,10 @@ namespace Tests.Services
             var usr = new ApplicationUser();
             var not1 = new Note(null, "DefNote1", "", "", usr, new Directory("def", usr));
             var image = new Image(null, "TestIMG1", "www.zmitac.com", not1);
-            await ims.AddImageAsync(image);
+            await ims.AddImageWithoutAzureUploadAsync(image);
 
             // Act
-            var result = await ims.DeleteImageAsync(image);
+            var result = await ims.DeleteImageWithoutAzureAsync(image);
 
             // Assert
             Assert.True(result);
@@ -161,10 +141,10 @@ namespace Tests.Services
             var usr = new ApplicationUser();
             var not1 = new Note(null, "DefNote1", "", "", usr, new Directory("def", usr));
             var image = new Image(null, "TestIMG1", "www.zmitac.com", not1);
-            await ims.AddImageAsync(image);
+            await ims.AddImageWithoutAzureUploadAsync(image);
 
             // Act
-            var result = await ims.DeleteImageAsync(image);
+            var result = await ims.DeleteImageWithoutAzureAsync(image);
 
             // Assert
             Assert.True(result);
@@ -184,10 +164,10 @@ namespace Tests.Services
                 new Image(null, "TestIMG1", "www.zmitac.com", not1),
                 new Image(null, "TestIMG2", "www.zmitac.com", not1)
             };
-            await ims.AddImagesAsync(imagesToDelete);
+            await ims.AddImagesWithoutAzureUploadAsync(imagesToDelete);
 
             // Act
-            var result = await ims.DeleteImagesAsync(imagesToDelete);
+            var result = await ims.DeleteImagesWithoutAzureAsync(imagesToDelete);
 
             // Assert
             Assert.True(result);
@@ -195,46 +175,6 @@ namespace Tests.Services
             var img2 = await ims.GetImageByIdAsync(imagesToDelete.Last().ImageId);
             img1.Should().BeNull();
             img2.Should().BeNull();
-        }
-        
-        [Fact(DisplayName = "Be able to set image URL")]
-        public async Task SetImageUrl()
-        {
-            //Arrange
-            var ims = new ImageService(_ir);
-            var usr = new ApplicationUser();
-            var not1 = new Note(null, "DefNote1", "", "", usr, new Directory("def", usr));
-            var image = new Image(null, "TestIMG1", "default.com", not1);
-            await ims.AddImageAsync(image);
-
-            // Act
-            var result = await ims.SetImageUrl("newurl.com", image.ImageId);
-
-            // Assert
-            Assert.True(result);
-            var img = await ims.GetImageByIdAsync(image.ImageId);
-            img.Should().NotBeNull();
-            img!.FileUrl.Should().Be("newurl.com");
-        }
-        
-        [Fact(DisplayName = "Be able to set image name")]
-        public async Task SetImageName()
-        {
-            //Arrange
-            var ims = new ImageService(_ir);
-            var usr = new ApplicationUser();
-            var not1 = new Note(null, "DefNote1", "", "", usr, new Directory("def", usr));
-            var image = new Image(null, "TestIMG1", "default.com", not1);
-            await ims.AddImageAsync(image);
-
-            // Act
-            var result = await ims.SetImageName("Fancy image", image.ImageId);
-
-            // Assert
-            Assert.True(result);
-            var img = await ims.GetImageByIdAsync(image.ImageId);
-            img.Should().NotBeNull();
-            img!.Name.Should().Be("Fancy image");
         }
     }
 }

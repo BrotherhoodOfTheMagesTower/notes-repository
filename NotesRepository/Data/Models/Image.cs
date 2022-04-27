@@ -25,7 +25,7 @@
         /// <summary>
         /// File data of the image
         /// </summary>
-        public string FileUrl { get; set; }
+        public string? FileUrl { get; set; }
 
         /// <summary>
         /// Note that the image is assigned to
