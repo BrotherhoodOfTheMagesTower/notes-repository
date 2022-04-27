@@ -1,19 +1,46 @@
-﻿@inherits LayoutComponentBase
+﻿@using Blazored.Toast
+@using Blazored.Toast.Configuration
+@inherits LayoutComponentBase
+@inject Data.ViewOptionService ViewOption
 
 <PageTitle>NotesRepository</PageTitle>
 
+@*TODO: add appropriate icons (maybe from open-iconic? (wwwroot -> css))*@
+<BlazoredToasts Position="ToastPosition.BottomRight"
+                Timeout="10"
+                IconType="IconType.Material"
+                ErrorIcon="" 
+                InfoIcon=""
+                SuccessIcon=""
+                WarningIcon="" 
+                ShowProgressBar="true" />
+
 <div class="page">
-    <div class="sidebar">
-        <NavMenu />
+    
+    <div class="top-row">
+         <span class="oi oi-menu" aria-hidden="true" @onclick="ViewOption.Toggle"></span>
+         <div class="login-display-wrapper">
+            <LoginDisplay />
+         </div>
     </div>
 
     <main>
-        <div class="top-row px-4">
-            <LoginDisplay />
+        <div class="sidebar @ViewOption.NavBarClass">
+            <NavMenu />
         </div>
-
         <article class="content px-4">
             @Body
         </article>
     </main>
 </div>
+
+
+@code {
+
+    protected override async Task OnInitializedAsync()
+    {
+        ViewOption.OnChanged = () => { 
+            StateHasChanged();//Refresh
+        };
+    }
+}

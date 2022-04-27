@@ -1,14 +1,20 @@
+nav {
+    overflow-y: auto;
+    height: calc(100vh - 3.5rem );
+}
+
 .navbar-toggler {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
 .top-row {
     height: 3.5rem;
-    background-color: rgba(0,0,0,0.4);
+    background-color: var(--third-color);
 }
 
 .navbar-brand {
-    font-size: 1.1rem;
+    font-size: 0.9rem;
+    font-weight: bold;
 }
 
 .oi {
@@ -18,9 +24,14 @@
     top: -2px;
 }
 
+.my-nav-item {
+    margin-left: 30px;
+    margin-right: 30px;
+}
+
 .nav-item {
-    font-size: 0.9rem;
-    padding-bottom: 0.5rem;
+    font-size: 0.8rem;
+    padding-bottom: 0.4rem;
 }
 
     .nav-item:first-of-type {
@@ -32,27 +43,39 @@
     }
 
     .nav-item ::deep a {
-        color: #d7d7d7;
+        color: white;
         border-radius: 4px;
         height: 3rem;
         display: flex;
         align-items: center;
         line-height: 3rem;
+        background: var(--my-white);
     }
 
 .nav-item ::deep a.active {
-    background-color: rgba(255,255,255,0.25);
+    background-color: var(--my-white);
     color: white;
 }
 
-.nav-item ::deep a:hover {
-    background-color: rgba(255,255,255,0.1);
-    color: white;
-}
+        .nav-item ::deep a:hover {
+            background-color: var(--my-white);
+            color: white;
+            cursor:pointer;
+        }
 
 @media (min-width: 641px) {
-    .navbar-toggler {
-        display: none;
+    .my-nav-item {
+        margin-left: 38px;
+        margin-right: 38px;
+    }
+
+    .navbar-brand {
+        font-size: 1rem;
+    }
+
+    .nav-item {
+        font-size: 0.9rem;
+        padding-bottom: 0.5rem;
     }
 
     .collapse {

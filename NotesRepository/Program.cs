@@ -1,23 +1,44 @@
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using NotesRepository.Data;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NotesRepository.Areas.Identity.Data;
 using Microsoft.AspNetCore.Components.Authorization;
 using NotesRepository.Areas.Identity;
-using Npgsql;
+using Blazored.Toast;
+using NotesRepository.Repositories;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Blazored.Toast;
+using NotesRepository.Repositories;
+using NotesRepository.Services;
+using Azure.Storage.Blobs;
 
 var builder = WebApplication.CreateBuilder(args);
-var connectionString = builder.Configuration.GetConnectionString("ApplicationDbContextConnection"); 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-     options.UseSqlServer(connectionString));
-builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
+
+var connectionString = builder.Configuration.GetConnectionString("ApplicationDbContextConnection");
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+
+builder.Services
+    .AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
 //Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>>();
+builder.Services.AddScoped<NoteRepository>();
+builder.Services.AddScoped<CollaboratorsNotesRepository>();
+builder.Services.AddScoped<DirectoryRepository>();
+builder.Services.AddScoped<ImageRepository>();
+builder.Services.AddScoped<EventRepository>();
+builder.Services.AddScoped<UserRepository>();
+builder.Services.AddScoped<AzureStorageHelper>();
+
+builder.Services.AddScoped<NoteService>();
+builder.Services.AddBlazoredToast();
+
+builder.Services.AddSingleton<ViewOptionService>();
 
 var app = builder.Build();
  
@@ -45,10 +66,7 @@ app.MapControllers();
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 
-using (var serviceScope = app.Services.GetService<IServiceScopeFactory>().CreateScope())
-{
-    var context = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    context.Database.Migrate();
-}
+var serviceProvider = app.Services?.GetService<IServiceScopeFactory>()?.CreateScope().ServiceProvider;
+serviceProvider!.GetService<ApplicationDbContext>()!.Database.Migrate();
 
 app.Run();
