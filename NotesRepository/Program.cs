@@ -5,6 +5,12 @@ using Microsoft.AspNetCore.Components.Authorization;
 using NotesRepository.Areas.Identity;
 using Blazored.Toast;
 using NotesRepository.Repositories;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Blazored.Toast;
+using NotesRepository.Repositories;
 using NotesRepository.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,6 +35,9 @@ builder.Services.AddScoped<UserRepository>();
 
 builder.Services.AddScoped<NoteService>();
 builder.Services.AddBlazoredToast();
+
+builder.Services.AddSingleton<ViewOptionService>();
+
 
 var app = builder.Build();
  
