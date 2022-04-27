@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NotesRepository.Data;
 using NotesRepository.Data.Models;
-
+using NotesRepository.Repositories.Interfaces;
 
 namespace NotesRepository.Repositories
 {

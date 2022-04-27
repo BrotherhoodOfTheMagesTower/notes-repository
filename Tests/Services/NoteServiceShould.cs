@@ -29,7 +29,7 @@ namespace Tests.Services
         public NoteServiceShould()
         {
             _options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase("In memory database - NoteService")
+                .UseInMemoryDatabase(Guid.NewGuid().ToString())
                 .Options;
             ctx = CreateDbContext();
             _nr = new NoteRepository(ctx);
@@ -372,7 +372,7 @@ namespace Tests.Services
             var note = new Note(null, "Tst", "AttachEventToNote()", "def-ico", usr, new Directory("Default", usr));
             await ns.AddNoteAsync(note);
             var ev = new Event(Guid.NewGuid(), "Con", DateTime.Now, DateTime.Now.AddMinutes(2), usr);
-            await _er.AddEventAsync(ev);
+            await _er.AddAsync(ev);
 
             // Act
             await ns.AttachEventToNoteAsync(ev.EventId, note.NoteId);
@@ -428,7 +428,7 @@ namespace Tests.Services
             var note = new Note(null, "Tst", "ChangeNoteDirectory()", "def-ico", usr, new Directory("Default", usr));
             await ns.AddNoteAsync(note);
             var dir = new Directory("new", usr);
-            await _dr.AddDirectoryAsync(dir);
+            await _dr.AddAsync(dir);
 
             // Act
             await ns.ChangeNoteDirectoryAsync(note.NoteId, dir.DirectoryId);
@@ -451,7 +451,7 @@ namespace Tests.Services
             await _ur.AddUserAsync(newUser);
             note.Owner = newUser;
             // Act
-            await _nr.UpdateNoteAsync(note);
+            await _nr.UpdateAsync(note);
 
             // Assert
             var noteFromDb = await ns.GetNoteByIdAsync(note.NoteId);

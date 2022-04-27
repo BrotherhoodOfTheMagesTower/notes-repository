@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Blazored.Toast;
 using NotesRepository.Repositories;
 using NotesRepository.Services;
+using Azure.Storage.Blobs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,12 +33,12 @@ builder.Services.AddScoped<DirectoryRepository>();
 builder.Services.AddScoped<ImageRepository>();
 builder.Services.AddScoped<EventRepository>();
 builder.Services.AddScoped<UserRepository>();
+builder.Services.AddScoped<AzureStorageHelper>();
 
 builder.Services.AddScoped<NoteService>();
 builder.Services.AddBlazoredToast();
 
 builder.Services.AddSingleton<ViewOptionService>();
-
 
 var app = builder.Build();
  

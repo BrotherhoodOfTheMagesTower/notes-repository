@@ -2,6 +2,7 @@
 using NotesRepository.Areas.Identity.Data;
 using NotesRepository.Data;
 using NotesRepository.Data.Models;
+using NotesRepository.Repositories.Interfaces;
 
 namespace NotesRepository.Repositories
 {

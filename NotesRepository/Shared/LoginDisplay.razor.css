@@ -1,0 +1,15 @@
+﻿.nav-item ::deep a:focus {
+    color: white;
+}
+
+.nav-item ::deep a:active {
+    color: white;
+}
+
+.nav-item ::deep a:hover {
+    color: var(--third-color);
+}
+
+.nav-item ::deep a {
+    color: white;
+}
