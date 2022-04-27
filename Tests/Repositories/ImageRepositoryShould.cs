@@ -6,7 +6,7 @@ using NotesRepository.Repositories;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Tests
+namespace Tests.Repositories
 {
     public class ImageRepositoryShould
     {

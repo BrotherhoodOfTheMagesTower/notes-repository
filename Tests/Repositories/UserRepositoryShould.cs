@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using Xunit;
 using FluentAssertions;
 
-namespace Tests
+namespace Tests.Repositories
 {
     public class UserRepositoryShould
     {

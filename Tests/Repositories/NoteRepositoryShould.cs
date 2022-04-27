@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using Xunit;
 using FluentAssertions;
 
-namespace Tests
+namespace Tests.Repositories
 {
     public class NoteRepositoryShould
     {
@@ -20,7 +20,7 @@ namespace Tests
         public NoteRepositoryShould()
         {
             _options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase("In memory database - Note")
+                .UseInMemoryDatabase(Guid.NewGuid().ToString())
                 .Options;
             _context = new ApplicationDbContext(_options);
         }

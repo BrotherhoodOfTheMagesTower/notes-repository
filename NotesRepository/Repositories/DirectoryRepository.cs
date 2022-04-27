@@ -27,16 +27,15 @@ namespace NotesRepository.Repositories
 
         /// <summary>
         /// Attaches a subdirectory entity to the particular directory. 
-        /// The subDirectory cannot have an assigned user while attaching it to the directory.
         /// </summary>
         /// <param name="subDirectory">The subdirectory entity</param>
         /// <param name="directoryId">The unique ID of directory</param>
         /// <returns>true if subdirectory was successfully added; otherwise false</returns>
         public async Task<bool> AttachSubDirectoryToParticularDirectoryAsync(Guid subDirectoryId, Guid directoryId)
         {
-            var dir = await ctx.Directories.FirstOrDefaultAsync(x => x.DirectoryId == directoryId);
-            var subDir = await ctx.Directories.FirstOrDefaultAsync(x => x.DirectoryId == subDirectoryId);
-            if (dir is not null)
+            var dir = await ctx.Directories.SingleOrDefaultAsync(x => x.DirectoryId == directoryId);
+            var subDir = await ctx.Directories.SingleOrDefaultAsync(x => x.DirectoryId == subDirectoryId);
+            if (dir is not null && subDir is not null)
             {
                 if (dir.SubDirectories is not null)
                     dir.SubDirectories.Add(subDir);

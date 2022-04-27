@@ -241,12 +241,11 @@ namespace Tests.Repositories
             // Assert
             var directories = await _context.Directories.ToListAsync();
             var dir = await nr.GetDirectoryByIdAsync(directory1.DirectoryId);
-
+            
             Assert.True(result);
-            Assert.NotNull(result);
+            Assert.NotNull(dir);
             Assert.Equal(subDirectory1, directories.First(i => i.DirectoryId == directory1.DirectoryId).SubDirectories.First());
             Assert.Equal(subDirectory1.DirectoryId, dir.SubDirectories.First().DirectoryId);
-
             await nr.DeleteDirectoryAsync(subDirectory1);
             await nr.DeleteDirectoryAsync(directory1);
 
