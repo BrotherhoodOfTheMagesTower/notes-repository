@@ -4,6 +4,7 @@ using NotesRepository.Areas.Identity.Data;
 using NotesRepository.Data;
 using NotesRepository.Data.Models;
 using NotesRepository.Repositories;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
@@ -18,7 +19,7 @@ namespace Tests.Repositories
         public ImageRepositoryShould()
         {
             _options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase("In memory database")
+                .UseInMemoryDatabase(Guid.NewGuid().ToString())
                 .Options;
             _context = new ApplicationDbContext(_options);
         }
