@@ -1,7 +1,22 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
+:root {
+    --main-color: #009BBF;
+    --secondary-color: #1B5EAB;
+    --third-color: #ACE1AF;
+    --my-white: rgba(255,255,255,0.25);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    text-rendering: optimizeLegibility;
+    font-size: 16px;
 }
 
 h1:focus {
