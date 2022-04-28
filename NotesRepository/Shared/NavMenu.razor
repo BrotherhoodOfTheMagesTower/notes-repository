@@ -1,4 +1,9 @@
 ﻿@inject Data.ViewOptionService ViewOption
+@using System.Security.Claims
+@using NotesRepository.Repositories
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor
+@inject UserRepository _ur;
+@inject DirectoryRepository _dr;
 
 <nav class="flex-column navigation">
     <div class="top-row ps-3 navbar navbar-dark">
@@ -9,14 +14,15 @@
     <form class="form-inline mb-3">
         <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
     </form>
-    <AuthorizeView> <!--TODO tutej trzeba dodać role, nie dodałem bo nie wiem jakie mamy Xd-->
-            <Authorized>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="/editNote">
-                        <span class="oi oi-copywriting"></span>New Note
-                    </NavLink>
-                </div>
-            </Authorized>
+    <AuthorizeView>
+        <!--TODO tutej trzeba dodać role, nie dodałem bo nie wiem jakie mamy Xd-->
+        <Authorized>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="/editNote">
+                    <span class="oi oi-copywriting"></span>New Note
+                </NavLink>
+            </div>
+        </Authorized>
     </AuthorizeView>
     <div class="nav-item px-3">
         <NavLink class="nav-link" href="#" Match="NavLinkMatch.All">
@@ -35,16 +41,17 @@
     </div>
     @if (allFolders)
     {
-        <div class="nav-item my-nav-item">
-            <NavLink class="nav-link" href="#">
-                <span class="oi oi-folder" aria-hidden="true"></span> Folder1
-            </NavLink>
-        </div>
-        <div class="nav-item my-nav-item">
-            <NavLink class="nav-link" href="#">
-                <span class="oi oi-folder" aria-hidden="true"></span> Folder2
-            </NavLink>
-        </div>
+        if (dirs is not null)
+        {
+            foreach (var dir in dirs)
+            {
+                <div class="nav-item my-nav-item">
+                    <NavLink class="nav-link" href="#">
+                        <span class="oi oi-folder" aria-hidden="true"></span> @dir.Name
+                    </NavLink>
+                </div>
+            }
+        }
     }
     <div class="nav-item px-3">
         <NavLink class="nav-link" href="#">
@@ -65,20 +72,37 @@
 
 
 @code {
+    protected override async Task OnInitializedAsync()
+    {
+        dirs = await GetAllUserDirectories();
+    }
+
     private bool collapseNavMenu = true;
 
     //private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
     private bool allFolders = false;
+    private ICollection<Data.Models.Directory>? dirs;
 
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
     }
 
-    private void TogleSubmenu()
+    private async Task TogleSubmenu()
     {
         allFolders = !allFolders;
+        await GetAllUserDirectories();
+    }
+
+    private async Task<ICollection<Data.Models.Directory>?> GetAllUserDirectories()
+    {
+        string currentUserId = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+        if (currentUserId is not null)
+        {
+            return await _dr.GetAllDirectoriesForParticularUserAsync(currentUserId);
+        }
+        return null;
     }
 
 }

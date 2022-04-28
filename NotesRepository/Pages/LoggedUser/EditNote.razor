@@ -1,6 +1,14 @@
 ﻿@page "/editNote"
 
 @using Markdig
+@using NotesRepository.Data.Models
+@using NotesRepository.Repositories
+@using NotesRepository.Services
+@using System.Security.Claims
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor
+
+@inject NoteService _ns;
+@inject UserRepository _ur;
 
 @inject IToastService toastService;
 
@@ -41,7 +49,7 @@ else
         pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build(); // Uruchomienie rozszerzeń markdown
     }
 
-    private void saveNote()
+    private async Task saveNote()
     {
         if (content.Length <= 0)
         {
@@ -49,8 +57,14 @@ else
         }
         else
         {
-            // TODO dostęp do bazy danych i wpisanie notatki
-            toastService.ShowSuccess("The note was saved.", "Congrats!");
+            string currentUserId = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var usr = await _ur.GetUserByIdAsync(currentUserId);
+            if(usr is not null)
+            {
+                var result = await _ns.AddNoteAsync(new Note(null, "default", content, "", usr, new Directory("Def", usr)));
+                if(result)
+                    toastService.ShowSuccess("The note was saved.", "Congrats!");
+            }
         }
     }
 
