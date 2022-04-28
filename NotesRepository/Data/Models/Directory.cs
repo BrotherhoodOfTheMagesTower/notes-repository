@@ -28,6 +28,16 @@ namespace NotesRepository.Data.Models
         public string Name { get; set; } = string.Empty;
 
         /// <summary>
+        /// Value that determines if the directory was marked as deleted
+        /// </summary>
+        public bool IsMarkedAsDeleted { get; set; } = false;
+
+        /// <summary>
+        /// Date and time when the directory was marked as deleted (optional)
+        /// </summary>
+        public DateTime? DeletedAt { get; set; }
+
+        /// <summary>
         /// Collection of Notes assigned to the directory (optional)
         /// </summary>
         public ICollection<Note>? Notes { get; set; }
@@ -41,5 +51,10 @@ namespace NotesRepository.Data.Models
         /// Collection of subdirectiories (optional)
         /// </summary>
         public ICollection<Directory>? SubDirectories { get; set; }
+
+        /// <summary>
+        /// The parent directory (optional)
+        /// </summary>
+        public virtual Directory? ParentDir { get; set; }
     }
 }

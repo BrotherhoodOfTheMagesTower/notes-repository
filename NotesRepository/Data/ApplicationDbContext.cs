@@ -45,11 +45,11 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         builder.Entity<Directory>()
             .HasOne(u => u.User)
             .WithMany(d => d.Directories)
-            .OnDelete(DeleteBehavior.NoAction); // should be changed to CASCADE!
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.Entity<Directory>()
             .HasMany(s => s.SubDirectories)
-            .WithOne()
+            .WithOne(p => p.ParentDir)
             .HasForeignKey("SubDirectoryId");
 
 
