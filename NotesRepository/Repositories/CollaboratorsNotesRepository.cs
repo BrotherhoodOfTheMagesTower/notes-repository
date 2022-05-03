@@ -56,6 +56,9 @@ namespace NotesRepository.Repositories
         /// <returns>true if collaborators were successfully deleted; otherwise false</returns>
         public async Task<bool> DeleteCollaboratorsFromNoteAsync(ICollection<CollaboratorsNotes> collaborators)
         {
+            var list = new List<CollaboratorsNotes?>();
+            foreach (var collaborator in collaborators)
+                list.Add(await ctx.CollaboratorsNotes.Where(c => c.Equals(collaborator)).SingleOrDefaultAsync());
             ctx.CollaboratorsNotes.RemoveRange(collaborators);
             var result = await ctx.SaveChangesAsync();
             return result > 0;

@@ -189,7 +189,7 @@ namespace Tests.Services
             collaborators.Should().BeEmpty();
         }
         
-        [Fact(DisplayName = "Be able to delete a collaborators from note")]
+        [Fact(DisplayName = "Be able to delete collaborators from note")]
         public async Task DeleteCollaboratorsFromNote()
         {
             //Arrange

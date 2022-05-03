@@ -34,9 +34,6 @@ namespace NotesRepository.Services
             return false;
         }
         
-        public async Task<bool> AddCollaboratorToNoteAsync(CollaboratorsNotes collaboratorNote)
-            => await _cnr.AddCollaboratorToNoteAsync(collaboratorNote);
-        
         public async Task<bool> AddCollaboratorsToNoteAsync(ICollection<string> userIds, Guid noteId)
         {
             var note = await _nr.GetByIdAsync(noteId);
@@ -58,35 +55,27 @@ namespace NotesRepository.Services
             return false;
         }
 
-        public async Task<bool> AddCollaboratorsToNoteAsync(ICollection<CollaboratorsNotes> collaboratorsNotes)
-            => await _cnr.AddCollaboratorsToNoteAsync(collaboratorsNotes);
-
         public async Task<bool> DeleteCollaboratorFromNoteAsync(string userId, Guid noteId)
             => await _cnr.DeleteCollaboratorFromNoteAsync(noteId, userId);
-        
-        public async Task<bool> DeleteCollaboratorFromNoteAsync(CollaboratorsNotes collaboratorNote)
-            => await _cnr.DeleteCollaboratorFromNoteAsync(collaboratorNote);
-        
-        public async Task<bool> DeleteCollaboratorsFromNoteAsync(ICollection<CollaboratorsNotes> collaboratorsNotes)
-            => await _cnr.DeleteCollaboratorsFromNoteAsync(collaboratorsNotes);
 
         public async Task<bool> DeleteCollaboratorsFromNoteAsync(ICollection<string> userIds, Guid noteId)
         {
             var note = await _nr.GetByIdAsync(noteId);
             if (note is not null)
             {
-                var list = new List<CollaboratorsNotes>();
                 foreach (var item in userIds)
                 {
                     var user = await _ur.GetUserByIdAsync(item);
                     if (user is not null)
                     {
-                        list.Add(new CollaboratorsNotes(user, note));
+                        var result = await _cnr.DeleteCollaboratorFromNoteAsync(note.NoteId, user.Id);
+                        if (!result)
+                            return false;
                     }
                     else
                         return false;
                 }
-                return await _cnr.DeleteCollaboratorsFromNoteAsync(list);
+                return true;
             }
             return false;
         }
