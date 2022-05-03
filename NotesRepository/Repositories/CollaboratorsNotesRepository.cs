@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using NotesRepository.Areas.Identity.Data;
 using NotesRepository.Data;
 using NotesRepository.Data.Models;
 using NotesRepository.Repositories.Interfaces;
@@ -14,23 +15,23 @@ namespace NotesRepository.Repositories
         }
 
         /// <summary>
-        /// <summary>
-        /// Add note to collaborator 
+        /// Adds collaborator to note 
         /// </summary>
         /// <param name="collaborator"></param>
-        /// <returns>true if notes were successfully added; otherwise false</returns>
-        public async Task<bool> AddNoteToCollaboratorAsync(CollaboratorsNotes collaborator)
+        /// <returns>true if collaborator was successfully added; otherwise false</returns>
+        public async Task<bool> AddCollaboratorToNoteAsync(CollaboratorsNotes collaborator)
         {
             await ctx.CollaboratorsNotes.AddAsync(collaborator);
             var result = await ctx.SaveChangesAsync();
             return result > 0;
         }
+
         /// <summary>
-        /// Add multiple notes to collaborator
+        /// Add multiple collaborators to note
         /// </summary>
         /// <param name="collaborator"></param>
-        /// <returns>true if notes were successfully added; otherwise false</returns>
-        public async Task<bool> AddNotesToCollaboratorAsync(ICollection<CollaboratorsNotes> collaborators)
+        /// <returns>true if collaborators were successfully added; otherwise false</returns>
+        public async Task<bool> AddCollaboratorsToNoteAsync(ICollection<CollaboratorsNotes> collaborators)
         {
             await ctx.CollaboratorsNotes.AddRangeAsync(collaborators);
             var result = await ctx.SaveChangesAsync();
@@ -38,34 +39,34 @@ namespace NotesRepository.Repositories
         }
 
         /// <summary>
-        /// Removing note from collaborator
+        /// Removes collaborator from note
         /// </summary>
         /// <param name="collaborator"></param>
-        /// <returns>true if note was successfully removed; otherwise false</returns>
-        public async Task<bool> DeleteNoteFromCollaboratorAsync(CollaboratorsNotes collaborator)
+        /// <returns>true if collaborator was successfully removed; otherwise false</returns>
+        public async Task<bool> DeleteCollaboratorFromNoteAsync(CollaboratorsNotes collaborator)
         {
             ctx.CollaboratorsNotes.Remove(collaborator);
             var result = await ctx.SaveChangesAsync();
             return result > 0;
         }
         /// <summary>
-        /// Delete multiple notes from collaborator
+        /// Delete multiple collaborators from note
         /// </summary>
         /// <param //name="collaborator"></param>
-        /// <returns>true if notes were successfully added; otherwise false</returns>
-        public async Task<bool> DeleteNotesFromCollaboratorAsync(ICollection<CollaboratorsNotes> collaborators)
+        /// <returns>true if collaborators were successfully deleted; otherwise false</returns>
+        public async Task<bool> DeleteCollaboratorsFromNoteAsync(ICollection<CollaboratorsNotes> collaborators)
         {
             ctx.CollaboratorsNotes.RemoveRange(collaborators);
             var result = await ctx.SaveChangesAsync();
             return result > 0;
         }
 
-        /// Removing note from collaborator including id of the user and id of the note
+        /// Removes collaborator from note
         /// </summary>
         /// <param name="noteId"></param>
         /// <param name="appUserId"></param>
         /// <returns>true if note was successfully removed; otherwise false</returns>
-        public async Task<bool> DeleteNoteFromCollaboratorAsync(Guid noteId, string appUserId)
+        public async Task<bool> DeleteCollaboratorFromNoteAsync(Guid noteId, string appUserId)
         {
             var collaborator = await ctx.CollaboratorsNotes.Where(a => a.ApplicationUserId == appUserId && a.NoteId == noteId).FirstOrDefaultAsync();
 
@@ -78,26 +79,29 @@ namespace NotesRepository.Repositories
             return false;
         }
 
-
-
         /// <summary>
-        /// Get all users including id of the note from database
+        /// Get all collaborators for note
         /// </summary>
         /// <param name="noteId"></param>
-        /// <returns>A collection of users related to the note</returns>
-        public async Task<ICollection<CollaboratorsNotes>> GetAllUsersRelatedToTheNoteAsync(Guid noteId)
+        /// <returns>A collection of collaborators to which the note was shared</returns>
+        public async Task<ICollection<ApplicationUser>> GetAllCollaboratorsForNote(Guid noteId)
         {
-            return await ctx.CollaboratorsNotes.Where(i => i.NoteId == noteId).ToListAsync();
+            return await ctx.CollaboratorsNotes
+                .Where(i => i.NoteId == noteId)
+                .Select(u => u.Collaborator)
+                .ToListAsync();
         }
 
         /// <summary>
-        /// Get all notes including id of the user from database
-        /// </summary>
+        /// Get all shared notes for user
         /// <param name="appUserId"></param>
-        /// <returns>A collection of notes that can be edited by specified user</returns>
-        public async Task<ICollection<CollaboratorsNotes>> GetAllNotesCanBeEditedByUserAsync(string appUserId)
+        /// <returns>A collection of notes that were shared with a specified user</returns>
+        public async Task<ICollection<Note>> GetAllSharedNotesForUser(string appUserId)
         {
-            return await ctx.CollaboratorsNotes.Where(a => a.ApplicationUserId == appUserId).ToListAsync();
+            return await ctx.CollaboratorsNotes
+                .Where(a => a.ApplicationUserId == appUserId)
+                .Select(x => x.SharedNote)
+                .ToListAsync();
         }
     }
 }

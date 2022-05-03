@@ -31,16 +31,16 @@ namespace Tests.Repositories
             // Arrange
             var cnr = new CollaboratorsNotesRepository(_context);
             var usr = new ApplicationUser();
-            var collaborator = new CollaboratorsNotes(usr.Id, new Guid(), usr, new Note(null, "Test note", "for AddNote()", "def-ico", new ApplicationUser(), new Directory("Default", usr)));
+            var collaborator = new CollaboratorsNotes(usr, new Note(null, "Test note", "for AddNote()", "def-ico", new ApplicationUser(), new Directory("Default", usr)));
 
             // Act
-            var result = await cnr.AddNoteToCollaboratorAsync(collaborator);
+            var result = await cnr.AddCollaboratorToNoteAsync(collaborator);
 
             // Assert
             var collaborators = await _context.CollaboratorsNotes.ToListAsync();
             Assert.True(result);
             Assert.Single(collaborators);
-            await cnr.DeleteNoteFromCollaboratorAsync(collaborator);
+            await cnr.DeleteCollaboratorFromNoteAsync(collaborator);
 
         }
         [Fact(DisplayName = "User is able to add multiple notes to a collaborator")]
@@ -51,32 +51,31 @@ namespace Tests.Repositories
             var usr = new ApplicationUser();
             var collaborators = new List<CollaboratorsNotes>()
             {
-                new CollaboratorsNotes(usr.Id, new Guid(), usr, new Note(null, "Test note 1", "for AddMultipleNotes()", "def-ico", new ApplicationUser(), new Directory("Default", usr))),
-                new CollaboratorsNotes(usr.Id, new Guid(), usr, new Note(null, "Test note 2", "for AddMultipleNotes()", "def-ico", new ApplicationUser(), new Directory("Default", usr))),
-                new CollaboratorsNotes(usr.Id, new Guid(), usr, new Note(null, "Test note 3", "for AddMultipleNotes()", "def-ico", new ApplicationUser(), new Directory("Default", usr)))
+                new CollaboratorsNotes(usr, new Note(null, "Test note 1", "for AddMultipleNotes()", "def-ico", new ApplicationUser(), new Directory("Default", usr))),
+                new CollaboratorsNotes(usr, new Note(null, "Test note 2", "for AddMultipleNotes()", "def-ico", new ApplicationUser(), new Directory("Default", usr))),
+                new CollaboratorsNotes(usr, new Note(null, "Test note 3", "for AddMultipleNotes()", "def-ico", new ApplicationUser(), new Directory("Default", usr)))
             };
 
             // Act
-            var result = await cnr.AddNotesToCollaboratorAsync(collaborators);
+            var result = await cnr.AddCollaboratorsToNoteAsync(collaborators);
 
             // Assert
             var collaboratorFromDb = await _context.CollaboratorsNotes.ToListAsync();
             Assert.True(result);
             collaboratorFromDb.Should().ContainItemsAssignableTo<CollaboratorsNotes>().And.HaveCount(3);
-            await cnr.DeleteNotesFromCollaboratorAsync(collaborators);
+            await cnr.DeleteCollaboratorsFromNoteAsync(collaborators);
         }
 
         [Fact(DisplayName = "User is able to delete a note from collaborator")]
         public async Task DeleteNoteFromCollaborator()
         {
-
             // Arrange
             var cnr = new CollaboratorsNotesRepository(_context);
             var usr = new ApplicationUser();
-            var collaborator = new CollaboratorsNotes(usr.Id, new Guid(), usr, new Note(null, "Test note", "for DeleteNote()", "def-ico", new ApplicationUser(), new Directory("Default", usr)));
-            await cnr.AddNoteToCollaboratorAsync(collaborator);
+            var collaborator = new CollaboratorsNotes(usr, new Note(null, "Test note", "for DeleteNote()", "def-ico", new ApplicationUser(), new Directory("Default", usr)));
+            await cnr.AddCollaboratorToNoteAsync(collaborator);
             // Act
-            var result = await cnr.DeleteNoteFromCollaboratorAsync(collaborator);
+            var result = await cnr.DeleteCollaboratorFromNoteAsync(collaborator);
 
             // Assert
             var collaborators = await _context.CollaboratorsNotes.ToListAsync();
@@ -92,10 +91,10 @@ namespace Tests.Repositories
             // Arrange
             var cnr = new CollaboratorsNotesRepository(_context);
             var usr = new ApplicationUser();
-            var collaborator = new CollaboratorsNotes(usr.Id, new Guid(), new ApplicationUser(), new Note(null, "Test note", "for DeleteNoteByIds()", "def-ico", new ApplicationUser(), new Directory("Default", usr)));
-            await cnr.AddNoteToCollaboratorAsync(collaborator);
+            var collaborator = new CollaboratorsNotes(new ApplicationUser(), new Note(null, "Test note", "for DeleteNoteByIds()", "def-ico", new ApplicationUser(), new Directory("Default", usr)));
+            await cnr.AddCollaboratorToNoteAsync(collaborator);
             // Act
-            var result = await cnr.DeleteNoteFromCollaboratorAsync(collaborator.NoteId, collaborator.ApplicationUserId);
+            var result = await cnr.DeleteCollaboratorFromNoteAsync(collaborator.NoteId, collaborator.ApplicationUserId);
 
             // Assert
             var collaborators = await _context.CollaboratorsNotes.ToListAsync();
@@ -105,21 +104,19 @@ namespace Tests.Repositories
         [Fact(DisplayName = "User is able to delete multiple notes from collaborator")]
         public async Task DeleteNotesFromCollaborator()
         {
-
-
             // Arrange
             var cnr = new CollaboratorsNotesRepository(_context);
             var usr = new ApplicationUser();
             var collaborators = new List<CollaboratorsNotes>()
             {
-                new CollaboratorsNotes(usr.Id, new Guid(), usr, new Note(null, "Test note 1", "for DeleteMultipleNotes()", "def-ico", new ApplicationUser(), new Directory("Default", usr))),
-                new CollaboratorsNotes(usr.Id, new Guid(), usr, new Note(null, "Test note 2", "for DeleteMultipleNotes()", "def-ico", new ApplicationUser(), new Directory("Default", usr))),
-                new CollaboratorsNotes(usr.Id, new Guid(), usr, new Note(null, "Test note 3", "for DeleteMultipleNotes()", "def-ico", new ApplicationUser(), new Directory("Default", usr)))
+                new CollaboratorsNotes(usr, new Note(null, "Test note 1", "for DeleteMultipleNotes()", "def-ico", new ApplicationUser(), new Directory("Default", usr))),
+                new CollaboratorsNotes(usr, new Note(null, "Test note 2", "for DeleteMultipleNotes()", "def-ico", new ApplicationUser(), new Directory("Default", usr))),
+                new CollaboratorsNotes(usr, new Note(null, "Test note 3", "for DeleteMultipleNotes()", "def-ico", new ApplicationUser(), new Directory("Default", usr)))
             };
-            await cnr.AddNotesToCollaboratorAsync(collaborators);
+            await cnr.AddCollaboratorsToNoteAsync(collaborators);
 
             // Act
-            var result = await cnr.DeleteNotesFromCollaboratorAsync(collaborators);
+            var result = await cnr.DeleteCollaboratorsFromNoteAsync(collaborators);
 
             // Assert
             var collaboratorsFromDb = await _context.CollaboratorsNotes.ToListAsync();

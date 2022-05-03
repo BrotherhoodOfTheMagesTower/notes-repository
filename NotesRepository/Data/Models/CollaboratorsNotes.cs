@@ -6,12 +6,12 @@ namespace NotesRepository.Data.Models
     {
         public CollaboratorsNotes() { }
 
-        public CollaboratorsNotes(string appUserId, Guid? noteId, ApplicationUser collaborator, Note sharedNote)
+        public CollaboratorsNotes(ApplicationUser collaborator, Note sharedNote)
         {
-            ApplicationUserId = appUserId;
-            NoteId = noteId ?? Guid.NewGuid();
             Collaborator = collaborator;
             SharedNote = sharedNote;
+            ApplicationUserId = collaborator.Id;
+            NoteId = sharedNote.NoteId;
         }
         public string ApplicationUserId { get; set; }
 
