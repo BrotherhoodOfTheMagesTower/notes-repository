@@ -1,6 +1,9 @@
 ﻿@inject Data.ViewOptionService ViewOption
 @using System.Security.Claims
 @using NotesRepository.Repositories
+@using Blazored.Typeahead
+@using Data.Models
+@using Repositories
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor
 @inject UserRepository _ur;
 @inject DirectoryRepository _dr;
@@ -11,19 +14,29 @@
             <a class="navbar-brand" href="/">NotesRepository</a>
         </div>
     </div>
-    <form class="form-inline mb-3">
-        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-    </form>
+    <br />
+    <BlazoredTypeahead SearchMethod="NotesSearch" @bind-Value="searchPhrase">
+            <SelectedTemplate>
+                @context.Content
+            </SelectedTemplate>
+            <ResultTemplate>
+                 @context.Content
+            </ResultTemplate>
+            <NotFoundTemplate>
+                Sorry, there weren't any search results.
+            </NotFoundTemplate>
+        </BlazoredTypeahead>
+
     <AuthorizeView>
         <!--TODO tutej trzeba dodać role, nie dodałem bo nie wiem jakie mamy Xd-->
         <Authorized>
+<br />
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="/editNote">
                     <span class="oi oi-copywriting"></span>New Note
                 </NavLink>
             </div>
-        </Authorized>
-    </AuthorizeView>
+        
     <div class="nav-item px-3">
         <NavLink class="nav-link" href="#" Match="NavLinkMatch.All">
             <span class="oi oi-home" aria-hidden="true"></span> Home
@@ -34,10 +47,12 @@
             <span class="oi oi-calendar" aria-hidden="true"></span> Calendar
         </NavLink>
     </div>
-    <div class="nav-item px-3" @onclick="() => TogleSubmenu()">
+    <div class="nav-item px-3">
         <NavLink class="dropdown-toggle nav-link">
-            <span class="oi oi-folder" aria-hidden="true"></span> Folders
+            <span class="oi oi-folder" aria-hidden="true" @onclick="() => TogleSubmenu()"></span>Folders 
+           <FolderMenu/>
         </NavLink>
+        
     </div>
     @if (allFolders)
     {
@@ -48,6 +63,7 @@
                 <div class="nav-item my-nav-item">
                     <NavLink class="nav-link" href="#">
                         <span class="oi oi-folder" aria-hidden="true"></span> @dir.Name
+                        <FolderMenu/>
                     </NavLink>
                 </div>
             }
@@ -68,6 +84,8 @@
             <span class="oi oi-trash" aria-hidden="true"></span> Trash
         </NavLink>
     </div>
+    </Authorized>
+    </AuthorizeView>
 </nav>
 
 
@@ -83,6 +101,19 @@
 
     private bool allFolders = false;
     private ICollection<Data.Models.Directory>? dirs;
+    public Note searchPhrase;
+    private bool searching=false;
+    List<Note> notes;
+
+    protected override void OnInitialized()
+    {
+            notes = new List<Note>
+            {
+                new Note("Ala ma kota"),
+                new Note("Ala Jakaś"),
+                new Note("Taaa"),
+            };
+    }
 
     private void ToggleNavMenu()
     {
@@ -95,8 +126,13 @@
         await GetAllUserDirectories();
     }
 
-    private async Task<ICollection<Data.Models.Directory>?> GetAllUserDirectories()
+    private async Task<IEnumerable<Note>> NotesSearch(string searchText)
     {
+        return notes;
+    }
+
+    private async Task<ICollection<Data.Models.Directory>?> GetAllUserDirectories()
+    {   
         string currentUserId = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
         if (currentUserId is not null)
         {
@@ -105,4 +141,16 @@
         return null;
     }
 
+    private void SearchPhrase()
+    {
+        // Wywołanie funkcji szukającej
+        if (searchPhrase == null)
+        {
+            searching = false;
+        }
+        else
+        {
+            searching = true;
+        }
+    }
 }

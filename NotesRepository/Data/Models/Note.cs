@@ -19,6 +19,12 @@ namespace NotesRepository.Data.Models
             Directory = directory;
         }
 
+        public Note(string content)
+        {
+            NoteId = new Guid();
+            Content = content;
+        }
+
         /// <summary>
         /// Unique ID of the note
         /// </summary>

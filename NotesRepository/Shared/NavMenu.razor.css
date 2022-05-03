@@ -1,5 +1,4 @@
 nav {
-    overflow-y: auto;
     height: calc(100vh - 3.5rem );
 }
 
@@ -32,6 +31,7 @@ nav {
 .nav-item {
     font-size: 0.8rem;
     padding-bottom: 0.4rem;
+    position: relative;
 }
 
     .nav-item:first-of-type {
@@ -83,3 +83,4 @@ nav {
         display: block;
     }
 }
+

@@ -19,7 +19,6 @@ main {
 
 .sidebar {
     background-image: linear-gradient(180deg, #1B5EAB 0%,#009BBF 70%);
-    overflow: hidden;
     z-index: 1000;
     position: absolute;
     width: calc(50% - 2rem);
