@@ -41,10 +41,13 @@ namespace NotesRepository.Repositories
         /// <summary>
         /// Delete more events from the database
         /// </summary>
-        /// <param name="events">Events o delete</param>
+        /// <param name="eventIds">Events to be deleted</param>
         /// <returns>True when events were successfully delete</returns>
-        public async Task<bool> DeleteManyAsync(ICollection<Event> events)
+        public async Task<bool> DeleteManyAsync(ICollection<Guid> eventIds)
         {
+            var events = new List<Event>();
+            foreach (var eventId in eventIds)
+                events.Add(await ctx.Events.SingleAsync(x => x.EventId == eventId));
             ctx.Events.RemoveRange(events);
             var result = await ctx.SaveChangesAsync();
             return result > 0;
@@ -114,7 +117,7 @@ namespace NotesRepository.Repositories
         /// </summary>
         /// <param name="date">Date</param>
         /// <returns>A collection of events which start at given day stored in the database</returns>
-        public async Task<ICollection<Event>> GetEventsByDateAsync(DateTime date)
+        public async Task<ICollection<Event>> GetEventsByStartDateAsync(DateTime date)
         {
             return await ctx.Events
                 .Where(e => e.StartAt == date)

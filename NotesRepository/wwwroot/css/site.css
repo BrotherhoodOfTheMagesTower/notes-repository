@@ -77,3 +77,6 @@ a, .btn-link {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+img, svg {
+    width: min(90%,450px);
+}
