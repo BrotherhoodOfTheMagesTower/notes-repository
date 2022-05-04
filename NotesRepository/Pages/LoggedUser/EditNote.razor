@@ -18,30 +18,28 @@
 }
 else
 {
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col">
-                <h3>Treść notatki</h3>
-                <textarea style="height: 700px; width: 700px; margin-bottom: 1rem;" @bind-value="content" @bind-value:event="oninput"></textarea>
-                <center>
-                    <button type="button" class="btn btn-primary" @onclick="saveNote">Zapisz notatkę</button>
-                </center>
-            </div>
-            <div class="col">
-                <h3>Podgląd</h3>
-                <div style="width: 700px; border-radius: 1px; border: 1px solid #000000; padding: 20px; overflow-y: scroll; height: 700px;">
-                    @((MarkupString)Markdown.ToHtml(content, pipeline))
-                </div>
+    <div class="my-container">
+        <div class="my-sub-container p-2 ">
+            <center><h3>Content</h3> </center>
+            <textarea class="my-text-area" @bind-value="content" @bind-value:event="oninput"></textarea>
+            <center>
+                <button type="button" class="btn btn-primary" @onclick="saveNote">Save</button>
+            </center>
+        </div>
+        <div class="my-sub-container p-2">
+             <center><h3>Preview</h3></center>
+            <div class="my-preview">
+                @((MarkupString)Markdown.ToHtml(content, pipeline))
             </div>
         </div>
     </div>
 }
 
-@code 
+@code
 {
     // TODO przykładowy template, potem musimy ładować te przez nas przygotowane
     private string content = "";
-    private MarkdownPipeline pipeline;
+    private MarkdownPipeline? pipeline;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -57,14 +55,18 @@ else
         }
         else
         {
-            string currentUserId = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            var usr = await _ur.GetUserByIdAsync(currentUserId);
-            if(usr is not null)
+            string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (currentUserId != null)
             {
-                var result = await _ns.AddNoteAsync(new Note(null, "default", content, "", usr, new Directory("Def", usr)));
-                if(result)
-                    toastService.ShowSuccess("The note was saved.", "Congrats!");
+                var usr = await _ur.GetUserByIdAsync(currentUserId);
+                if (usr is not null)
+                {
+                    var result = await _ns.AddNoteAsync(new Note(null, "default", content, "", usr, new Directory("Def", usr)));
+                    if (result)
+                        toastService.ShowSuccess("The note was saved.", "Congrats!");
+                }
             }
+
         }
     }
 
