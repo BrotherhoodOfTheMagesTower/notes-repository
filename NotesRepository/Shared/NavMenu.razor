@@ -3,7 +3,6 @@
 @using NotesRepository.Repositories
 @using Blazored.Typeahead
 @using Data.Models
-@using Repositories
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor
 @inject UserRepository _ur;
 @inject DirectoryRepository _dr;
@@ -140,8 +139,8 @@
     }
 
     private async Task<ICollection<Data.Models.Directory>?> GetAllUserDirectories()
-    {
-        string currentUserId = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+    {   
+        string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (currentUserId is not null)
         {
             return await _dr.GetAllDirectoriesForParticularUserAsync(currentUserId);
