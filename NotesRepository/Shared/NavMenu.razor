@@ -133,7 +133,7 @@
 
     private async Task<ICollection<Data.Models.Directory>?> GetAllUserDirectories()
     {   
-        string currentUserId = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+        string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (currentUserId is not null)
         {
             return await _dr.GetAllDirectoriesForParticularUserAsync(currentUserId);
