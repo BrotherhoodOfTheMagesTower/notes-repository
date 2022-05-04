@@ -5,14 +5,9 @@ using Microsoft.AspNetCore.Components.Authorization;
 using NotesRepository.Areas.Identity;
 using Blazored.Toast;
 using NotesRepository.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Blazored.Toast;
-using NotesRepository.Repositories;
 using NotesRepository.Services;
-using Azure.Storage.Blobs;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +17,14 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlSer
 builder.Services
     .AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddEntityFrameworkStores<ApplicationDbContext>();
+builder.Services
+    .AddAuthentication()
+        .AddGoogle(opts =>
+        {
+            opts.ClientId = "1024151888164-a4ckjd6fc4kdpecff7cp7u4lhacqgbsh.apps.googleusercontent.com";
+            opts.ClientSecret = "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";
+            opts.SignInScheme = IdentityConstants.ExternalScheme;
+        });
 
 //Add services to the container.
 builder.Services.AddRazorPages();
