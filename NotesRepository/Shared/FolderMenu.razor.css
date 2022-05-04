@@ -1,13 +1,4 @@
-﻿
-.folder-menu{
-    position: absolute;
-    right: 25px;
-    top: 15px;
-}
-
 .option-menu {
-    background: #009BBF;
-    z-index: 100;
-    position: absolute;
-    top: 50px;
+  /*  background: #009BBF;
+    z-index: 100;*/
 }

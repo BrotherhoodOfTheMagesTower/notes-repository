@@ -19,10 +19,11 @@ main {
 
 .sidebar {
     background-image: linear-gradient(180deg, #1B5EAB 0%,#009BBF 70%);
-    z-index: 1000;
+    z-index: 99;
     position: absolute;
-    width: calc(50% - 2rem);
+    width: calc(50% );
     height: calc(100vh - 3.5rem);
+    overflow: hidden;
 }
 
 .top-row {
@@ -32,8 +33,9 @@ main {
     height: 3.5rem;
     display: flex;
     align-items: center;
-    padding-left: 2rem !important;
-    padding-right: 1.5rem !important;
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+    overflow-x:hidden;
 }
 
 .login-display-wrapper {
@@ -68,13 +70,19 @@ main {
     }
 }
 
+@media (min-width: 450px){
+    .sidebar {
+        width: 40%;
+    }
+} 
+
 @media (min-width: 641px) {
     .page {
         flex-direction: column;
     }
 
     .sidebar {
-        width: 300px;
+        width: 320px;
         height: calc(100vh - 3.5rem);
         position: relative;
         transition: width 0.5s ease-in-out;
