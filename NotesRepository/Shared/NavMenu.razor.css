@@ -1,6 +1,6 @@
 nav {
     height: calc(100vh - 3.5rem );
-    z-index:99;
+    z-index: 99;
 }
 
 .navigation {
@@ -8,9 +8,8 @@ nav {
     overflow-y: auto;
 }
 
-.my-list-item{
-    margin-left:10px;
-    
+.my-list-item {
+    margin-left: 10px;
 }
 
 .navbar-toggler {
@@ -63,15 +62,15 @@ nav {
         background: var(--my-white);
     }
 
-.nav-item ::deep a.active {
-    background-color: var(--my-white);
-    color: white;
-}
+        .nav-item ::deep a.active {
+            background-color: var(--my-white);
+            color: white;
+        }
 
         .nav-item ::deep a:hover {
             background-color: var(--my-white);
             color: white;
-            cursor:pointer;
+            cursor: pointer;
         }
 
 @media (min-width: 750px) {
@@ -94,4 +93,3 @@ nav {
         display: block;
     }
 }
-

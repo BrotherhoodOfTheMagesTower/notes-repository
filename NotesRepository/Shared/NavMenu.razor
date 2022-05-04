@@ -7,7 +7,7 @@
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor
 @inject UserRepository _ur;
 @inject DirectoryRepository _dr;
-@inject IModalService modal;  
+@inject IModalService modal;
 
 
 <nav class="flex-column navigation">
@@ -18,74 +18,74 @@
     </div>
     <br />
     <BlazoredTypeahead SearchMethod="NotesSearch" @bind-Value="searchPhrase">
-            <SelectedTemplate>
-                @context.Content
-            </SelectedTemplate>
-            <ResultTemplate>
-                 @context.Content
-            </ResultTemplate>
-            <NotFoundTemplate>
-                Sorry, there weren't any search results.
-            </NotFoundTemplate>
-        </BlazoredTypeahead>
+        <SelectedTemplate>
+            @context.Content
+        </SelectedTemplate>
+        <ResultTemplate>
+            @context.Content
+        </ResultTemplate>
+        <NotFoundTemplate>
+            Sorry, there weren't any search results.
+        </NotFoundTemplate>
+    </BlazoredTypeahead>
 
     <AuthorizeView>
         <!--TODO tutej trzeba dodać role, nie dodałem bo nie wiem jakie mamy Xd-->
         <Authorized>
-<br />
+            <br />
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="/editNote">
-                    <span class="oi oi-copywriting"></span>New Note
+                    <span class="oi oi-copywriting" aria-hidden="true"></span>New Note
                 </NavLink>
             </div>
-        
-    <div class="nav-item px-3">
-        <NavLink class="nav-link" href="#" Match="NavLinkMatch.All">
-            <span class="oi oi-home" aria-hidden="true"></span> Home
-        </NavLink>
-    </div>
-    <div class="nav-item px-3">
-        <NavLink class="nav-link" href="#">
-            <span class="oi oi-calendar" aria-hidden="true"></span> Calendar
-        </NavLink>
-    </div>
-    <div class="nav-item px-3">
-        <NavLink class="dropdown-toggle nav-link" @onclick="() => TogleSubmenu()">
-            <span class="oi oi-folder" aria-hidden="true" ></span>Folders  
-        </NavLink>
-        
-    </div>
-    @if (allFolders)
-    {
-        if (dirs is not null)
-        {
-            foreach (var dir in dirs)
+
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="#" Match="NavLinkMatch.All">
+                    <span class="oi oi-home" aria-hidden="true"></span> Home
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="#">
+                    <span class="oi oi-calendar" aria-hidden="true"></span> Calendar
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="dropdown-toggle nav-link" @onclick="() => TogleSubmenu()">
+                    <span class="oi oi-folder" aria-hidden="true"></span>Folders
+                </NavLink>
+
+            </div>
+            @if (allFolders)
             {
-                <div class="nav-item my-nav-item">
-                    <NavLink class="nav-link" href="#">
-                        <span class="oi oi-folder" aria-hidden="true"></span>@dir.Name
-                        <span class="oi oi-arrow-right my-list-item" @onclick="@(() => modal.Show<FolderMenu>(@dir.Name))"></span>
-                    </NavLink>
-                </div>
+                if (dirs is not null)
+                {
+                    foreach (var dir in dirs)
+                    {
+                        <div class="nav-item my-nav-item">
+                            <NavLink class="nav-link" href="#">
+                                <span class="oi oi-folder" aria-hidden="true"></span><span class="p-1">@dir.Name</span>
+                                <span class="oi oi-arrow-right " @onclick="@(() => modal.Show<FolderMenu>(@dir.Name,options))"></span>
+                            </NavLink>
+                        </div>
+                    }
+                }
             }
-        }
-    }
-    <div class="nav-item px-3">
-        <NavLink class="nav-link" href="#">
-            <span class="oi oi-text" aria-hidden="true"></span> Templates
-        </NavLink>
-    </div>
-    <div class="nav-item px-3">
-        <NavLink class="dropdown-toggle nav-link">
-            <span class="oi oi-share" aria-hidden="true"></span> Shared
-        </NavLink>
-    </div>
-    <div class="nav-item px-3">
-        <NavLink class="dropdown-toggle nav-link">
-            <span class="oi oi-trash" aria-hidden="true"></span> Trash
-        </NavLink>
-    </div>
-    </Authorized>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="#">
+                    <span class="oi oi-text" aria-hidden="true"></span> Templates
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="dropdown-toggle nav-link">
+                    <span class="oi oi-share" aria-hidden="true"></span> Shared
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="dropdown-toggle nav-link">
+                    <span class="oi oi-trash" aria-hidden="true"></span> Trash
+                </NavLink>
+            </div>
+        </Authorized>
     </AuthorizeView>
 </nav>
 
@@ -103,12 +103,18 @@
     private bool allFolders = false;
     private ICollection<Data.Models.Directory>? dirs;
     public Note searchPhrase;
-    private bool searching=false;
-    List<Note> notes;
+    private bool searching = false;
+    private List<Note> notes;
+    private ModalOptions options = new ModalOptions()
+        {
+
+            Animation = ModalAnimation.FadeInOut(0.1),
+        };
+
 
     protected override void OnInitialized()
     {
-            notes = new List<Note>
+        notes = new List<Note>
             {
                 new Note("Ala ma kota"),
                 new Note("Ala Jakaś"),
@@ -134,7 +140,7 @@
     }
 
     private async Task<ICollection<Data.Models.Directory>?> GetAllUserDirectories()
-    {   
+    {
         string currentUserId = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
         if (currentUserId is not null)
         {
