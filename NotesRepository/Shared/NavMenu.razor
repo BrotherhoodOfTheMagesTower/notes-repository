@@ -7,6 +7,8 @@
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor
 @inject UserRepository _ur;
 @inject DirectoryRepository _dr;
+@inject IModalService modal;  
+
 
 <nav class="flex-column navigation">
     <div class="top-row ps-3 navbar navbar-dark">
@@ -48,9 +50,8 @@
         </NavLink>
     </div>
     <div class="nav-item px-3">
-        <NavLink class="dropdown-toggle nav-link">
-            <span class="oi oi-folder" aria-hidden="true" @onclick="() => TogleSubmenu()"></span>Folders 
-           <FolderMenu/>
+        <NavLink class="dropdown-toggle nav-link" @onclick="() => TogleSubmenu()">
+            <span class="oi oi-folder" aria-hidden="true" ></span>Folders  
         </NavLink>
         
     </div>
@@ -62,8 +63,8 @@
             {
                 <div class="nav-item my-nav-item">
                     <NavLink class="nav-link" href="#">
-                        <span class="oi oi-folder" aria-hidden="true"></span> @dir.Name
-                        <FolderMenu/>
+                        <span class="oi oi-folder" aria-hidden="true"></span>@dir.Name
+                        <span class="oi oi-arrow-right my-list-item" @onclick="@(() => modal.Show<FolderMenu>(@dir.Name))"></span>
                     </NavLink>
                 </div>
             }
@@ -124,6 +125,7 @@
     {
         allFolders = !allFolders;
         await GetAllUserDirectories();
+
     }
 
     private async Task<IEnumerable<Note>> NotesSearch(string searchText)

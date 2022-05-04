@@ -1,18 +1,12 @@
-using NotesRepository.Data;
-using Microsoft.EntityFrameworkCore;
-using NotesRepository.Areas.Identity.Data;
+using Blazored.Modal;
+using Blazored.Toast;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.EntityFrameworkCore;
 using NotesRepository.Areas.Identity;
-using Blazored.Toast;
-using NotesRepository.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Blazored.Toast;
+using NotesRepository.Areas.Identity.Data;
+using NotesRepository.Data;
 using NotesRepository.Repositories;
 using NotesRepository.Services;
-using Azure.Storage.Blobs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,11 +31,12 @@ builder.Services.AddScoped<AzureStorageHelper>();
 
 builder.Services.AddScoped<NoteService>();
 builder.Services.AddBlazoredToast();
+builder.Services.AddBlazoredModal();
 
 builder.Services.AddSingleton<ViewOptionService>();
 
 var app = builder.Build();
- 
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
