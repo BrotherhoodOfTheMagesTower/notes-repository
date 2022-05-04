@@ -7,7 +7,7 @@
 
 main {
     flex: 1;
-    display: flex;
+    overflow-y: auto;
 }
 
 .top-belt {
@@ -21,7 +21,7 @@ main {
     background-image: linear-gradient(180deg, #1B5EAB 0%,#009BBF 70%);
     z-index: 99;
     position: absolute;
-    width: calc(50% );
+    width: calc(50vw);
     height: calc(100vh - 3.5rem);
     overflow: hidden;
 }
@@ -72,7 +72,7 @@ main {
 
 @media (min-width: 450px){
     .sidebar {
-        width: 40%;
+        width: 40vw;
     }
 } 
 
@@ -82,9 +82,9 @@ main {
     }
 
     .sidebar {
+        z-index: 1;
         width: 320px;
-        height: calc(100vh - 3.5rem);
-        position: relative;
+        height: calc(100vh - 3.rem);
         transition: width 0.5s ease-in-out;
     }
 
