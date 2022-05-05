@@ -6,6 +6,7 @@
 @using NotesRepository.Services
 @using System.Security.Claims
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor
+@inject Microsoft.Extensions.Localization.IStringLocalizer<Resource> localizer
 
 @inject NoteService _ns;
 @inject UserRepository _ur;
