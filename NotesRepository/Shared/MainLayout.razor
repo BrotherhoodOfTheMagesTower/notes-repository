@@ -9,26 +9,27 @@
 <BlazoredToasts Position="ToastPosition.BottomRight"
                 Timeout="10"
                 IconType="IconType.Material"
-                ErrorIcon="" 
+                ErrorIcon=""
                 InfoIcon=""
                 SuccessIcon=""
-                WarningIcon="" 
+                WarningIcon=""
                 ShowProgressBar="true" />
 
 <div class="page">
-    
-    <div class="top-row">
-         <span class="oi oi-menu" aria-hidden="true" @onclick="ViewOption.Toggle"></span>
-         <div class="login-display-wrapper">
-            <LoginDisplay />
-         </div>
+
+
+    <div class="sidebar @ViewOption.NavBarClass">
+        <NavMenu />
     </div>
 
     <main>
-        <div class="sidebar @ViewOption.NavBarClass">
-            <NavMenu />
+        <div class="top-row">
+            <span class="oi oi-menu" aria-hidden="true" @onclick="ViewOption.Toggle "></span>
+            <div class="login-display-wrapper">
+                <LoginDisplay />
+            </div>
         </div>
-        <article class="content px-4">
+        <article class="content px-4 pb-3">
             @Body
         </article>
     </main>
@@ -39,7 +40,9 @@
 
     protected override async Task OnInitializedAsync()
     {
-        ViewOption.OnChanged = () => { 
+        ViewOption.FirstLoad = true;
+        ViewOption.OnChanged = () =>
+        {
             StateHasChanged();//Refresh
         };
     }

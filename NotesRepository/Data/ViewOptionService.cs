@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace NotesRepository.Data
+﻿namespace NotesRepository.Data
 {
     public class ViewOptionService
     {
         private bool _navBarVisible = true;
+        public bool FirstLoad { get; set; } = true;
 
-        public Action OnChanged { get; set; }
+        public Action? OnChanged { get; set; }
 
         public bool IsNavigationVisible { get { return _navBarVisible; } }
 
@@ -25,8 +21,13 @@ namespace NotesRepository.Data
         {
             get
             {
-                if (_navBarVisible) return String.Empty;//No additional css class for show nav bar
-                return "d-none";//d-none class will hide the div
+                if (FirstLoad)
+                {
+                    FirstLoad = false;
+                    return " ";
+                }
+                if (_navBarVisible) return "slide-in-left ";
+                return "slide-out-left";
             }
         }
     }
