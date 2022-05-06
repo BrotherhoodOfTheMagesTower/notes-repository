@@ -23,8 +23,10 @@
     </div>
 
     <main>
-        <div class="top-row">
-            <span class="oi oi-menu" aria-hidden="true" @onclick="ViewOption.Toggle "></span>
+        <div class="top-row justify-content-between">
+            <div class="oi-menu-wrapper">
+                <div class="oi oi-menu" aria-hidden="true" @onclick="ViewOption.Toggle "></div>
+            </div>
             <div class="login-display-wrapper">
                 <LoginDisplay />
             </div>
@@ -40,7 +42,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        ViewOption.FirstLoad = true;
         ViewOption.OnChanged = () =>
         {
             StateHasChanged();//Refresh

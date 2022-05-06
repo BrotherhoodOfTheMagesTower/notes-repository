@@ -3,8 +3,6 @@
     public class ViewOptionService
     {
         private bool _navBarVisible = true;
-        public bool FirstLoad { get; set; } = true;
-
         public Action? OnChanged { get; set; }
 
         public bool IsNavigationVisible { get { return _navBarVisible; } }
@@ -21,13 +19,8 @@
         {
             get
             {
-                if (FirstLoad)
-                {
-                    FirstLoad = false;
-                    return " ";
-                }
-                if (_navBarVisible) return "slide-in-left ";
-                return "slide-out-left";
+                if (_navBarVisible) return string.Empty;//No additional css class for show nav bar
+                return "d-none";//d-none class will hide the div
             }
         }
     }
