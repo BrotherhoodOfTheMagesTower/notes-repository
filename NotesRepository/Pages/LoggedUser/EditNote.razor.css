@@ -1,0 +1,35 @@
+﻿.my-text-area {
+    padding: 20px;
+    height: 80vh;
+    margin-bottom: 1rem;
+    overflow: auto;
+    border: 1px solid #000000;
+    width: 100%;
+}
+.my-preview {
+    border: 1px solid #000000;
+    padding: 20px;
+    overflow: auto;
+    height: 80vh;
+    width: 100%;
+}
+.my-container {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.my-sub-container {
+    flex: 100%;
+}
+
+img{
+    width:100px;
+}
+
+@media (min-width: 750px){
+    .my-sub-container {
+        flex: 50%;
+    }
+}
+

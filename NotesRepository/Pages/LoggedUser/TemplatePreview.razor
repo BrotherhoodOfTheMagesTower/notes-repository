@@ -1,0 +1,65 @@
+﻿@page "/selectTemplate"
+
+@using Markdig
+@using NotesRepository.Data.Models
+@using NotesRepository.Repositories
+@using NotesRepository.Services
+@using Data.Constants
+@using System.Security.Claims
+
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor
+@inject Microsoft.Extensions.Localization.IStringLocalizer<Resource> localizer
+@inject NavigationManager navigationManager
+
+@if (preview.Item1 is null || content is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="my-container">
+        <div class="my-sub-container p-2 ">
+            <center><h3>@localizer["preview"]</h3> </center>
+            <ul>
+                @for(int i = 0; i < content.Count; i++)
+                {
+                    var local = i;
+                    <li>
+                        <button type="button" class="btn btn-primary" @onclick="() => changePreview(local)">@content[local].Item1</button>
+                    </li>
+                }
+            </ul>
+        </div>
+        <div class="my-sub-container p-2">
+             <center><h3>@localizer["preview"]</h3></center>
+            <div class="my-preview">
+                @((MarkupString)Markdown.ToHtml(preview.Item1, pipeline))
+            </div>
+            <center>
+                <button type="button" class="btn btn-primary" @onclick="changePageToEditNote">Start writing</button>
+            </center>
+        </div>
+    </div>
+}
+
+@code
+{
+    private List<(string, string)> content; // first item = title, second item = tempalte content
+    private (string, int) preview;          // first item = preview content, second item = template index
+    private MarkdownPipeline? pipeline;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        content = new List<(string, string)>();
+        content.Add(("To-do list", Templates.ToDoTemplate));
+        content.Add(("Test, remove me later!", Templates.ToDoWithColumnTemplate));
+        preview = init();
+        pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build(); // Uruchomienie rozszerzeń markdown
+    }
+
+    private void changePreview(int index) => preview = index >= 0 && index <= content.Count ? (content[index].Item2, index) : ("Wrong index", -1);
+
+    private (string, int) init() => content.Count > 0 ? (content[0].Item2, 0) : ("No templates in the system", -1);
+
+    private void changePageToEditNote() => navigationManager.NavigateTo($"/editNote/{preview.Item2.ToString()}");
+}

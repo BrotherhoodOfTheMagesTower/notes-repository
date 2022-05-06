@@ -6,7 +6,7 @@ namespace NotesRepository.Repositories.Interfaces
     {
         Task<ICollection<Event>> GetAllUserEventsAsync(string userId);
         Task<ICollection<Event>> GetEventsByContentAsync(string content);
-        Task<ICollection<Event>> GetEventsByDateAsync(DateTime date);
-        Task<bool> DeleteManyAsync(ICollection<Event> events);
+        Task<ICollection<Event>> GetEventsByStartDateAsync(DateTime date);
+        Task<bool> DeleteManyAsync(ICollection<Guid> eventIds);
     }
 }

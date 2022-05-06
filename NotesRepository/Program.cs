@@ -1,9 +1,10 @@
-using NotesRepository.Data;
-using Microsoft.EntityFrameworkCore;
-using NotesRepository.Areas.Identity.Data;
-using Microsoft.AspNetCore.Components.Authorization;
-using NotesRepository.Areas.Identity;
+using Blazored.Modal;
 using Blazored.Toast;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.EntityFrameworkCore;
+using NotesRepository.Areas.Identity;
+using NotesRepository.Areas.Identity.Data;
+using NotesRepository.Data;
 using NotesRepository.Repositories;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,8 @@ using System.Threading.Tasks;
 using Blazored.Toast;
 using NotesRepository.Repositories;
 using NotesRepository.Services;
-using Azure.Storage.Blobs;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,11 +24,21 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlSer
 builder.Services
     .AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddEntityFrameworkStores<ApplicationDbContext>();
+builder.Services
+    .AddAuthentication()
+        .AddGoogle(opts =>
+        {
+            opts.ClientId = "1024151888164-a4ckjd6fc4kdpecff7cp7u4lhacqgbsh.apps.googleusercontent.com";
+            opts.ClientSecret = "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";
+            opts.SignInScheme = IdentityConstants.ExternalScheme;
+        });
 
 //Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>>();
+builder.Services.AddControllers();
+builder.Services.AddLocalization();
 builder.Services.AddScoped<NoteRepository>();
 builder.Services.AddScoped<CollaboratorsNotesRepository>();
 builder.Services.AddScoped<DirectoryRepository>();
@@ -37,11 +49,12 @@ builder.Services.AddScoped<AzureStorageHelper>();
 
 builder.Services.AddScoped<NoteService>();
 builder.Services.AddBlazoredToast();
+builder.Services.AddBlazoredModal();
 
 builder.Services.AddSingleton<ViewOptionService>();
 
 var app = builder.Build();
- 
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

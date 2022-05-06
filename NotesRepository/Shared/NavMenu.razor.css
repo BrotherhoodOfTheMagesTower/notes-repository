@@ -1,6 +1,6 @@
-nav {
-    overflow-y: auto;
-    height: calc(100vh - 3.5rem );
+
+.my-list-item {
+    margin-left: 10px;
 }
 
 .navbar-toggler {
@@ -12,9 +12,14 @@ nav {
     background-color: var(--third-color);
 }
 
+.navbar-brand:hover {
+    color: white;
+}
+
 .navbar-brand {
     font-size: 0.9rem;
     font-weight: bold;
+    color: black;
 }
 
 .oi {
@@ -32,6 +37,7 @@ nav {
 .nav-item {
     font-size: 0.8rem;
     padding-bottom: 0.4rem;
+    overflow: hidden;
 }
 
     .nav-item:first-of-type {
@@ -52,18 +58,18 @@ nav {
         background: var(--my-white);
     }
 
-.nav-item ::deep a.active {
-    background-color: var(--my-white);
-    color: white;
-}
-
-        .nav-item ::deep a:hover {
+        .nav-item ::deep a.active {
             background-color: var(--my-white);
             color: white;
-            cursor:pointer;
         }
 
-@media (min-width: 641px) {
+        .nav-item ::deep a:hover {
+            background-color: var(--third-color);
+            color: black;
+            cursor: pointer;
+        }
+
+@media (min-width: 750px) {
     .my-nav-item {
         margin-left: 38px;
         margin-right: 38px;

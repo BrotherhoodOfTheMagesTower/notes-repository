@@ -1,0 +1,20 @@
+﻿@inject Microsoft.Extensions.Localization.IStringLocalizer<Resource> localizer
+
+<div class="option-menu">
+    <div class="nav-item px-3">
+        <NavLink class="nav-link">
+            <span class="oi oi-plus" aria-hidden="true"></span> @localizer["addFolder"]
+        </NavLink>
+    </div>
+    <div class="nav-item px-3">
+        <NavLink class="nav-link">
+            <span class="oi oi-trash" aria-hidden="true"></span> @localizer["deleteFolder"]
+        </NavLink>
+    </div>
+    <div class="nav-item px-3">
+        <NavLink class="nav-link">
+            <span class="oi oi-brush" aria-hidden="true"></span> @localizer["renameFolder"]
+        </NavLink>
+    </div>
+</div>
+

@@ -5,12 +5,12 @@ namespace NotesRepository.Repositories.Interfaces
 {
     public interface ICollaboratorsNotesRepository
     {
-        Task<bool> AddNoteToCollaboratorAsync(CollaboratorsNotes collaborator);
-        Task<bool> AddNotesToCollaboratorAsync(ICollection<CollaboratorsNotes> collaborators);
-        Task<bool> DeleteNoteFromCollaboratorAsync(Guid noteId, string appUserId);
-        Task<bool> DeleteNoteFromCollaboratorAsync(CollaboratorsNotes collaborator);
-        Task<bool> DeleteNotesFromCollaboratorAsync(ICollection<CollaboratorsNotes> collaborators);
-        Task<ICollection<CollaboratorsNotes>> GetAllNotesCanBeEditedByUserAsync(string appUserId);
-        Task<ICollection<CollaboratorsNotes>> GetAllUsersRelatedToTheNoteAsync(Guid noteId);
+        Task<bool> AddCollaboratorToNoteAsync(CollaboratorsNotes collaborator);
+        Task<bool> AddCollaboratorsToNoteAsync(ICollection<CollaboratorsNotes> collaborators);
+        Task<bool> DeleteCollaboratorFromNoteAsync(Guid noteId, string appUserId);
+        Task<bool> DeleteCollaboratorFromNoteAsync(CollaboratorsNotes collaborator);
+        Task<bool> DeleteCollaboratorsFromNoteAsync(ICollection<CollaboratorsNotes> collaborators);
+        Task<ICollection<Note>> GetAllSharedNotesForUser(string appUserId);
+        Task<ICollection<ApplicationUser>> GetAllCollaboratorsForNote(Guid noteId);
     }
 }

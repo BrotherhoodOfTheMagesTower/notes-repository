@@ -287,8 +287,6 @@ namespace Tests.Repositories
             directories.Should().HaveCount(1);
             subDirectories.Should().HaveCount(0);
             await nr.DeleteAsync(directory);
-
-
         }
 
 

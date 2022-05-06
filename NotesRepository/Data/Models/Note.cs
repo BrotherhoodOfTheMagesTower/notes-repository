@@ -19,6 +19,12 @@ namespace NotesRepository.Data.Models
             Directory = directory;
         }
 
+        public Note(string content)
+        {
+            NoteId = new Guid();
+            Content = content;
+        }
+
         /// <summary>
         /// Unique ID of the note
         /// </summary>
@@ -94,9 +100,9 @@ namespace NotesRepository.Data.Models
         public bool IsMarkedAsDeleted { get; set; } = false;
 
         /// <summary>
-        /// Date and time when the note was marked as deleted
+        /// Date and time when the note was marked as deleted (optional)
         /// </summary>
-        public DateTime DeletedAt { get; set; }
+        public DateTime? DeletedAt { get; set; }
 
         /// <summary>
         /// Determines, wheter the note is pinned or not

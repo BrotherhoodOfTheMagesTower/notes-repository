@@ -1,7 +1,18 @@
-﻿@page "/editNote"
+﻿@page "/editNote/{templateIndex}"
 
 @using Markdig
+@using NotesRepository.Data.Models
+@using NotesRepository.Repositories
+@using NotesRepository.Services
+@using System.Security.Claims
+@using System.ComponentModel.DataAnnotations;
+@using Data.Constants;
 
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor
+@inject Microsoft.Extensions.Localization.IStringLocalizer<Resource> localizer
+@inject NavigationManager navigationManager
+@inject NoteService _ns;
+@inject UserRepository _ur;
 @inject IToastService toastService;
 
 @if (content is null)
@@ -10,30 +21,29 @@
 }
 else
 {
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col">
-                <h3>Treść notatki</h3>
-                <textarea style="height: 700px; width: 700px; margin-bottom: 1rem;" @bind-value="content" @bind-value:event="oninput"></textarea>
-                <center>
-                    <button type="button" class="btn btn-primary" @onclick="saveNote">Zapisz notatkę</button>
-                </center>
-            </div>
-            <div class="col">
-                <h3>Podgląd</h3>
-                <div style="width: 700px; border-radius: 1px; border: 1px solid #000000; padding: 20px; overflow-y: scroll; height: 700px;">
-                    @((MarkupString)Markdown.ToHtml(content, pipeline))
-                </div>
+    <div class="my-container">
+        <div class="my-sub-container p-2 ">
+            <center><h3>@localizer["templates"]</h3> </center>
+            <textarea class="my-text-area" @bind-value="content" @bind-value:event="oninput"></textarea>
+            <center>
+                <button type="button" class="btn btn-primary" @onclick="saveNote">Save</button>
+            </center>
+        </div>
+        <div class="my-sub-container p-2">
+             <center><h3>@localizer["preview"]</h3></center>
+            <div class="my-preview">
+                @((MarkupString)Markdown.ToHtml(content, pipeline))
             </div>
         </div>
     </div>
 }
 
-@code 
+@code
 {
-    // TODO przykładowy template, potem musimy ładować te przez nas przygotowane
+    [Parameter]
+    public string templateIndex { get; set; }
     private string content = "";
-    private MarkdownPipeline pipeline;
+    private MarkdownPipeline? pipeline;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -41,7 +51,7 @@ else
         pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build(); // Uruchomienie rozszerzeń markdown
     }
 
-    private void saveNote()
+    private async Task saveNote()
     {
         if (content.Length <= 0)
         {
@@ -49,39 +59,32 @@ else
         }
         else
         {
-            // TODO dostęp do bazy danych i wpisanie notatki
-            toastService.ShowSuccess("The note was saved.", "Congrats!");
+            string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (currentUserId != null)
+            {
+                var usr = await _ur.GetUserByIdAsync(currentUserId);
+                if (usr is not null)
+                {
+                    var result = await _ns.AddNoteAsync(new Note(null, "default", content, "", usr, new Directory("Def", usr)));
+                    if (result)
+                        toastService.ShowSuccess("The note was saved.", "Congrats!");
+                }
+            }
+
         }
     }
 
-    private string init()
+    private string init() // TODO narazie init obsługuje tylko wczytywanie templateów, trzeba dodać obsługę wczytywania z bazy
     {
-        return @"Template
-~~Przekreślenie~~ tekstu
-
----
-lub
-___
-
-> Akapit? Czy coś innego Xd
-
-[Mój Github](https://github.com/jacek13)
-
-> Lista:
-* element 1
-* element 2
-* element 3
-    * dzieli sie na pod element
-    * podelement prim
-
-> Lista numerowana:
-1. element 1
-2. element 2
-3. element 3
-
-`Jakis tekst`
-
-![zdjecie](https://avatars.githubusercontent.com/u/56163434?s=400&u=b60309cd30e98cc4c84079a406350c6d4b6f9c20&v=4)
-";
+        var index = Int32.Parse(templateIndex);
+        if (index > -1)
+        {
+            List<string> templates = new List<string>();
+            templates.Add(Templates.ToDoTemplate);
+            templates.Add(Templates.ToDoWithColumnTemplate);
+            return index >= 0 && index <= templates.Count ? templates[index] : "";
+        }
+        else
+            return "";
     }
 }
