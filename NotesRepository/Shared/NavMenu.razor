@@ -18,21 +18,21 @@
         </div>
     </div>
     <br />
-    <BlazoredTypeahead SearchMethod="NotesSearch" @bind-Value="searchPhrase">
-        <SelectedTemplate>
-            @context.Content
-        </SelectedTemplate>
-        <ResultTemplate>
-            @context.Content
-        </ResultTemplate>
-        <NotFoundTemplate>
-            Sorry, there weren't any search results.
-        </NotFoundTemplate>
-    </BlazoredTypeahead>
 
     <AuthorizeView>
         <!--TODO tutej trzeba dodać role, nie dodałem bo nie wiem jakie mamy Xd-->
         <Authorized>
+            <BlazoredTypeahead SearchMethod="NotesSearch" @bind-Value="searchPhrase">
+                <SelectedTemplate Context="searchContext">
+                    @searchContext.Content
+                </SelectedTemplate>
+                <ResultTemplate Context="resultContext">
+                    @resultContext.Content
+                </ResultTemplate>
+                <NotFoundTemplate Context="notFoundContext">
+                    Sorry, there weren't any search results.
+                </NotFoundTemplate>
+            </BlazoredTypeahead>
             <br />
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="/editNote">
@@ -141,7 +141,7 @@
     }
 
     private async Task<ICollection<Data.Models.Directory>?> GetAllUserDirectories()
-    {   
+    {
         string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (currentUserId is not null)
         {
