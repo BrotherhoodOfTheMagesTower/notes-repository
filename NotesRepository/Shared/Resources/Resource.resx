@@ -156,6 +156,9 @@
   <data name="renameFolder" xml:space="preserve">
     <value>Rename this folder</value>
   </data>
+  <data name="save" xml:space="preserve">
+    <value>Save</value>
+  </data>
   <data name="saveNote" xml:space="preserve">
     <value>Save note</value>
   </data>

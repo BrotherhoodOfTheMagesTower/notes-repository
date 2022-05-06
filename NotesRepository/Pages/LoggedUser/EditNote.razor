@@ -23,10 +23,10 @@ else
 {
     <div class="my-container">
         <div class="my-sub-container p-2 ">
-            <center><h3>@localizer["templates"]</h3> </center>
+            <center><h3>@localizer["content"]</h3> </center>
             <textarea class="my-text-area" @bind-value="content" @bind-value:event="oninput"></textarea>
             <center>
-                <button type="button" class="btn btn-primary" @onclick="saveNote">Save</button>
+                <button type="button" class="btn btn-primary" @onclick="saveNote">@localizer["save"]</button>
             </center>
         </div>
         <div class="my-sub-container p-2">

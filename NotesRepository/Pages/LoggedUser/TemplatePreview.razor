@@ -19,7 +19,7 @@ else
 {
     <div class="my-container">
         <div class="my-sub-container p-2 ">
-            <center><h3>@localizer["preview"]</h3> </center>
+            <center><h3>@localizer["templates"]</h3> </center>
             <ul>
                 @for(int i = 0; i < content.Count; i++)
                 {
@@ -36,7 +36,7 @@ else
                 @((MarkupString)Markdown.ToHtml(preview.Item1, pipeline))
             </div>
             <center>
-                <button type="button" class="btn btn-primary" @onclick="changePageToEditNote">Start writing</button>
+                <button type="button" class="btn btn-primary" @onclick="changePageToEditNote">@localizer["edit"]</button>
             </center>
         </div>
     </div>
