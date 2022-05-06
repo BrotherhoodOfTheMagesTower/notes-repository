@@ -13,31 +13,31 @@ Things that I need to do this weekend:
     * wash the bike";
 
             
-        public static readonly string ToDoWithColumnTemplate = @"#ToDo List
-            ~~Przekreślenie~~tekstu
+        public static readonly string ToDoWithColumnTemplate = @"# ToDo List
+~~Przekreślenie~~tekstu
 
-            ---
-            lub
-            ___
+---
+lub
+___
 
-            > Akapit? Czy coś innego Xd
+> Akapit? Czy coś innego Xd
 
-            [Mój Github] (https://github.com/jacek13)
+[Mój Github] (https://github.com/jacek13)
 
-            > Lista:
-            * element 1
-            * element 2
-            * element 3
-                * dzieli sie na pod element
-                * podelement prim
+> Lista:
+* element 1
+* element 2
+* element 3
+    * dzieli sie na pod element
+    * podelement prim
 
-            > Lista numerowana:
-            1. element 1
-            2. element 2
-            3. element 3
+> Lista numerowana:
+1. element 1
+2. element 2
+3. element 3
 
-            `Jakis tekst`
+`Jakis tekst`
 
-            ![zdjecie] (https://avatars.githubusercontent.com/u/56163434?s=400&u=b60309cd30e98cc4c84079a406350c6d4b6f9c20&v=4)";
+![zdjecie] (https://avatars.githubusercontent.com/u/56163434?s=400&u=b60309cd30e98cc4c84079a406350c6d4b6f9c20&v=4)";
     }
 }

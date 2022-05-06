@@ -147,6 +147,9 @@
   <data name="newNote" xml:space="preserve">
     <value>Nowa notatka</value>
   </data>
+  <data name="preview" xml:space="preserve">
+    <value>Podgląd</value>
+  </data>
   <data name="register" xml:space="preserve">
     <value>Zarejestruj się</value>
   </data>

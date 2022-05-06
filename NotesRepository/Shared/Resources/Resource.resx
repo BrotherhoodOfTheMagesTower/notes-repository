@@ -147,6 +147,9 @@
   <data name="newNote" xml:space="preserve">
     <value>New note</value>
   </data>
+  <data name="preveiw" xml:space="preserve">
+    <value>Preview</value>
+  </data>
   <data name="reguster" xml:space="preserve">
     <value>Register</value>
   </data>
