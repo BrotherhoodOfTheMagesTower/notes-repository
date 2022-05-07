@@ -160,10 +160,10 @@ namespace NotesRepository.Repositories
         public async Task<ICollection<Directory>?> GetAllSubDirectoriesOfParticularDirectory(Guid directoryId)
         {
             return await ctx.Directories
-                .Where(d => d.DirectoryId == directoryId)
                 .Include(s => s.SubDirectories)
-                .Select(d => d.SubDirectories)
-                .SingleOrDefaultAsync();
+                .Include(s => s.Notes)
+                .Where(d => d.ParentDir.DirectoryId == directoryId)
+                .ToListAsync();
         }
 
         /// <summary>
@@ -189,6 +189,44 @@ namespace NotesRepository.Repositories
             ctx.Directories.Update(directory);
             var result = await ctx.SaveChangesAsync();
             return result > 0;
+        }
+
+        /// <summary>
+        /// Marks the directory as currently edited
+        /// </summary>
+        /// <param name="directoryId">The unique ID of directory</param>
+        /// <returns>true if note was successfully marked as deleted; otherwise false</returns>
+        public async Task<bool> MarkDirectoryAsDeletedAsync(Guid directoryId)
+        {
+            var directory = await ctx.Directories.SingleOrDefaultAsync(x => x.DirectoryId == directoryId);
+            if (directory is not null)
+            {
+                directory.IsMarkedAsDeleted = true;
+                directory.DeletedAt = DateTime.UtcNow;
+                ctx.Update(directory);
+                var result = await ctx.SaveChangesAsync();
+                return result > 0;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Marks the directory as currently edited
+        /// </summary>
+        /// <param name="directoryId">The unique ID of directory</param>
+        /// <returns>true if note was successfully marked as not deleted; otherwise false</returns>
+        public async Task<bool> MarkDirectoryAsNotDeletedAsync(Guid directoryId)
+        {
+            var directory = await ctx.Directories.SingleOrDefaultAsync(x => x.DirectoryId == directoryId);
+            if (directory is not null)
+            {
+                directory.IsMarkedAsDeleted = false;
+                directory.DeletedAt = null;
+                ctx.Update(directory);
+                var result = await ctx.SaveChangesAsync();
+                return result > 0;
+            }
+            return false;
         }
     }
 }

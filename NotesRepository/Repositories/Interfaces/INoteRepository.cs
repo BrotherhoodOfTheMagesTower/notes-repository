@@ -6,6 +6,7 @@ namespace NotesRepository.Repositories.Interfaces
     {
         Task<ICollection<Note>> GetAllUserNotesAsync(string userId);
         Task<Note?> GetNoteByTitleAsync(string title);
+        Task<ICollection<Note>> GetAllDirectoryNotesAsync(Guid directoryId);
         Task<bool> AddManyAsync(ICollection<Note> notes);
         Task<bool> DeleteManyAsync(ICollection<Note> notes);
         Task<List<Note>> SearchNoteByTitleAndContentAsync(string searchText);

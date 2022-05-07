@@ -145,6 +145,24 @@ namespace NotesRepository.Repositories
         }
 
         /// <summary>
+        /// Gets all notes from the database, that are assigned to specific directory 
+        /// </summary>
+        /// <param name="directoryId">The unique ID of Directory, which notes will be returned</param>
+        /// <returns>A collection of notes assigned to particular directory, that are currently stored in the database</returns>
+        public async Task<ICollection<Note>?> GetAllDirectoryNotesAsync(Guid directoryId)
+        {
+            return await ctx.Notes
+                .Include(d => d.Directory)
+                .Include(o => o.Owner)
+                .Include(i => i.Images)
+                .Include(e => e.EditedBy)
+                .Include(ev => ev.Event)
+                .Include(c => c.CollaboratorsNotes)
+                .Where(d => d.Directory.DirectoryId == directoryId)
+                .ToListAsync();
+        }
+
+        /// <summary>
         /// Gets all notes, which title or content contains the searchText
         /// </summary>
         /// <param name="searchText">The phrase that user has provided</param>
@@ -191,5 +209,7 @@ namespace NotesRepository.Repositories
             }
             return false;
         }
+
+
     }
 }
