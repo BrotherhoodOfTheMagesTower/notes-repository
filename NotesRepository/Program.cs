@@ -82,4 +82,6 @@ app.MapFallbackToPage("/_Host");
 var serviceProvider = app.Services?.GetService<IServiceScopeFactory>()?.CreateScope().ServiceProvider;
 serviceProvider!.GetService<ApplicationDbContext>()!.Database.Migrate();
 
+serviceProvider!.SeedDefaultEntities();
+
 app.Run();

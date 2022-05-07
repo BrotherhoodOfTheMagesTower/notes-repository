@@ -51,23 +51,61 @@
                 </NavLink>
             </div>
             <div class="nav-item px-3">
-                <NavLink class="dropdown-toggle nav-link" @onclick="() => TogleSubmenu()">
+                <NavLink class="dropdown-toggle nav-link" @onclick="() => ToggleSubmenu()">
                     <span class="oi oi-folder" aria-hidden="true"></span>@localizer["folders"]
                 </NavLink>
-
             </div>
-            @if (allFolders)
+            @if (areAllFoldersToggled)
             {
-                if (dirs is not null)
+                if (mainDirs is not null)
                 {
-                    foreach (var dir in dirs)
+                    foreach (var dir in mainDirs)
                     {
-                        <div class="nav-item my-nav-item">
-                            <NavLink class="nav-link" href="#">
-                                <span class="oi oi-folder" aria-hidden="true"></span><span class="p-1">@dir.Name</span>
-                                <span class="oi oi-arrow-right " @onclick="@(() => modal.Show<FolderMenu>(@dir.Name,options))"></span>
-                            </NavLink>
-                        </div>
+                        @if (dir.SubDirectories is not null)
+                        {
+                            <div class="nav-item my-nav-item">
+                                <NavLink class="dropdown-toggle nav-link" @onclick="() => ToggleSubDirectory(dir.DirectoryId)">
+                                    <span class="oi oi-folder" aria-hidden="true"></span><span class="p-1">@dir.Name</span>
+                                    <span class="oi oi-arrow-right " @onclick="@(() => modal.Show<FolderMenu>(@dir.Name,options))"></span>
+                                </NavLink>
+                            </div>
+                            if (isSubDirToggled)
+                            {
+                                if (subDirs is not null)
+                                {
+                                    foreach (var subDir in subDirs)
+                                    {
+                                        @if (subDir.SubDirectories is not null)
+                                        {
+                                            <div class="nav-item my-nav-item">
+                                                <NavLink class="dropdown-toggle nav-link" @onclick="() => ToggleSubDirectory(subDir.DirectoryId)">
+                                                    <span class="oi oi-folder" aria-hidden="true"></span><span class="p-1">@subDir.Name</span>
+                                                    <span class="oi oi-arrow-right " @onclick="@(() => modal.Show<FolderMenu>(@subDir.Name,options))"></span>
+                                                </NavLink>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="nav-item my-nav-item">
+                                                <NavLink class="nav-link" href="#">
+                                                    <span class="oi oi-folder" aria-hidden="true"></span><span class="p-1">@subDir.Name</span>
+                                                    <span class="oi oi-arrow-right " @onclick="@(() => modal.Show<FolderMenu>(@subDir.Name,options))"></span>
+                                                </NavLink>
+                                            </div>
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            <div class="nav-item my-nav-item">
+                                <NavLink class="nav-link" href="#">
+                                    <span class="oi oi-folder" aria-hidden="true"></span><span class="p-1">@dir.Name</span>
+                                    <span class="oi oi-arrow-right " @onclick="@(() => modal.Show<FolderMenu>(@dir.Name,options))"></span>
+                                    </NavLink>
+                            </div>
+                        }
                     }
                 }
             }
@@ -94,15 +132,17 @@
 @code {
     protected override async Task OnInitializedAsync()
     {
-        dirs = await GetAllUserDirectories();
+        mainDirs = await GetAllUserMainDirectories();
     }
 
     private bool collapseNavMenu = true;
 
     //private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
-    private bool allFolders = false;
-    private ICollection<Data.Models.Directory>? dirs;
+    private bool areAllFoldersToggled = false;
+    private bool isSubDirToggled = false;
+    private ICollection<Directory>? mainDirs;
+    private ICollection<Directory>? subDirs;
     public Note searchPhrase;
     private bool searching = false;
     private List<Note> notes;
@@ -128,11 +168,16 @@
         collapseNavMenu = !collapseNavMenu;
     }
 
-    private async Task TogleSubmenu()
+    private async Task ToggleSubmenu()
     {
-        allFolders = !allFolders;
-        await GetAllUserDirectories();
+        areAllFoldersToggled = !areAllFoldersToggled;
+        await GetAllUserMainDirectories();
+    }
 
+    private async Task ToggleSubDirectory(Guid directoryId)
+    {
+        isSubDirToggled = !isSubDirToggled;
+        subDirs = await GetAllSubDirectoriesForSpecificDirectory(directoryId);
     }
 
     private async Task<IEnumerable<Note>> NotesSearch(string searchText)
@@ -140,15 +185,19 @@
         return notes;
     }
 
-    private async Task<ICollection<Data.Models.Directory>?> GetAllUserDirectories()
+    private async Task<ICollection<Directory>?> GetAllUserMainDirectories()
     {
         string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (currentUserId is not null)
         {
-            return await _dr.GetAllDirectoriesForParticularUserAsync(currentUserId);
+            var allDirs = await _dr.GetAllDirectoriesForParticularUserAsync(currentUserId);
+            return allDirs.Where(x => x.ParentDir == null && x.Name != "Bin").ToList();
         }
         return null;
     }
+
+    private async Task<ICollection<Directory>?> GetAllSubDirectoriesForSpecificDirectory(Guid directoryId)
+        => await _dr.GetAllSubDirectoriesOfParticularDirectory(directoryId);
 
     private void SearchPhrase()
     {
