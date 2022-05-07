@@ -1,22 +1,25 @@
-﻿
+﻿@inject Microsoft.Extensions.Localization.IStringLocalizer<Resource> localizer
+
 <AuthorizeView>
     <Authorized>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="Identity/Account/Manage">
+        <div class="nav-item">
+            <NavLink href="Identity/Account/Manage">
                 <a>Hello, @context.User.Identity?.Name!</a>
             </NavLink>
         </div>
     </Authorized>
     <NotAuthorized>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="Identity/Account/Register">
-                <span class="oi oi-plus" aria-hidden="true"></span> Register
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="Identity/Account/Login">
-                <span class="oi oi-account-login" aria-hidden="true"></span> Log in
-            </NavLink>
+        <div class="login-parent d-flex">
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="Identity/Account/Register">
+                    <span class="oi oi-plus" aria-hidden="true"></span> @localizer["register"]
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="Identity/Account/Login">
+                    <span class="oi oi-account-login" aria-hidden="true"></span> @localizer["logIn"]
+                </NavLink>
+            </div>
         </div>
     </NotAuthorized>
 </AuthorizeView>

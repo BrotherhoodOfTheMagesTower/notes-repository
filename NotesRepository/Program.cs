@@ -37,6 +37,8 @@ builder.Services
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>>();
+builder.Services.AddControllers();
+builder.Services.AddLocalization();
 builder.Services.AddScoped<NoteRepository>();
 builder.Services.AddScoped<CollaboratorsNotesRepository>();
 builder.Services.AddScoped<DirectoryRepository>();

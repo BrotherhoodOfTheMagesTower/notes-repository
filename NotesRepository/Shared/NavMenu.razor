@@ -1,9 +1,11 @@
 ﻿@inject Data.ViewOptionService ViewOption
+@using Microsoft.Extensions.Localization
 @using System.Security.Claims
 @using NotesRepository.Repositories
 @using Blazored.Typeahead
 @using Data.Models
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor
+@inject Microsoft.Extensions.Localization.IStringLocalizer<Resource> localizer
 @inject UserRepository _ur;
 @inject DirectoryRepository _dr;
 @inject IModalService modal;
@@ -16,41 +18,41 @@
         </div>
     </div>
     <br />
-    <BlazoredTypeahead SearchMethod="NotesSearch" @bind-Value="searchPhrase">
-        <SelectedTemplate>
-            @context.Content
-        </SelectedTemplate>
-        <ResultTemplate>
-            @context.Content
-        </ResultTemplate>
-        <NotFoundTemplate>
-            Sorry, there weren't any search results.
-        </NotFoundTemplate>
-    </BlazoredTypeahead>
 
     <AuthorizeView>
         <!--TODO tutej trzeba dodać role, nie dodałem bo nie wiem jakie mamy Xd-->
         <Authorized>
+            <BlazoredTypeahead SearchMethod="NotesSearch" @bind-Value="searchPhrase">
+                <SelectedTemplate Context="searchContext">
+                    @searchContext.Content
+                </SelectedTemplate>
+                <ResultTemplate Context="resultContext">
+                    @resultContext.Content
+                </ResultTemplate>
+                <NotFoundTemplate Context="notFoundContext">
+                    Sorry, there weren't any search results.
+                </NotFoundTemplate>
+            </BlazoredTypeahead>
             <br />
             <div class="nav-item px-3">
-                <NavLink class="nav-link" href="/editNote">
-                    <span class="oi oi-copywriting" aria-hidden="true"></span>New Note
+                <NavLink class="nav-link" href="/editNote/-1">
+                    <span class="oi oi-copywriting" aria-hidden="true"></span> @localizer["newNote"]
                 </NavLink>
             </div>
 
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="#" Match="NavLinkMatch.All">
-                    <span class="oi oi-home" aria-hidden="true"></span> Home
+                    <span class="oi oi-home" aria-hidden="true"></span> @localizer["homePage"]
                 </NavLink>
             </div>
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="#">
-                    <span class="oi oi-calendar" aria-hidden="true"></span> Calendar
+                    <span class="oi oi-calendar" aria-hidden="true"></span> @localizer["calendar"]
                 </NavLink>
             </div>
             <div class="nav-item px-3">
                 <NavLink class="dropdown-toggle nav-link" @onclick="() => TogleSubmenu()">
-                    <span class="oi oi-folder" aria-hidden="true"></span>Folders
+                    <span class="oi oi-folder" aria-hidden="true"></span>@localizer["folders"]
                 </NavLink>
 
             </div>
@@ -70,18 +72,18 @@
                 }
             }
             <div class="nav-item px-3">
-                <NavLink class="nav-link" href="#">
-                    <span class="oi oi-text" aria-hidden="true"></span> Templates
+                <NavLink class="nav-link" href="/selectTemplate">
+                    <span class="oi oi-text" aria-hidden="true"></span> @localizer["templates"]
                 </NavLink>
             </div>
             <div class="nav-item px-3">
                 <NavLink class="dropdown-toggle nav-link">
-                    <span class="oi oi-share" aria-hidden="true"></span> Shared
+                    <span class="oi oi-share" aria-hidden="true"></span> @localizer["shared"]
                 </NavLink>
             </div>
             <div class="nav-item px-3">
                 <NavLink class="dropdown-toggle nav-link">
-                    <span class="oi oi-trash" aria-hidden="true"></span> Trash
+                    <span class="oi oi-trash" aria-hidden="true"></span> @localizer["trash"]
                 </NavLink>
             </div>
         </Authorized>
@@ -139,7 +141,7 @@
     }
 
     private async Task<ICollection<Data.Models.Directory>?> GetAllUserDirectories()
-    {   
+    {
         string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (currentUserId is not null)
         {
