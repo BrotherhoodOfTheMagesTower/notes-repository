@@ -9,6 +9,10 @@ namespace NotesRepository.Data
 {
     public static class DefaultEntitiesSeeder
     {
+        /// <summary>
+        /// This method is responsible for seeding default directories, notes etc. for one particular user - admin@admin.com
+        /// </summary>
+        /// <param name="serviceProvider"></param>
         public static void SeedDefaultEntities(this IServiceProvider serviceProvider)
         {
             var context = serviceProvider.GetService<ApplicationDbContext>();
@@ -68,14 +72,11 @@ namespace NotesRepository.Data
                     new Directory { DirectoryId = Guid.Parse("9833eefb-b902-4d4e-93d8-bc760325e576"), Name = "SubDirOfCustom_2", User = user } }
             };
 
-            if (!context!.Users.Any())
+            if (!context.Users.Any(x => x.Id == user.Id))
             {
-                if (!context.Users.Any(x => x.Id == user.Id))
-                {
-                    user.HashPassword("Admin123!");
-                    context.Users.Add(user);
-                    context.SaveChanges();
-                }
+                user.HashPassword("Admin123!");
+                context.Users.Add(user);
+                context.SaveChanges();
             }
 
             if (!context.Directories.Any(x => x.DirectoryId == defDir.DirectoryId))
@@ -120,7 +121,7 @@ namespace NotesRepository.Data
                 context.Notes.Add(note);
                 context.SaveChanges();
             }
-            
+
             if (!context.Notes.Any(x => x.NoteId == Guid.Parse("0b2f78d3-d292-462e-a889-dd5c541f131b")))
             {
                 var note = new Note
@@ -136,7 +137,7 @@ namespace NotesRepository.Data
                 context.Notes.Add(note);
                 context.SaveChanges();
             }
-            
+
             if (!context.Notes.Any(x => x.NoteId == Guid.Parse("9bb2e297-6a70-4517-82b5-7fca43550c3e")))
             {
                 var note = new Note
@@ -152,7 +153,7 @@ namespace NotesRepository.Data
                 context.Notes.Add(note);
                 context.SaveChanges();
             }
-            
+
             if (!context.Notes.Any(x => x.NoteId == Guid.Parse("8e37c761-b4af-40bd-b2aa-f260a9b5d5b7")))
             {
                 var note = new Note
@@ -168,7 +169,7 @@ namespace NotesRepository.Data
                 context.Notes.Add(note);
                 context.SaveChanges();
             }
-            
+
             if (!context.Notes.Any(x => x.NoteId == Guid.Parse("8d44780e-592d-4003-a271-69c186653dda")))
             {
                 var note = new Note
@@ -184,7 +185,7 @@ namespace NotesRepository.Data
                 context.Notes.Add(note);
                 context.SaveChanges();
             }
-            
+
             if (!context.Notes.Any(x => x.NoteId == Guid.Parse("1e3a6c05-18d5-4b16-a546-b28f243e0f72")))
             {
                 var note = new Note
@@ -200,7 +201,7 @@ namespace NotesRepository.Data
                 context.Notes.Add(note);
                 context.SaveChanges();
             }
-            
+
             if (!context.Notes.Any(x => x.NoteId == Guid.Parse("a6fd2e45-df97-4de1-8119-76a6191fb690")))
             {
                 var note = new Note
@@ -216,7 +217,7 @@ namespace NotesRepository.Data
                 context.Notes.Add(note);
                 context.SaveChanges();
             }
-            
+
             if (!context.Notes.Any(x => x.NoteId == Guid.Parse("a6fd2e45-df97-4de1-8119-76a6191fb690")))
             {
                 var note = new Note
