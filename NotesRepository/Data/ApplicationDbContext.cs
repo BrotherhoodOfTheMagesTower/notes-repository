@@ -35,7 +35,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         builder.Entity<Note>()
             .HasOne(u => u.Owner)
             .WithMany(n => n.Notes)
-            .OnDelete(DeleteBehavior.NoAction); // should be changed to CASCADE!
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.Entity<Note>()
             .HasOne(d => d.Directory)
