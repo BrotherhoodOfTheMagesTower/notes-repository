@@ -1,0 +1,57 @@
+﻿@inject DialogService DialogService
+@using NotesRepository.Data.Models
+<RadzenTemplateForm TItem="Event" Data="@model" Submit=@OnSubmit>
+<div class="row" style="margin-bottom: 16px">
+    <div class="col-md-3">
+        <RadzenLabel Text="Text" />
+    </div>
+    <div class="col">
+        <RadzenTextBox @bind-Value="@model.Content" Name="Content" />
+        <RadzenRequiredValidator Text="Title is required" Component="Content" />
+    </div>
+</div>
+<div class="row" style="margin-bottom: 16px">
+    <div class="col-md-3">
+        <RadzenLabel Text="Start" />
+    </div>
+    <div class="col">
+        <RadzenDatePicker @bind-Value="@model.StartAt" Name="StartAt" ShowTime="true" />
+        <RadzenRequiredValidator Text="Start is required" Component="StartAt" />
+    </div>
+</div>
+<div class="row" style="margin-bottom: 16px">
+    <div class="col-md-3">
+        <RadzenLabel Text="End" />
+    </div>
+    <div class="col">
+        <RadzenDatePicker Name="EndAt" @bind-Value="@model.EndAt" ShowTime="true" />
+        <RadzenRequiredValidator Component="EndAt" Text="End is required" />
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3"></div>
+    <div class="col">
+        <RadzenButton ButtonType="ButtonType.Submit" Text="Save" />
+    </div>
+</div>
+</RadzenTemplateForm>
+@code {
+    [Parameter]
+    public DateTime StartAt { get; set; }
+
+    [Parameter]
+    public DateTime EndAt { get; set; }
+
+    Event model = new Event();
+
+    protected override void OnParametersSet()
+    {
+        model.StartAt = StartAt;
+        model.EndAt = EndAt;
+    }
+
+    void OnSubmit(Event model)
+    {
+        DialogService.Close(model);
+    }
+}

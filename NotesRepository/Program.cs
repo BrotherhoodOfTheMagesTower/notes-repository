@@ -15,6 +15,7 @@ using NotesRepository.Repositories;
 using NotesRepository.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
+using Radzen;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -52,6 +53,7 @@ builder.Services.AddBlazoredToast();
 builder.Services.AddBlazoredModal();
 
 builder.Services.AddSingleton<ViewOptionService>();
+builder.Services.AddScoped<DialogService>();
 
 var app = builder.Build();
 
