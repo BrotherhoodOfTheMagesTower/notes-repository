@@ -42,5 +42,16 @@ namespace NotesRepository.Services
 
         public async Task<bool> DeleteManyAsync(ICollection<Guid> eventIds)
             => await _er.DeleteManyAsync(eventIds);
+
+        public async Task<bool> AttachNoteToEventAsync(Guid eventId, Guid noteId)
+        {
+            var _event = await _er.GetByIdAsync(eventId);
+            if (_event is not null)
+            {
+                _event.NoteId = noteId;
+                return await _er.UpdateAsync(_event);
+            }
+            return false;
+        }
     }
 }

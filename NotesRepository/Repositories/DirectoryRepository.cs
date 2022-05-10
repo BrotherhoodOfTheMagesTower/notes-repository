@@ -180,19 +180,6 @@ namespace NotesRepository.Repositories
                 .ToListAsync();
         }
 
-        ///// <summary>
-        ///// Gets the default directory for specific user
-        ///// </summary>
-        ///// <param name="directoryId">The unique ID of the user</param>
-        ///// <returns>A collection of subdirectories for specific directory</returns>
-        //public async Task<Directory?> GetDefaultDirectoryForParticularUserAsync(string userId)
-        //{
-        //    return await ctx.Directories
-        //        .Where(u => u.User.Id == userId)
-        //        .Where(n => n.Name == "Default")
-        //        .SingleOrDefaultAsync();
-        //}
-
         /// <summary>
         /// Updates the directory entity in the database
         /// </summary>
