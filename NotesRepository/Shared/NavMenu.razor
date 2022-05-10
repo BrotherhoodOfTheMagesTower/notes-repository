@@ -20,7 +20,6 @@
     <br />
 
     <AuthorizeView>
-        <!--TODO tutej trzeba dodać role, nie dodałem bo nie wiem jakie mamy Xd-->
         <Authorized>
             <BlazoredTypeahead SearchMethod="NotesSearch" @bind-Value="searchPhrase">
                 <SelectedTemplate Context="searchContext">
@@ -55,58 +54,15 @@
                     <span class="oi oi-folder" aria-hidden="true"></span>@localizer["folders"]
                 </NavLink>
             </div>
+
             @if (areAllFoldersToggled)
             {
-                if (mainDirs is not null)
+
+                @if (mainDirs is not null)
                 {
-                    foreach (var dir in mainDirs)
-                    {
-                        @if (dir.SubDirectories is not null)
-                        {
-                            <div class="nav-item my-nav-item">
-                                <NavLink class="dropdown-toggle nav-link" @onclick="() => ToggleSubDirectory(dir.DirectoryId)">
-                                    <span class="oi oi-folder" aria-hidden="true"></span><span class="p-1">@dir.Name</span>
-                                    <span class="oi oi-arrow-right " @onclick="@(() => modal.Show<FolderMenu>(@dir.Name,options))"></span>
-                                </NavLink>
-                            </div>
-                            if (isSubDirToggled)
-                            {
-                                if (subDirs is not null)
-                                {
-                                    foreach (var subDir in subDirs)
-                                    {
-                                        @if (subDir.SubDirectories is not null)
-                                        {
-                                            <div class="nav-item my-nav-item">
-                                                <NavLink class="dropdown-toggle nav-link" @onclick="() => ToggleSubDirectory(subDir.DirectoryId)">
-                                                    <span class="oi oi-folder" aria-hidden="true"></span><span class="p-1">@subDir.Name</span>
-                                                    <span class="oi oi-arrow-right " @onclick="@(() => modal.Show<FolderMenu>(@subDir.Name,options))"></span>
-                                                </NavLink>
-                                            </div>
-                                        }
-                                        else
-                                        {
-                                            <div class="nav-item my-nav-item">
-                                                <NavLink class="nav-link" href="#">
-                                                    <span class="oi oi-folder" aria-hidden="true"></span><span class="p-1">@subDir.Name</span>
-                                                    <span class="oi oi-arrow-right " @onclick="@(() => modal.Show<FolderMenu>(@subDir.Name,options))"></span>
-                                                </NavLink>
-                                            </div>
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            <div class="nav-item my-nav-item">
-                                <NavLink class="nav-link" href="#">
-                                    <span class="oi oi-folder" aria-hidden="true"></span><span class="p-1">@dir.Name</span>
-                                    <span class="oi oi-arrow-right " @onclick="@(() => modal.Show<FolderMenu>(@dir.Name,options))"></span>
-                                    </NavLink>
-                            </div>
-                        }
-                    }
+                    @ToggleFolders(null)
+                    ;
+
                 }
             }
             <div class="nav-item px-3">
@@ -136,13 +92,10 @@
     }
 
     private bool collapseNavMenu = true;
-
-    //private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
-
     private bool areAllFoldersToggled = false;
-    private bool isSubDirToggled = false;
+
+
     private ICollection<Directory>? mainDirs;
-    private ICollection<Directory>? subDirs;
     public Note searchPhrase;
     private bool searching = false;
     private List<Note> notes;
@@ -168,16 +121,16 @@
         collapseNavMenu = !collapseNavMenu;
     }
 
-    private async Task ToggleSubmenu()
+    private void ToggleSubmenu()
     {
         areAllFoldersToggled = !areAllFoldersToggled;
-        await GetAllUserMainDirectories();
     }
 
-    private async Task ToggleSubDirectory(Guid directoryId)
+    private void ToggleSubDirectory(Directory directory)
     {
-        isSubDirToggled = !isSubDirToggled;
-        subDirs = await GetAllSubDirectoriesForSpecificDirectory(directoryId);
+        directory.IsToggled = !directory.IsToggled;
+        ToggleFolders(directory);
+
     }
 
     private async Task<IEnumerable<Note>> NotesSearch(string searchText)
@@ -196,8 +149,8 @@
         return null;
     }
 
-    private async Task<ICollection<Directory>?> GetAllSubDirectoriesForSpecificDirectory(Guid directoryId)
-        => await _dr.GetAllSubDirectoriesOfParticularDirectory(directoryId);
+    private ICollection<Directory>? GetAllSubDirectoriesForSpecificDirectory(Guid directoryId)
+    => _dr.GetAllSubDirectoriesOfParticularDirectorySync(directoryId);
 
     private void SearchPhrase()
     {
@@ -211,4 +164,129 @@
             searching = true;
         }
     }
+
+    private RenderFragment ToggleFolders(Directory? currentDir)
+    {
+        ICollection<Directory>? allCurrentSubdirectiories;
+
+        if (currentDir == null)
+        {
+            allCurrentSubdirectiories = mainDirs;
+        }
+        else
+        {
+            allCurrentSubdirectiories = GetAllSubDirectoriesForSpecificDirectory(currentDir.DirectoryId);
+        }
+
+
+        return
+    @<div>
+        @if (allCurrentSubdirectiories is not null)
+            {
+
+                foreach (var dir in allCurrentSubdirectiories)
+                {
+                    if (dir.SubDirectories is not null)
+                    {
+                        <div class="nav-item my-nav-item">
+                            <NavLink class="dropdown-toggle nav-link justify-content-between" @onclick="@(() => ToggleSubDirectory(dir))">
+                                <div class="my-inside-nav-link">
+                                    <i class="oi oi-folder" aria-hidden="true"></i>
+                                    @PrintDirectoryName(dir)
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </div>
+                                <i class="fa-solid fa-ellipsis " @onclick="@(() => modal.Show<FolderMenu>(@dir.Name,options))"></i>
+                            </NavLink>
+                        </div>
+                        if (dir.IsToggled)
+                        {
+                            foreach (var subDir in dir.SubDirectories)
+                            {
+                                @if (subDir.SubDirectories is not null)
+                                {
+                                    <div class="nav-item my-nav-item">
+                                        <NavLink class="dropdown-toggle nav-link justify-content-between" @onclick="() => ToggleSubDirectory(subDir)">
+                                            <div class="my-inside-nav-link">
+                                                <i class="oi oi-folder" aria-hidden="true"></i>
+                                                @PrintDirectoryName(subDir)
+                                                <i class="fa-solid fa-chevron-down"></i>
+                                            </div>
+                                            <i class="fa-solid fa-ellipsis " @onclick="@(() => modal.Show<FolderMenu>(@subDir.Name,options))"></i>
+                                        </NavLink>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="nav-item my-nav-item">
+                                        <NavLink class="nav-link justify-content-between" href="#">
+                                            <div class="my-inside-nav-link">
+                                                <i class="oi oi-folder" aria-hidden="true"></i>
+                                                @PrintDirectoryName(subDir)
+                                                <i class="fa-solid fa-chevron-down"></i>
+                                            </div>
+                                            <i class="fa-solid fa-ellipsis" @onclick="@(() => modal.Show<FolderMenu>(@subDir.Name,options))"></i>
+                                        </NavLink>
+                                    </div>
+                                }
+
+                            }
+                            if (dir.Notes is not null)
+                            {
+                                foreach (var note in dir.Notes)
+                                {
+                                    <div class="nav-item my-nav-item">
+                                        <NavLink class="dropdown-toggle nav-link justify-content-between" @onclick="() => GoToNote(note)">
+                                            <div class="my-inside-nav-link">
+                                                <i class="oi oi-file" aria-hidden="true"></i>
+                                                @note.Title
+                                            </div>
+                                        </NavLink>
+                                    </div>
+                                }
+                            }
+                        }
+                    }
+
+                    else
+                    {
+                        <div class="nav-item my-nav-item">
+                            <NavLink class="nav-link justify-content-between" href="#">
+                                <div class="my-inside-nav-link">
+                                    <i class="oi oi-folder" aria-hidden="true"></i>
+                                    @PrintDirectoryName(dir);
+                                    <i class="fa-solid fa-ellipsis " @onclick="@(() => modal.Show<FolderMenu>(@dir.Name,options))"></i>
+                                </div>
+                            </NavLink>
+                        </div>
+                    }
+                }
+            }
+        </div>
+    ;
+    }
+    private RenderFragment PrintDirectoryName(Directory dir)
+    {
+        string name = dir.Name;
+        return
+    @<span>
+        @if (@dir.Name.Count() > 7)
+            {
+                name = name.Remove(6);
+                name += "...";
+                <span class="p-1">@name</span>
+            }
+            else
+            {
+                <span class="p-1">@name</span>
+            }
+        </span>
+    ;
+    }
+
+    //toDo implement this fuction
+    private async Task GoToNote(Note note)
+    {
+
+    }
+
 }

@@ -12,7 +12,7 @@ namespace NotesRepository.Data.Models
             DirectoryId = directoryId ?? Guid.NewGuid();
             Name = name;
             Notes = notes;
-            User= user;
+            User = user;
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace NotesRepository.Data.Models
         /// Collection of Notes assigned to the directory (optional)
         /// </summary>
         public ICollection<Note>? Notes { get; set; }
-        
+
         /// <summary>
         /// User, that the directory belongs to
         /// </summary>
@@ -56,5 +56,7 @@ namespace NotesRepository.Data.Models
         /// The parent directory (optional)
         /// </summary>
         public virtual Directory? ParentDir { get; set; }
+
+        public bool IsToggled { get; set; } = false;
     }
 }
