@@ -80,11 +80,11 @@ namespace Tests.Services
             await _nr.AddAsync(note8);
 
 
-            await _dr.AttachSubDirectoryToParticularDirectoryAsync(directory2.DirectoryId, directory1.DirectoryId);
-            await _dr.AttachSubDirectoryToParticularDirectoryAsync(directory3.DirectoryId, directory1.DirectoryId);
-            await _dr.AttachSubDirectoryToParticularDirectoryAsync(directory4.DirectoryId, directory2.DirectoryId);
-            await _dr.AttachSubDirectoryToParticularDirectoryAsync(directory5.DirectoryId, directory3.DirectoryId);
-            await _dr.AttachSubDirectoryToParticularDirectoryAsync(directory6.DirectoryId, directory5.DirectoryId);
+            await _dr.ChangeParentDirectoryForSubDirectory(directory2.DirectoryId, directory1.DirectoryId);
+            await _dr.ChangeParentDirectoryForSubDirectory(directory3.DirectoryId, directory1.DirectoryId);
+            await _dr.ChangeParentDirectoryForSubDirectory(directory4.DirectoryId, directory2.DirectoryId);
+            await _dr.ChangeParentDirectoryForSubDirectory(directory5.DirectoryId, directory3.DirectoryId);
+            await _dr.ChangeParentDirectoryForSubDirectory(directory6.DirectoryId, directory5.DirectoryId);
 
             var dirFromDatabase = await ds.GetDirectoryByIdAsync(directory1.DirectoryId);
 
