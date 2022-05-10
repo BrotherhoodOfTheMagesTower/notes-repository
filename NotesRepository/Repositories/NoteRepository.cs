@@ -149,7 +149,7 @@ namespace NotesRepository.Repositories
         /// </summary>
         /// <param name="directoryId">The unique ID of Directory, which notes will be returned</param>
         /// <returns>A collection of notes assigned to particular directory, that are currently stored in the database</returns>
-        public async Task<ICollection<Note>?> GetAllDirectoryNotesAsync(Guid directoryId)
+        public async Task<ICollection<Note>> GetAllNotesForParticularDirectoryAsync(Guid directoryId)
         {
             return await ctx.Notes
                 .Include(d => d.Directory)

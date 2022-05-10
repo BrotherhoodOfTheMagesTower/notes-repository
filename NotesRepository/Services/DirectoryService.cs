@@ -63,7 +63,7 @@ namespace NotesRepository.Services
         public async Task<(ICollection<Directory>?, ICollection<Note>?)> GetAllSubDirectoriesAndNotesOfParticularDirectoryAsync(Guid directoryId)
         {
             ICollection<Directory>? directories = await _dr.GetAllSubDirectoriesOfParticularDirectory(directoryId);
-            ICollection<Note>? notes = await _nr.GetAllDirectoryNotesAsync(directoryId);
+            ICollection<Note>? notes = await _nr.GetAllNotesForParticularDirectoryAsync(directoryId);
             return (directories, notes);
         }
 
@@ -98,7 +98,7 @@ namespace NotesRepository.Services
                 
                 if (directory.Notes.Count > 0)
                 {
-                    var notes = await _nr.GetAllDirectoryNotesAsync(directoryId);
+                    var notes = await _nr.GetAllNotesForParticularDirectoryAsync(directoryId);
                     foreach (var note in notes)
                     {
                         await _ns.MarkNoteAsDeletedAndStartTimerAsync(note.NoteId);
