@@ -1,8 +1,13 @@
 ﻿@using NotesRepository.Data.Models
+@using NotesRepository.Repositories
 @using NotesRepository.Services
+@using System.Collections.ObjectModel
 
 @inject DialogService DialogService
 @inject IToastService toastService;
+@inject NoteService noteService;
+@inject UserRepository userRepository;
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor
 
 
 
@@ -46,7 +51,13 @@
     </div>
     <div class="col">
         <RadzenLabel Text="Note Title" />
-        <RadzenTextBox Placeholder ="to do"  Name="Note Title" />
+        <InputSelect @bind-Value="@noteId">
+            @foreach (var note in allNotes)
+                    {
+                        <option value=@note.NoteId>@note.Title</option>
+                    }
+        </InputSelect>
+        @*<RadzenTextBox Placeholder ="to do"  Name="Note Title" />*@
     </div>
 </div>
 <div class="row">
@@ -64,6 +75,15 @@
     public DateTime EndAt { get; set; }
 
     Event model = new Event();
+    private List<Note>? allNotes = new();
+    private Note note = new();
+    private string noteId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        ApplicationUser loggedUser = await userRepository.GetUserByEmailAsync(httpContextAccessor.HttpContext.User.Identity.Name);
+        allNotes = await noteService.GetAllUserNotesByIdAsync(loggedUser.Id);
+    }
 
     protected override void OnParametersSet()
     {
@@ -74,7 +94,7 @@
     void OnSubmit(Event model)
     {
         DialogService.Close(model);
-        toastService.ShowSuccess("The event was added.");
+        toastService.ShowSuccess("succes");
         //TO DO zapisanie do bazy danych
     }
 

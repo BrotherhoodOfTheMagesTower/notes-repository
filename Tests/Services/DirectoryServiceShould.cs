@@ -44,7 +44,7 @@ namespace Tests.Services
         {
             //Arrange
             var ns = new NoteService(_nr);
-            var ds = new DirectoryService(_nr, _dr, ns);
+            var ds = new DirectoryService(_nr, _dr, ns, _ur);
             var usr = new ApplicationUser();
 
             var directory1 = new Directory("Directory name1", usr);

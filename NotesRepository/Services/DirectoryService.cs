@@ -17,10 +17,10 @@ namespace NotesRepository.Services
             _dr = directoryRepository;
         }
 
-        public DirectoryService(NoteRepository noteRepository, DirectoryRepository directoryRepository, NoteService noteService)
+        public DirectoryService(NoteRepository noteRepository, DirectoryRepository directoryRepository, NoteService noteService, UserRepository userRepository)
         {
             _nr = noteRepository;
-           // _ur = userRepository;
+            _ur = userRepository;
             _dr = directoryRepository;
             _ns = noteService;
         }
@@ -92,21 +92,23 @@ namespace NotesRepository.Services
                        await MarkDirectorySubdirectoriesAndNotesAsDeleted(subdirectory.DirectoryId);
                     }
                 }
-            }       
-            if (directory.Notes != null)
+            }
+
+            var notes = await _nr.GetAllNotesForParticularDirectoryAsync(directoryId);
+            if (notes != null)
             {
                 
                 if (directory.Notes.Count > 0)
                 {
-                    var notes = await _nr.GetAllNotesForParticularDirectoryAsync(directoryId);
                     foreach (var note in notes)
                     {
                         await _ns.MarkNoteAsDeletedAndStartTimerAsync(note.NoteId);
                     }
                 }
             }
-
+         //   var bin = await GetBinForParticularUserAsync();
             await _dr.MarkDirectoryAsDeletedAsync(directoryId);
+           // await _dr.ChangeParentDirectoryForSubDirectory(directoryId, bin.)
             return true;
         }
     }
