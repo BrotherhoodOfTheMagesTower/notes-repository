@@ -67,15 +67,11 @@ namespace NotesRepository.Services
             return (directories, notes);
         }
 
-
-
-
-
         public async Task<bool> MarkDirectorySubdirectoriesAndNotesAsDeleted(Guid directoryId) //dodac bin jak nadrzedny
         {
             var directory = await _dr.GetByIdAsync(directoryId);
 
-            if(directory == null)
+            if (directory == null)
             {
                 return false;
             }
@@ -95,13 +91,12 @@ namespace NotesRepository.Services
             }       
             if (directory.Notes != null)
             {
-                
                 if (directory.Notes.Count > 0)
                 {
                     var notes = await _nr.GetAllNotesForParticularDirectoryAsync(directoryId);
                     foreach (var note in notes)
                     {
-                        await _ns.MarkNoteAsDeletedAndStartTimerAsync(note.NoteId);
+                        await _nr.MarkNoteAsDeletedAsync(note.NoteId);
                     }
                 }
             }
