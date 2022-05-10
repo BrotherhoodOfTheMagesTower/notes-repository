@@ -51,6 +51,11 @@ namespace NotesRepository.Data.Models
         public ApplicationUser User { get; set; }
 
         /// <summary>
+        /// Note ForeignKey, is required in One to One relation navigation
+        /// </summary>
+        public Guid? NoteId { get; set; }
+
+        /// <summary>
         /// Note, which is assigned to the event
         /// </summary>
         public Note? Note { get; set; }

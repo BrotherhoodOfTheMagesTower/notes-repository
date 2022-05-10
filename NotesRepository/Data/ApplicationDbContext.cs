@@ -78,6 +78,6 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             .HasOne(n => n.Note)
             .WithOne(e => e.Event)
             .IsRequired(false)
-            .HasForeignKey<Event>(n => n.EventId);
+            .HasForeignKey<Event>(n => n.NoteId);
     }
 }
