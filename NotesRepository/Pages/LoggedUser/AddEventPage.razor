@@ -1,5 +1,11 @@
-﻿@inject DialogService DialogService
-@using NotesRepository.Data.Models
+﻿@using NotesRepository.Data.Models
+@using NotesRepository.Services
+
+@inject DialogService DialogService
+@inject IToastService toastService;
+
+
+
 <RadzenTemplateForm TItem="Event" Data="@model" Submit=@OnSubmit>
 <div class="row" style="margin-bottom: 16px">
     <div class="col-md-3">
@@ -31,6 +37,21 @@
 <div class="row">
     <div class="col-md-3"></div>
     <div class="col">
+      <div class="form-check my-2">
+  <input class="form-check-input" type="checkbox" value="" id="checkingRemainder"> @*TO DO  sprawdzenie eventu i podpinanie remaindera*@
+  <label class="form-check-label" for="flexCheckDefault">
+    Set remainder
+  </label>
+</div>
+    </div>
+    <div class="col">
+        <RadzenLabel Text="Note Title" />
+        <RadzenTextBox Placeholder ="to do"  Name="Note Title" />
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3"></div>
+    <div class="col">
         <RadzenButton ButtonType="ButtonType.Submit" Text="Save" />
     </div>
 </div>
@@ -53,5 +74,8 @@
     void OnSubmit(Event model)
     {
         DialogService.Close(model);
+        toastService.ShowSuccess("The event was added.");
+        //TO DO zapisanie do bazy danych
     }
+
 }

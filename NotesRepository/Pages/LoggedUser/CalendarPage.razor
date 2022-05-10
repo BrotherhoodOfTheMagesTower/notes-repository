@@ -36,7 +36,7 @@
         }
 
         
-        if ((args.View.Text == "Week" || args.View.Text == "Day") && args.Start.Hour > 8 && args.Start.Hour < 19)
+        if ((args.View.Text == "Week" || args.View.Text == "Day") && args.Start.Hour > 7 && args.Start.Hour < 16)
         {
             args.Attributes["style"] = "background: rgba(255,220,40,.2);";
         }
@@ -51,8 +51,8 @@
         if (datas != null)
         {
             data.Add(datas);
-
             await scheduler.Reload();
+            
         }
     }
       async Task OnAppointmentSelect(SchedulerAppointmentSelectEventArgs<Event> args)
@@ -60,8 +60,8 @@
 
 
         await DialogService.OpenAsync<EditEventPage>("Edit Event", new Dictionary<string, object> { { "Event", args.Data } });
-
         await scheduler.Reload();
+        
     }
 
     void OnAppointmentRender(SchedulerAppointmentRenderEventArgs<Event> args)
