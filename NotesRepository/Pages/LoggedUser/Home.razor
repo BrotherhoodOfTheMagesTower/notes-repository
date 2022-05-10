@@ -1,0 +1,91 @@
+﻿@page "/Home"
+
+@using Data.Models
+
+@inject Microsoft.Extensions.Localization.IStringLocalizer<Resource> localizer
+
+<h2>@localizer["homePage"]</h2>
+<div class="home-page">
+    <div class="user-notes">
+        <br />
+        <h5>@localizer["pinned"]</h5>
+        <div class="notes">
+            @foreach(var note in noteList)
+            {
+                <div class="note">
+                    <center>
+                    <h5>@note.Content</h5>
+                    <br>
+                    <h6>@date</h6>
+                    </center>
+                </div>
+            }
+        </div>
+        <br />
+        <h5>@localizer["theLatest"]</h5>
+        <div class="notes">
+            @foreach(var note in noteList)
+            {
+                <div class="note">
+                    <center>
+                    <h5>@note.Content</h5>
+                    <br>
+                    <h6>@date</h6>
+                    </center>
+                </div>
+            }
+        </div>
+        <br />
+        <h5>@localizer["upcomingEvents"]</h5>
+        <div class="notes">
+            @foreach(var note in noteList)
+            {
+                <div class="note">
+                    <center>
+                    <h5>@note.Content</h5>
+                    <br>
+                    <h6>@date</h6>
+                    </center>
+                </div>
+            }          
+        </div>
+    </div>
+
+    
+    
+    <div class="draft">
+        <br />
+        <h5>@localizer["draft"]</h5>
+        <div class="button-bar">
+            <a  class="my-button" @onclick="ClearDraft">@localizer["clear"]</a>
+            <a class="my-button" @onclick="SaveDraft">@localizer["save"]</a>
+        </div>
+        <textarea class="my-text-area" ></textarea>
+    </div>
+</div>
+
+@code
+{
+    private List<Note> noteList;
+    private DateTime date = new DateTime();
+
+    protected override void OnInitialized()
+    {
+        noteList = new List<Note>
+            {
+                new Note("Ala ma kota"),
+                new Note("Ala Jakaś"),
+                new Note("Taaa"),
+            };
+    }
+
+    private void SaveDraft()
+    {
+        
+    }
+
+    private void ClearDraft()
+    {
+        
+    }
+}
