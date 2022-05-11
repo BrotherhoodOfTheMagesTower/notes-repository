@@ -33,7 +33,43 @@ namespace NotesRepository.Services
 
         public async Task<Note?> GetNoteByTitleAsync(string title, string userId)
             => await _nr.GetNoteByTitleAsync(title, userId);
+
+        /// <summary>
+        /// Gets all notes from the database, that are assigned to specific directory 
+        /// </summary>
+        /// <param name="directoryId">The unique ID of Directory, which notes will be returned</param>
+        /// <returns>A collection of notes assigned to particular directory, that are currently stored in the database</returns>
+        public async Task<ICollection<Note>> GetAllNotesForParticularDirectoryAsync(Guid directoryId)
+            => await _nr.GetAllNotesForParticularDirectoryAsync(directoryId);
         
+        /// <summary>
+        /// Gets all notes from the database, that are assigned to specific directory 
+        /// </summary>
+        /// <param name="directoryId">The unique ID of Directory, which notes will be returned</param>
+        /// <returns>A collection of notes assigned to particular directory, that are currently stored in the database</returns>
+        public ICollection<Note> GetAllNotesForParticularDirectory(Guid directoryId)
+            => _nr.GetAllNotesForParticularDirectory(directoryId);
+
+        /// <summary>
+        /// Gets all notes from the database, that are were moved to the bin by single delete.
+        /// Note objects does not include other properties. If you want to get more properties from the entity call
+        /// GetNoteByIdAsync()
+        /// </summary>
+        /// <param name="userId">The unique ID of user</param>
+        /// <returns>A collection of notes from particular user that are were moved to the bin by single delete</returns>
+        public async Task<ICollection<Note>> GetAllSingleNotesFromUserThatAreCurrentlyInRecycleBin(string userId)
+            => await _nr.GetAllNotesFromParticularUserThatAreCurrentlyInRecycleBinAsync(userId);
+
+        /// <summary>
+        /// Gets all notes from the database, that are were moved to the bin by single delete 
+        /// Note objects does not include other properties. If you want to get more properties from the entity call
+        /// GetNoteByIdAsync()
+        /// </summary>
+        /// <param name="userId">The unique ID of user</param>
+        /// <returns>A collection of notes from particular user that are were moved to the bin by single delete</returns>
+        public async Task<ICollection<Note>> GetAllPinnedNotesFromUser(string userId)
+            => await _nr.GetAllPinnedNotesFromUserAsync(userId);
+
         public async Task<ICollection<Note>> GetRecentlyEditedOrCreatedNotes(string userId, int count = 10)
             => await _nr.GetRecentlyEditedOrCreatedNotes(userId, count);
 
@@ -166,9 +202,5 @@ namespace NotesRepository.Services
             }
             return false;
         }
-
-        // zwracanie 10 ostatnich notatek danego uzytkownika, po dacie najwczesniejszych
-        // zwracanie wszystkich podpietych notatek
-        // zwracanie wszystkich notatek z danego folderu
     }
 }

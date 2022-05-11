@@ -154,13 +154,59 @@ namespace NotesRepository.Repositories
         public async Task<ICollection<Note>> GetAllNotesForParticularDirectoryAsync(Guid directoryId)
         {
             return await ctx.Notes
+                .Where(d => d.Directory.DirectoryId == directoryId)
                 .Include(d => d.Directory)
                 .Include(o => o.Owner)
                 .Include(i => i.Images)
                 .Include(e => e.EditedBy)
                 .Include(ev => ev.Event)
                 .Include(c => c.CollaboratorsNotes)
+                .ToListAsync();
+        }
+        
+        /// <summary>
+        /// Gets all notes from the database, that are assigned to specific directory 
+        /// </summary>
+        /// <param name="directoryId">The unique ID of Directory, which notes will be returned</param>
+        /// <returns>A collection of notes assigned to particular directory, that are currently stored in the database</returns>
+        public ICollection<Note> GetAllNotesForParticularDirectory(Guid directoryId)
+        {
+            return ctx.Notes
                 .Where(d => d.Directory.DirectoryId == directoryId)
+                .Include(d => d.Directory)
+                .Include(o => o.Owner)
+                .Include(i => i.Images)
+                .Include(e => e.EditedBy)
+                .Include(ev => ev.Event)
+                .Include(c => c.CollaboratorsNotes)
+                .ToList();
+        }
+
+        /// <summary>
+        /// Gets all notes from the database, that are were moved to the bin by single delete 
+        /// </summary>
+        /// <param name="userId">The unique ID of user</param>
+        /// <returns>A collection of notes from particular user that are were moved to the bin by single delete</returns>
+        public async Task<ICollection<Note>> GetAllNotesFromParticularUserThatAreCurrentlyInRecycleBinAsync(string userId)
+        {
+            return await ctx.Notes
+                .Where(o => o.Owner.Id == userId)
+                .Where(d => d.Directory.Name == "Bin")
+                .ToListAsync();
+        }
+
+        /// <summary>
+        /// Gets all notes from the database, that are were moved to the bin by single delete 
+        /// Note objects does not include other properties. If you want to get more properties from the entity call
+        /// GetNoteByIdAsync()
+        /// </summary>
+        /// <param name="userId">The unique ID of user</param>
+        /// <returns>A collection of notes from particular user that are were moved to the bin by single delete</returns>
+        public async Task<ICollection<Note>> GetAllPinnedNotesFromUserAsync(string userId)
+        {
+            return await ctx.Notes
+                .Where(o => o.Owner.Id == userId)
+                .Where(d => d.IsPinned == true)
                 .ToListAsync();
         }
 
