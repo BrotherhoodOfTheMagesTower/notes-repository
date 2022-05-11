@@ -298,7 +298,7 @@ namespace NotesRepository.Repositories
         /// <param name="userId"></param>
         /// <param name="count"></param>
         /// <returns>Returns <paramref name="count"/> recently edited or created notes of a particular user</returns>
-        public async Task<ICollection<Note>> GetRecentlyEditedOrCreatedNotes(string userId, int count)
+        public async Task<ICollection<Note>> GetRecentlyEditedOrCreatedNotesAsync(string userId, int count)
         {
             var allNotes = await GetAllUserNotesAsync(userId);
             return allNotes.OrderByDescending(x => x.EditedAt).ThenByDescending(x => x.CreatedAt).Take(count).ToArray();

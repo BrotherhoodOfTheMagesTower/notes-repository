@@ -55,7 +55,7 @@ namespace NotesRepository.Services
         /// </summary>
         /// <param name="userId">The unique ID of user</param>
         /// <returns>A collection of notes from particular user that are were moved to the bin by single delete</returns>
-        public async Task<ICollection<Note>> GetAllSingleNotesFromUserThatAreCurrentlyInRecycleBin(string userId)
+        public async Task<ICollection<Note>> GetAllSingleNotesFromUserThatAreCurrentlyInRecycleBinAsync(string userId)
             => await _nr.GetAllNotesFromParticularUserThatAreCurrentlyInRecycleBinAsync(userId);
 
         /// <summary>
@@ -66,8 +66,8 @@ namespace NotesRepository.Services
         public async Task<ICollection<Note>> GetAllPinnedNotesFromUserAsync(string userId)
             => await _nr.GetAllPinnedNotesFromUserAsync(userId);
 
-        public async Task<ICollection<Note>> GetRecentlyEditedOrCreatedNotes(string userId, int count = 10)
-            => await _nr.GetRecentlyEditedOrCreatedNotes(userId, count);
+        public async Task<ICollection<Note>> GetRecentlyEditedOrCreatedNotesAsync(string userId, int count = 10)
+            => await _nr.GetRecentlyEditedOrCreatedNotesAsync(userId, count);
 
         public async Task<List<Note>> SearchNotesByTitleAndContentAsync(string searchText, string userId)
             => await _nr.SearchNoteByTitleAndContentAsync(searchText, userId);
@@ -114,7 +114,7 @@ namespace NotesRepository.Services
         /// </summary>
         /// <param name="noteId">The note ID</param>
         /// <returns>true, if the note was successfuly moved to the bin and removed from the current directory; otherwise false</returns>
-        public async Task<bool> MoveSingleNoteToBin(Guid noteId)
+        public async Task<bool> MoveSingleNoteToBinAsync(Guid noteId)
         {
             var note = await _nr.GetByIdAsync(noteId);
             if(note is not null)
@@ -134,7 +134,7 @@ namespace NotesRepository.Services
         /// <param name="noteId"></param>
         /// <param name="directoryId"></param>
         /// <returns>true, if the note was successfuly restored from the bin to the given directory</returns>
-        public async Task<bool> RestoreASingleNoteFromTheBin(Guid noteId, Guid directoryId)
+        public async Task<bool> RestoreASingleNoteFromTheBinAsync(Guid noteId, Guid directoryId)
         {
             var note = await _nr.GetByIdAsync(noteId);
             if(note is not null)

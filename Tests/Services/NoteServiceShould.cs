@@ -164,7 +164,7 @@ namespace Tests.Services
             await ns.AddNotesAsync(notes);
 
             // Act
-            var notesInBinFromUsr3 = await ns.GetAllSingleNotesFromUserThatAreCurrentlyInRecycleBin(usr3.Id);
+            var notesInBinFromUsr3 = await ns.GetAllSingleNotesFromUserThatAreCurrentlyInRecycleBinAsync(usr3.Id);
 
             // Assert
             Assert.NotNull(notesInBinFromUsr3);
@@ -406,7 +406,7 @@ namespace Tests.Services
             await _dr.AddAsync(new Directory("Bin", usr));
 
             // Act
-            await ns.MoveSingleNoteToBin(note.NoteId);
+            await ns.MoveSingleNoteToBinAsync(note.NoteId);
 
             // Assert
             var noteFromDb = await ns.GetNoteByIdAsync(note.NoteId);
@@ -430,9 +430,9 @@ namespace Tests.Services
             await ns.AddNoteAsync(note);
 
             // Act
-            await ns.MoveSingleNoteToBin(note.NoteId);
+            await ns.MoveSingleNoteToBinAsync(note.NoteId);
             await Task.Delay(1000);
-            var result = await ns.RestoreASingleNoteFromTheBin(note.NoteId, (await _dr.GetByIdAsync(targetDir.DirectoryId)).DirectoryId);
+            var result = await ns.RestoreASingleNoteFromTheBinAsync(note.NoteId, (await _dr.GetByIdAsync(targetDir.DirectoryId)).DirectoryId);
 
             // Assert
             var noteAfterRestore = await ns.GetNoteByIdAsync(note.NoteId);
