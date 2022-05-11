@@ -19,6 +19,16 @@ html, body {
     font-size: 16px;
 }
 
+tbody, td, tfoot, th, thead, tr {
+    border-width: 0.8px;
+    text-align: center;
+}
+
+td, th {
+    padding: 5px;
+    text-align: center;
+}
+
 h1:focus {
     outline: none;
 }

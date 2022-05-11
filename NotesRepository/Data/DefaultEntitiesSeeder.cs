@@ -246,31 +246,31 @@ namespace NotesRepository.Data
             }
             #endregion
 
-            #region seedEvents
-            if (!context.Events.Any(x => x.EventId == events.ElementAt(0).EventId))
-            {
-                context.Events.Update(events.ElementAt(0));
-                context.SaveChanges();
-            }
+            //#region seedEvents
+            //if (!context.Events.Any(x => x.EventId == events.ElementAt(0).EventId))
+            //{
+            //    context.Events.Update(events.ElementAt(0));
+            //    context.SaveChanges();
+            //}
             
-            if(!context.Events.Any(x => x.EventId == events.ElementAt(1).EventId))
-            {
-                context.Events.Add(events.ElementAt(1));
-                context.SaveChanges();
-            }
+            //if(!context.Events.Any(x => x.EventId == events.ElementAt(1).EventId))
+            //{
+            //    context.Events.Add(events.ElementAt(1));
+            //    context.SaveChanges();
+            //}
             
-            if(!context.Events.Any(x => x.EventId == events.ElementAt(2).EventId))
-            {
-                context.Events.Add(events.ElementAt(2));
-                context.SaveChanges();
-            }
+            //if(!context.Events.Any(x => x.EventId == events.ElementAt(2).EventId))
+            //{
+            //    context.Events.Add(events.ElementAt(2));
+            //    context.SaveChanges();
+            //}
             
-            if(!context.Events.Any(x => x.EventId == events.ElementAt(3).EventId))
-            {
-                context.Events.Add(events.ElementAt(3));
-                context.SaveChanges();
-            }
-            #endregion
+            //if(!context.Events.Any(x => x.EventId == events.ElementAt(3).EventId))
+            //{
+            //    context.Events.Add(events.ElementAt(3));
+            //    context.SaveChanges();
+            //}
+            //#endregion
         }
 
         private static void HashPassword(this ApplicationUser user, string psswd = "Password123!")
