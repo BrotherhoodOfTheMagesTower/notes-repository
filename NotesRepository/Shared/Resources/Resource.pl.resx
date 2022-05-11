@@ -126,6 +126,9 @@
   <data name="calendar" xml:space="preserve">
     <value>Kalendarz</value>
   </data>
+  <data name="changeFolder" xml:space="preserve">
+    <value>Zmień folder</value>
+  </data>
   <data name="clear" xml:space="preserve">
     <value>Wyczyść</value>
   </data>
@@ -135,11 +138,17 @@
   <data name="deleteFolder" xml:space="preserve">
     <value>Usuń folder</value>
   </data>
+  <data name="deleteNote" xml:space="preserve">
+    <value>Usuń notatkę</value>
+  </data>
   <data name="draft" xml:space="preserve">
     <value>Brudnopis</value>
   </data>
   <data name="edit" xml:space="preserve">
     <value>Edytuj notatkę</value>
+  </data>
+  <data name="editName" xml:space="preserve">
+    <value>Zmień nazwę</value>
   </data>
   <data name="folders" xml:space="preserve">
     <value>Foldery</value>
@@ -176,6 +185,9 @@
   </data>
   <data name="shared" xml:space="preserve">
     <value>Udostępnione</value>
+  </data>
+  <data name="shareNote" xml:space="preserve">
+    <value>Udostępnij notatkę</value>
   </data>
   <data name="templates" xml:space="preserve">
     <value>Szablony</value>
