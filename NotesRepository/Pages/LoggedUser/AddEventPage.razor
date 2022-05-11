@@ -7,11 +7,12 @@
 @inject IToastService toastService;
 @inject NoteService noteService;
 @inject UserRepository userRepository;
+@inject EventService eventService;
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor
 
 
 
-<RadzenTemplateForm TItem="Event" Data="@model" Submit=@OnSubmit>
+<RadzenTemplateForm TItem="Event" Data="@model" Submit="async () => await OnSubmit(model)">
 <div class="row" style="margin-bottom: 16px">
     <div class="col-md-3">
         <RadzenLabel Text="Text" />
@@ -82,6 +83,8 @@
     protected override async Task OnInitializedAsync()
     {
         ApplicationUser loggedUser = await userRepository.GetUserByEmailAsync(httpContextAccessor.HttpContext.User.Identity.Name);
+        model.User = loggedUser;
+        model.EventId = Guid.NewGuid();
         allNotes = await noteService.GetAllUserNotesByIdAsync(loggedUser.Id);
     }
 
@@ -91,10 +94,15 @@
         model.EndAt = EndAt;
     }
 
-    void OnSubmit(Event model)
+    async Task OnSubmit(Event model)
     {
-        DialogService.Close(model);
-        toastService.ShowSuccess("succes");
+        //DialogService.Close(model);
+
+        var added = await eventService.AddAsync(model);
+        var returned = await eventService.GetByIdAsync(model.EventId);
+        var attached = await eventService.AttachNoteToEventAsync(model.EventId, Guid.Parse(noteId));
+
+        
         //TO DO zapisanie do bazy danych
     }
 
