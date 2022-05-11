@@ -1,20 +1,13 @@
 using Blazored.Modal;
 using Blazored.Toast;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NotesRepository.Areas.Identity;
 using NotesRepository.Areas.Identity.Data;
 using NotesRepository.Data;
 using NotesRepository.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Blazored.Toast;
-using NotesRepository.Repositories;
 using NotesRepository.Services;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Identity;
 using Radzen;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -50,6 +43,8 @@ builder.Services.AddScoped<AzureStorageHelper>();
 
 builder.Services.AddScoped<NoteService>();
 builder.Services.AddScoped<EventService>();
+builder.Services.AddScoped<DirectoryService>();
+
 builder.Services.AddBlazoredToast();
 builder.Services.AddBlazoredModal();
 

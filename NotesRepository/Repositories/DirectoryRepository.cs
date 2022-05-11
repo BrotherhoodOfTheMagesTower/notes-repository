@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NotesRepository.Data;
-using Directory = NotesRepository.Data.Models.Directory;
 using NotesRepository.Repositories.Interfaces;
+using Directory = NotesRepository.Data.Models.Directory;
 
 namespace NotesRepository.Repositories
 {
@@ -162,6 +162,15 @@ namespace NotesRepository.Repositories
                 .Include(s => s.Notes)
                 .Where(d => d.ParentDir.DirectoryId == directoryId)
                 .ToListAsync();
+        }
+
+        public ICollection<Directory>? GetAllSubDirectoriesOfParticularDirectorySync(Guid directoryId)
+        {
+            return ctx.Directories
+                .Include(s => s.SubDirectories)
+                .Include(s => s.Notes)
+                .Where(d => d.ParentDir.DirectoryId == directoryId)
+                .ToList();
         }
 
         /// <summary>
