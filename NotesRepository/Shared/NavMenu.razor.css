@@ -34,12 +34,28 @@
     margin-right: 30px;
 }
 
+.my-custom-nav-item {
+    color: white;
+   
+}
+
+.folder-child:hover{
+   color:black;
+   cursor:pointer;
+}
+
+.my-nav-item-parent:first-child{
+    color:red;
+}
+.my-options:hover {
+    color: black;
+    cursor: pointer;
+}
 .nav-item {
     font-size: 0.8rem;
     padding-bottom: 0.4rem;
     overflow: hidden;
 }
-
     .nav-item:first-of-type {
         padding-top: 1rem;
     }
@@ -71,8 +87,8 @@
 
 @media (min-width: 750px) {
     .my-nav-item {
-        margin-left: 38px;
-        margin-right: 38px;
+        margin-left: 22px;
+        margin-right: 1rem;
     }
 
     .navbar-brand {

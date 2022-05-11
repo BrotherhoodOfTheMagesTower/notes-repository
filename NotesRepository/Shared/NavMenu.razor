@@ -4,23 +4,24 @@
 @using NotesRepository.Repositories
 @using Blazored.Typeahead
 @using Data.Models
+@using NotesRepository.Services
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor
 @inject Microsoft.Extensions.Localization.IStringLocalizer<Resource> localizer
 @inject UserRepository _ur;
 @inject DirectoryRepository _dr;
 @inject IModalService modal;
-
+@inject DirectoryService _ds;
+@inject NavigationManager NavigationManager;
 
 <nav class="flex-column navigation">
     <div class="top-row ps-3 navbar navbar-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/">NotesRepository</a>
+            <a class="navbar-brand" href="/Home">NotesRepository</a>
         </div>
     </div>
     <br />
 
     <AuthorizeView>
-        <!--TODO tutej trzeba dodać role, nie dodałem bo nie wiem jakie mamy Xd-->
         <Authorized>
             <BlazoredTypeahead SearchMethod="NotesSearch" @bind-Value="searchPhrase">
                 <SelectedTemplate Context="searchContext">
@@ -41,34 +42,27 @@
             </div>
 
             <div class="nav-item px-3">
-                <NavLink class="nav-link" href="#" Match="NavLinkMatch.All">
+                <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">
                     <span class="oi oi-home" aria-hidden="true"></span> @localizer["homePage"]
                 </NavLink>
             </div>
             <div class="nav-item px-3">
-                <NavLink class="nav-link" href="#">
+                <NavLink class="nav-link" href="/calendar">
                     <span class="oi oi-calendar" aria-hidden="true"></span> @localizer["calendar"]
                 </NavLink>
             </div>
             <div class="nav-item px-3">
-                <NavLink class="dropdown-toggle nav-link" @onclick="() => TogleSubmenu()">
+                <NavLink class="dropdown-toggle nav-link" @onclick="() => ToggleSubmenu()">
                     <span class="oi oi-folder" aria-hidden="true"></span>@localizer["folders"]
                 </NavLink>
-
             </div>
-            @if (allFolders)
+
+            @if (areAllFoldersToggled)
             {
-                if (dirs is not null)
+                @if (mainDirs is not null)
                 {
-                    foreach (var dir in dirs)
-                    {
-                        <div class="nav-item my-nav-item">
-                            <NavLink class="nav-link" href="#">
-                                <span class="oi oi-folder" aria-hidden="true"></span><span class="p-1">@dir.Name</span>
-                                <span class="oi oi-arrow-right " @onclick="@(() => modal.Show<FolderMenu>(@dir.Name,options))"></span>
-                            </NavLink>
-                        </div>
-                    }
+                    @ToggleMainFolders(null)
+                    ;
                 }
             }
             <div class="nav-item px-3">
@@ -92,17 +86,8 @@
 
 
 @code {
-    protected override async Task OnInitializedAsync()
-    {
-        dirs = await GetAllUserDirectories();
-    }
-
-    private bool collapseNavMenu = true;
-
-    //private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
-
-    private bool allFolders = false;
-    private ICollection<Data.Models.Directory>? dirs;
+    private bool areAllFoldersToggled = false;
+    private ICollection<Directory>? mainDirs;
     public Note searchPhrase;
     private bool searching = false;
     private List<Note> notes;
@@ -112,6 +97,10 @@
             Animation = ModalAnimation.FadeInOut(0.1),
         };
 
+    protected override async Task OnInitializedAsync()
+    {
+        mainDirs = await _ds.GetAllDirectoriesWithoutParentDirectoryForParticularUserAsync(GetCurrentUserId()!);
+    }
 
     protected override void OnInitialized()
     {
@@ -123,16 +112,14 @@
             };
     }
 
-    private void ToggleNavMenu()
+    private void ToggleSubmenu()
     {
-        collapseNavMenu = !collapseNavMenu;
+        areAllFoldersToggled = !areAllFoldersToggled;
     }
 
-    private async Task TogleSubmenu()
+    private void ToggleSubDirectory(Directory directory)
     {
-        allFolders = !allFolders;
-        await GetAllUserDirectories();
-
+        directory.IsToggled = !directory.IsToggled;
     }
 
     private async Task<IEnumerable<Note>> NotesSearch(string searchText)
@@ -140,15 +127,14 @@
         return notes;
     }
 
-    private async Task<ICollection<Data.Models.Directory>?> GetAllUserDirectories()
+    private string? GetCurrentUserId()
     {
         string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (currentUserId is not null)
-        {
-            return await _dr.GetAllDirectoriesForParticularUserAsync(currentUserId);
-        }
-        return null;
+        return currentUserId;
     }
+
+    private ICollection<Directory>? GetAllSubDirectoriesForSpecificDirectory(Guid directoryId)
+    => _dr.GetAllSubDirectoriesOfParticularDirectorySync(directoryId);
 
     private void SearchPhrase()
     {
@@ -162,4 +148,138 @@
             searching = true;
         }
     }
+
+    private RenderFragment ToggleFolders(Directory directory) => __builder =>
+    {
+        ICollection<Directory>? allCurrentSubdirectiories;
+        if (directory == null)
+        {
+            allCurrentSubdirectiories = mainDirs;
+        }
+        else
+        {
+            allCurrentSubdirectiories = GetAllSubDirectoriesForSpecificDirectory(directory.DirectoryId);
+        }
+
+        @if (allCurrentSubdirectiories is not null)
+        {
+            foreach (var dir in allCurrentSubdirectiories)
+            {
+                <div class="d-flex align-items-baseline justify-content-between nav-item my-nav-item dropdown-toggle nav-link my-custom-nav-item">
+                    <div class="folder-child " @onclick="@(() => ToggleSubDirectory(dir))">
+                        <i class="oi oi-folder" aria-hidden="true"></i>
+                        @PrintName(dir.Name)
+                        @if (dir.SubDirectories!= null && dir.SubDirectories.Count() > 0 || dir.Notes!=null && dir.Notes.Count() > 0)
+                        {
+                            if (!dir.IsToggled)
+                            {
+                                <i class="fa-solid fa-chevron-down"></i>
+
+                            }
+                            else
+                            {
+                                <i class="fa-solid fa-chevron-up"></i>
+                            }
+                        }
+                    </div>
+                    <div class="my-options">
+                        <i class="fa-solid fa-ellipsis " @onclick="@(() => modal.Show<FolderMenu>(@dir.Name,options))"></i>
+                    </div>
+                </div>
+
+                @if (dir.IsToggled)
+                {
+                    @ToggleFolders(dir)
+                    ;
+                }
+            }
+        }
+
+        if (directory?.Notes is not null)
+        {
+            foreach (var note in directory.Notes)
+            {
+                <div class="d-flex align-items-baseline justify-content-between nav-item my-nav-item dropdown-toggle nav-link my-custom-nav-item">
+                    <div class="folder-child" @onclick="() => GoToNote(note.NoteId.ToString())">
+                        <i class="oi oi-file" aria-hidden="true"></i>
+                        @PrintName(note.Title)
+                    </div>
+                    <div class="my-options">
+                        <i class="fa-solid fa-ellipsis " @onclick="@(() => modal.Show<NoteMenu>(@note.Title,options))"></i>
+                    </div>
+                </div>
+            }
+        }
+
+    };
+
+    private RenderFragment ToggleMainFolders(Directory? directory) => __builder =>
+    {
+        ICollection<Directory>? allCurrentSubdirectiories;
+        if (directory == null)
+        {
+            allCurrentSubdirectiories = mainDirs;
+        }
+        else
+        {
+            allCurrentSubdirectiories = GetAllSubDirectoriesForSpecificDirectory(directory.DirectoryId);
+        }
+
+        @if (allCurrentSubdirectiories is not null)
+
+        {
+            foreach (var dir in allCurrentSubdirectiories)
+            {
+                <div class="nav-item my-nav-item">
+                    <NavLink class="dropdown-toggle nav-link justify-content-between" @onclick="@(() => ToggleSubDirectory(dir))">
+                        <div class="my-inside-nav-link">
+                            <i class="oi oi-folder" aria-hidden="true"></i>
+                            @PrintName(dir.Name)
+                            @if (dir.SubDirectories!= null && dir.SubDirectories.Count() > 0)
+                            {
+                                if (!dir.IsToggled)
+                                {
+                                    <i class="fa-solid fa-chevron-down"></i>
+
+                                }
+                                else
+                                {
+                                    <i class="fa-solid fa-chevron-up"></i>
+                                }
+                            }
+                        </div>
+                        <i class="fa-solid fa-ellipsis " @onclick="@(() => modal.Show<FolderMenu>(@dir.Name,options))"></i>
+                    </NavLink>
+                </div>
+
+                @if (dir.IsToggled)
+                {
+                    @ToggleFolders(dir)
+                    ;
+                }
+            }
+        }
+
+    };
+
+    private RenderFragment PrintName(string name) => __builder =>
+    {
+        @if (name.Count() > 10)
+        {
+            name = name.Remove(9);
+            name += "...";
+            <span class="p-1">@name</span>
+        }
+        else
+        {
+            <span class="p-1">@name</span>
+        }
+    };
+
+    //toDo implement this fuction
+    private void GoToNote(string Id)
+    {
+        NavigationManager.NavigateTo($"/editNote/{Id}");
+    }
+
 }

@@ -31,11 +31,46 @@ namespace NotesRepository.Services
         public async Task<List<Note>> GetAllUserNotesByIdAsync(string userId)
             => (await _nr.GetAllUserNotesAsync(userId)).ToList();
 
-        public async Task<Note?> GetNoteByTitleAsync(string title)
-            => await _nr.GetNoteByTitleAsync(title);
+        public async Task<Note?> GetNoteByTitleAsync(string title, string userId)
+            => await _nr.GetNoteByTitleAsync(title, userId);
 
-        public async Task<List<Note>> SearchNotesByTitleAndContentAsync(string searchText)
-            => await _nr.SearchNoteByTitleAndContentAsync(searchText);
+        /// <summary>
+        /// Gets all notes from the database, that are assigned to specific directory 
+        /// </summary>
+        /// <param name="directoryId">The unique ID of Directory, which notes will be returned</param>
+        /// <returns>A collection of notes assigned to particular directory, that are currently stored in the database</returns>
+        public async Task<ICollection<Note>> GetAllNotesForParticularDirectoryAsync(Guid directoryId)
+            => await _nr.GetAllNotesForParticularDirectoryAsync(directoryId);
+        
+        /// <summary>
+        /// Gets all notes from the database, that are assigned to specific directory 
+        /// </summary>
+        /// <param name="directoryId">The unique ID of Directory, which notes will be returned</param>
+        /// <returns>A collection of notes assigned to particular directory, that are currently stored in the database</returns>
+        public ICollection<Note> GetAllNotesForParticularDirectory(Guid directoryId)
+            => _nr.GetAllNotesForParticularDirectory(directoryId);
+
+        /// <summary>
+        /// Gets all notes from the database, that are were moved to the bin by single delete.
+        /// </summary>
+        /// <param name="userId">The unique ID of user</param>
+        /// <returns>A collection of notes from particular user that are were moved to the bin by single delete</returns>
+        public async Task<ICollection<Note>> GetAllSingleNotesFromUserThatAreCurrentlyInRecycleBinAsync(string userId)
+            => await _nr.GetAllNotesFromParticularUserThatAreCurrentlyInRecycleBinAsync(userId);
+
+        /// <summary>
+        /// Gets all notes from the database, that are were moved to the bin by single delete
+        /// </summary>
+        /// <param name="userId">The unique ID of user</param>
+        /// <returns>A collection of notes from particular user that are were moved to the bin by single delete</returns>
+        public async Task<ICollection<Note>> GetAllPinnedNotesFromUserAsync(string userId)
+            => await _nr.GetAllPinnedNotesFromUserAsync(userId);
+
+        public async Task<ICollection<Note>> GetRecentlyEditedOrCreatedNotesAsync(string userId, int count = 10)
+            => await _nr.GetRecentlyEditedOrCreatedNotesAsync(userId, count);
+
+        public async Task<List<Note>> SearchNotesByTitleAndContentAsync(string searchText, string userId)
+            => await _nr.SearchNoteByTitleAndContentAsync(searchText, userId);
 
         public async Task<bool> AddNoteAsync(Note note)
             => await _nr.AddAsync(note);
@@ -73,20 +108,49 @@ namespace NotesRepository.Services
             }
             return false;
         }
-        
-        public async Task<bool> MarkNoteAsDeletedAndStartTimerAsync(Guid noteId)
+
+        /// <summary>
+        /// Moves a single note to the bin (IsDeleted = true; DeletedAt = now)
+        /// </summary>
+        /// <param name="noteId">The note ID</param>
+        /// <returns>true, if the note was successfuly moved to the bin and removed from the current directory; otherwise false</returns>
+        public async Task<bool> MoveSingleNoteToBinAsync(Guid noteId)
         {
             var note = await _nr.GetByIdAsync(noteId);
-            if (note is not null)
+            if(note is not null)
             {
-                note.DeletedAt = DateTime.Now;
-                note.IsMarkedAsDeleted = true;
-                //TODO: add scheduler for 30 days (using Quartz.NET)
-                return await _nr.UpdateAsync(note);
+                var isMarkedAsDeleted = await _nr.MarkNoteAsDeletedAsync(noteId);
+                var bin = await _dr.GetDirectoryByNameAsync("Bin", note.Owner.Id);
+                var isMovedToBin = await ChangeNoteDirectoryAsync(noteId, bin.DirectoryId);
+                if (isMarkedAsDeleted && isMovedToBin)
+                    return true;
             }
             return false;
         }
-        
+
+        /// <summary>
+        /// Restores a note from the bin to the given directory
+        /// </summary>
+        /// <param name="noteId"></param>
+        /// <param name="directoryId"></param>
+        /// <returns>true, if the note was successfuly restored from the bin to the given directory</returns>
+        public async Task<bool> RestoreASingleNoteFromTheBinAsync(Guid noteId, Guid directoryId)
+        {
+            var note = await _nr.GetByIdAsync(noteId);
+            if(note is not null)
+            {
+                var isMarkedAsNotDeleted = await _nr.MarkNoteAsNotDeletedAsync(noteId);
+                var dir = await _dr.GetByIdAsync(directoryId);
+                if(dir is not null)
+                {
+                    var isMovedToNewDir = await ChangeNoteDirectoryAsync(noteId, directoryId);
+                    if (isMarkedAsNotDeleted && isMovedToNewDir)
+                        return true;
+                }
+            }
+            return false;
+        }
+
         public async Task<bool> PinNoteAsync(Guid noteId)
         {
             var note = await _nr.GetByIdAsync(noteId);
@@ -98,14 +162,12 @@ namespace NotesRepository.Services
             return false;
         }
         
-        public async Task<bool> AttachEventToNoteAsync(Guid eventId, Guid noteId)
+        public async Task<bool> UnpinNoteAsync(Guid noteId)
         {
-            var _event = await _er.GetByIdAsync(eventId);
             var note = await _nr.GetByIdAsync(noteId);
-            if (note is not null && _event is not null)
+            if (note is not null)
             {
-                await _er.DeleteAsync(_event);
-                note.Event = _event;
+                note.IsPinned = false;
                 return await _nr.UpdateAsync(note);
             }
             return false;

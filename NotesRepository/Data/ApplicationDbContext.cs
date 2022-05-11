@@ -1,7 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using NotesRepository.Areas.Identity.Data;
 using NotesRepository.Data.Models;
 using Directory = NotesRepository.Data.Models.Directory;
@@ -35,7 +33,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         builder.Entity<Note>()
             .HasOne(u => u.Owner)
             .WithMany(n => n.Notes)
-            .OnDelete(DeleteBehavior.NoAction); // should be changed to CASCADE!
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.Entity<Note>()
             .HasOne(d => d.Directory)
@@ -51,6 +49,9 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             .HasMany(s => s.SubDirectories)
             .WithOne(p => p.ParentDir)
             .HasForeignKey("SubDirectoryId");
+
+        builder.Entity<Directory>()
+            .Ignore(t => t.IsToggled);
 
 
         // collaborators
@@ -78,6 +79,6 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             .HasOne(n => n.Note)
             .WithOne(e => e.Event)
             .IsRequired(false)
-            .HasForeignKey<Event>(n => n.EventId);
+            .HasForeignKey<Event>(n => n.NoteId);
     }
 }

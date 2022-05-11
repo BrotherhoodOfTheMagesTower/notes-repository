@@ -23,14 +23,14 @@ else
 {
     <div class="my-container">
         <div class="my-sub-container p-2 ">
-            <center><h3>@localizer["templates"]</h3> </center>
+            <center><h3>@localizer["content"]</h3> </center>
             <textarea class="my-text-area" @bind-value="content" @bind-value:event="oninput"></textarea>
             <center>
-                <button type="button" class="btn btn-primary" @onclick="saveNote">Save</button>
+                <button type="button" class="btn btn-primary" @onclick="saveNote">@localizer["save"]</button>
             </center>
         </div>
         <div class="my-sub-container p-2">
-             <center><h3>@localizer["preview"]</h3></center>
+            <center><h3>@localizer["preview"]</h3></center>
             <div class="my-preview">
                 @((MarkupString)Markdown.ToHtml(content, pipeline))
             </div>
@@ -44,10 +44,12 @@ else
     public string templateIndex { get; set; }
     private string content = "";
     private MarkdownPipeline? pipeline;
+    private bool validId = false;
+    private Guid parsedId;
 
     protected override async Task OnParametersSetAsync()
     {
-        content = init(); // TODO wczytujemy z bazy danych albo przekazujemy je z frontu
+        content = await init();
         pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build(); // Uruchomienie rozszerzeń markdown
     }
 
@@ -74,17 +76,25 @@ else
         }
     }
 
-    private string init() // TODO narazie init obsługuje tylko wczytywanie templateów, trzeba dodać obsługę wczytywania z bazy
+    private async Task<string> init() // TODO narazie init obsługuje tylko wczytywanie templateów, trzeba dodać obsługę wczytywania z bazy
     {
-        var index = Int32.Parse(templateIndex);
-        if (index > -1)
+        validId = Guid.TryParse(templateIndex, out parsedId);
+        if (validId == false)
         {
-            List<string> templates = new List<string>();
-            templates.Add(Templates.ToDoTemplate);
-            templates.Add(Templates.ToDoWithColumnTemplate);
-            return index >= 0 && index <= templates.Count ? templates[index] : "";
+            return Templates.NotesTemplates[templateIndex];
         }
         else
-            return "";
+        {
+            var note = await _ns.GetNoteByIdAsync(Guid.Parse(templateIndex));
+            if (note is not null)
+            {
+                return note.Content;
+            }
+            else
+            {
+                return " ";    //TODO 404
+            }
+        }
+    }
     }
 }

@@ -132,16 +132,82 @@ namespace NotesRepository.Repositories
         /// </summary>
         /// <param name="title">The title of note</param>
         /// <returns>A note entity if it exists in the db; otherwise null</returns>
-        public async Task<Note?> GetNoteByTitleAsync(string title)
+        public async Task<Note?> GetNoteByTitleAsync(string title, string userId)
         {
             return await ctx.Notes
+                .Where(u => u.Owner.Id == userId)
+                .Where(i => i.Title == title)
                 .Include(d => d.Directory)
                 .Include(o => o.Owner)
                 .Include(i => i.Images)
                 .Include(e => e.EditedBy)
                 .Include(ev => ev.Event)
                 .Include(c => c.CollaboratorsNotes)
-                .FirstOrDefaultAsync(i => i.Title == title);
+                .FirstOrDefaultAsync();
+        }
+
+        /// <summary>
+        /// Gets all notes from the database, that are assigned to specific directory 
+        /// </summary>
+        /// <param name="directoryId">The unique ID of Directory, which notes will be returned</param>
+        /// <returns>A collection of notes assigned to particular directory, that are currently stored in the database</returns>
+        public async Task<ICollection<Note>> GetAllNotesForParticularDirectoryAsync(Guid directoryId)
+        {
+            return await ctx.Notes
+                .Where(d => d.Directory.DirectoryId == directoryId)
+                .Include(d => d.Directory)
+                .Include(o => o.Owner)
+                .Include(i => i.Images)
+                .Include(e => e.EditedBy)
+                .Include(ev => ev.Event)
+                .Include(c => c.CollaboratorsNotes)
+                .ToListAsync();
+        }
+        
+        /// <summary>
+        /// Gets all notes from the database, that are assigned to specific directory 
+        /// </summary>
+        /// <param name="directoryId">The unique ID of Directory, which notes will be returned</param>
+        /// <returns>A collection of notes assigned to particular directory, that are currently stored in the database</returns>
+        public ICollection<Note> GetAllNotesForParticularDirectory(Guid directoryId)
+        {
+            return ctx.Notes
+                .Where(d => d.Directory.DirectoryId == directoryId)
+                .Include(d => d.Directory)
+                .Include(o => o.Owner)
+                .Include(i => i.Images)
+                .Include(e => e.EditedBy)
+                .Include(ev => ev.Event)
+                .Include(c => c.CollaboratorsNotes)
+                .ToList();
+        }
+
+        /// <summary>
+        /// Gets all notes from the database, that are were moved to the bin by single delete 
+        /// </summary>
+        /// <param name="userId">The unique ID of user</param>
+        /// <returns>A collection of notes from particular user that are were moved to the bin by single delete</returns>
+        public async Task<ICollection<Note>> GetAllNotesFromParticularUserThatAreCurrentlyInRecycleBinAsync(string userId)
+        {
+            return await ctx.Notes
+                .Where(o => o.Owner.Id == userId)
+                .Where(d => d.Directory.Name == "Bin")
+                .ToListAsync();
+        }
+
+        /// <summary>
+        /// Gets all notes from the database, that are were moved to the bin by single delete 
+        /// Note objects does not include other properties. If you want to get more properties from the entity call
+        /// GetNoteByIdAsync()
+        /// </summary>
+        /// <param name="userId">The unique ID of user</param>
+        /// <returns>A collection of notes from particular user that are were moved to the bin by single delete</returns>
+        public async Task<ICollection<Note>> GetAllPinnedNotesFromUserAsync(string userId)
+        {
+            return await ctx.Notes
+                .Where(o => o.Owner.Id == userId)
+                .Where(d => d.IsPinned == true)
+                .ToListAsync();
         }
 
         /// <summary>
@@ -149,9 +215,10 @@ namespace NotesRepository.Repositories
         /// </summary>
         /// <param name="searchText">The phrase that user has provided</param>
         /// <returns>A list of note entities if the phrase does match</returns>
-        public async Task<List<Note>> SearchNoteByTitleAndContentAsync(string searchText)
+        public async Task<List<Note>> SearchNoteByTitleAndContentAsync(string searchText, string userId)
         {
             return await ctx.Notes
+                .Where(o => o.Owner.Id == userId)
                 .Where(t => t.Title.Contains(searchText) || t.Content.Contains(searchText))
                 .ToListAsync();
         }
@@ -190,6 +257,51 @@ namespace NotesRepository.Repositories
                 return result > 0;
             }
             return false;
+        }
+
+        /// <summary>
+        /// Marks the note as deleted
+        /// </summary>
+        /// <param name="noteId"></param>
+        /// <returns>true if note was successfully marked as deleted; otherwise false</returns>
+        public async Task<bool> MarkNoteAsDeletedAsync(Guid noteId)
+        {
+            var note = await GetByIdAsync(noteId);
+            if (note is not null)
+            {
+                note.DeletedAt = DateTime.Now;
+                note.IsMarkedAsDeleted = true;
+                return await UpdateAsync(note);
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Marks the note as not deleted
+        /// </summary>
+        /// <param name="noteId"></param>
+        /// <returns>true if note was successfully marked as not deleted; otherwise false</returns>
+        public async Task<bool> MarkNoteAsNotDeletedAsync(Guid noteId)
+        {
+            var note = await GetByIdAsync(noteId);
+            if (note is not null)
+            {
+                note.DeletedAt = null;
+                note.IsMarkedAsDeleted = false;
+                return await UpdateAsync(note);
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="count"></param>
+        /// <returns>Returns <paramref name="count"/> recently edited or created notes of a particular user</returns>
+        public async Task<ICollection<Note>> GetRecentlyEditedOrCreatedNotesAsync(string userId, int count)
+        {
+            var allNotes = await GetAllUserNotesAsync(userId);
+            return allNotes.OrderByDescending(x => x.EditedAt).ThenByDescending(x => x.CreatedAt).Take(count).ToArray();
         }
     }
 }

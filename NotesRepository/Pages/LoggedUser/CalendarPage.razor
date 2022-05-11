@@ -1,0 +1,78 @@
+﻿@page "/calendar"
+
+@inject DialogService DialogService
+@using NotesRepository.Data.Models
+@using Radzen
+
+<div class = "Calendar" style="display:flex; align-items:center; justify-content:center;">
+<RadzenExample Name="Scheduler" AdditionalSourceCodePages=@(new List<string>() { "AddEventPage.razor", "EditEventPage.razor" })/>
+    <RadzenScheduler @ref=@scheduler SlotRender=@OnSlotRender style="height: 768px; width:70%;" TItem="Event" Data=@data StartProperty="StartAt" EndProperty="EndAt"
+        TextProperty="Content" SelectedIndex="2"
+        SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentSelect AppointmentRender=@OnAppointmentRender>
+        <RadzenDayView />
+        <RadzenWeekView />
+        <RadzenMonthView />
+    </RadzenScheduler>
+</div>
+@code {
+    RadzenScheduler<Event> scheduler;
+    Dictionary<DateTime, string> events = new Dictionary<DateTime, string>();
+
+
+    IList<Event> data = new List<Event>
+    {
+      // EXAMPLE added manually 
+        new Event {StartAt = DateTime.Today.AddDays(-1), EndAt = DateTime.Today.AddDays(-1), Content ="Testing"}
+    };
+
+
+
+   void OnSlotRender(SchedulerSlotRenderEventArgs args) 
+    {
+        
+        if (args.View.Text == "Month" && args.Start.Date == DateTime.Today)
+        {
+            args.Attributes["style"] = "background: rgba(255,220,40,.2);";
+        }
+
+        
+        if ((args.View.Text == "Week" || args.View.Text == "Day") && args.Start.Hour > 7 && args.Start.Hour < 16)
+        {
+            args.Attributes["style"] = "background: rgba(255,220,40,.2);";
+        }
+    }
+
+    async Task OnSlotSelect(SchedulerSlotSelectEventArgs args)
+    {
+
+        Event datas = await DialogService.OpenAsync<AddEventPage>("Add Event",
+            new Dictionary<string, object> { { "StartAt", args.Start }, { "EndAt", args.End } });
+
+        if (datas != null)
+        {
+            data.Add(datas);
+            await scheduler.Reload();
+            
+        }
+    }
+      async Task OnAppointmentSelect(SchedulerAppointmentSelectEventArgs<Event> args)
+    {
+
+
+        await DialogService.OpenAsync<EditEventPage>("Edit Event", new Dictionary<string, object> { { "Event", args.Data } });
+        await scheduler.Reload();
+        
+    }
+
+    void OnAppointmentRender(SchedulerAppointmentRenderEventArgs<Event> args)
+    {
+
+
+        // EXAMPLE MANUALLY styling
+        if (args.Data.Content == "Testing")
+        {
+            args.Attributes["style"] = "background: green";
+        }
+    }
+
+}

@@ -92,7 +92,7 @@ namespace Tests.Services
             await ns.AddNoteAsync(note);
 
             // Act
-            var result = await ns.GetNoteByTitleAsync("Custom");
+            var result = await ns.GetNoteByTitleAsync("Custom", usr.Id);
 
             // Assert
             Assert.NotNull(result);
@@ -111,14 +111,26 @@ namespace Tests.Services
                 new Note(null, "Test note2", "Search2()", "def-ico", usr, new Directory("Default", usr)),
                 new Note(null, "Test note3", "Search3()", "def-ico", usr, new Directory("Default", usr))
             };
+            var notesFromAnotherUser = new List<Note>
+            {
+                new Note(null, "Test note1RandomUser", "Search1()", "def-ico", new ApplicationUser(), new Directory("Default", usr)),
+                new Note(null, "Test note2", "Search2()RandomUser", "def-ico", new ApplicationUser(), new Directory("Default", usr)),
+                new Note(null, "Test note3RandomUser", "Search3()", "def-ico", new ApplicationUser(), new Directory("Default", usr))
+            };
             await ns.AddNotesAsync(notes);
+            await ns.AddNotesAsync(notesFromAnotherUser);
 
             // Act
-            var titleResult = await ns.SearchNotesByTitleAndContentAsync("te1");
-            var contentResult = await ns.SearchNotesByTitleAndContentAsync("rch2");
-            var notMatchResult = await ns.SearchNotesByTitleAndContentAsync("foo");
-            var multipleTitleMatchResult = await ns.SearchNotesByTitleAndContentAsync("note");
-            var multipleContentMatchResult = await ns.SearchNotesByTitleAndContentAsync("earch");
+            var titleResult = await ns.SearchNotesByTitleAndContentAsync("te1", usr.Id);
+            var contentResult = await ns.SearchNotesByTitleAndContentAsync("rch2", usr.Id);
+
+            var noMatch1 = await ns.SearchNotesByTitleAndContentAsync("te1RandomUser", usr.Id);
+            var noMatch2 = await ns.SearchNotesByTitleAndContentAsync("Search2()Random", usr.Id);
+
+            var notMatchResult = await ns.SearchNotesByTitleAndContentAsync("foo", usr.Id);
+            var multipleTitleMatchResult = await ns.SearchNotesByTitleAndContentAsync("note", usr.Id);
+            var multipleContentMatchResult = await ns.SearchNotesByTitleAndContentAsync("earch", usr.Id);
+            var its_A_TRAP = await ns.SearchNotesByTitleAndContentAsync("itsATrap", usr.Id);
 
             // Assert
             Assert.NotNull(titleResult);
@@ -130,6 +142,62 @@ namespace Tests.Services
             Assert.NotNull(multipleContentMatchResult);
             multipleContentMatchResult.Should().HaveCount(3);
             notMatchResult.Should().BeEmpty();
+            noMatch1.Should().BeEmpty();
+            noMatch2.Should().BeEmpty();
+        }
+        
+        [Fact(DisplayName = "Be able to get all single notes from bin")]
+        public async Task GetAllSingleNotesFromBin()
+        {
+            //Arrange
+            var ns = new NoteService(_nr);
+            var usr1 = new ApplicationUser();
+            var usr2 = new ApplicationUser();
+            var usr3 = new ApplicationUser();
+            var notes = new List<Note>
+            {
+                new Note(null, "from usr1", "GetAllSingleNotesFromBin()", "def-ico", usr1, new Directory("Bin", usr1)),
+                new Note(null, "from usr2", "GetAllSingleNotesFromBin()", "def-ico", usr2, new Directory("Bin", usr2)),
+                new Note(null, "from usr3", "GetAllSingleNotesFromBin()", "def-ico", usr3, new Directory("Bin", usr3)),
+                new Note(null, "from usr3", "GetAllSingleNotesFromBin()", "def-ico", usr3, new Directory("Bin", usr3)),
+            };
+            await ns.AddNotesAsync(notes);
+
+            // Act
+            var notesInBinFromUsr3 = await ns.GetAllSingleNotesFromUserThatAreCurrentlyInRecycleBinAsync(usr3.Id);
+
+            // Assert
+            Assert.NotNull(notesInBinFromUsr3);
+            notesInBinFromUsr3.Should().HaveCount(2);
+        }
+        
+        [Fact(DisplayName = "Be able to get all pinned notes from particular user")]
+        public async Task GetAllPinnedNotes()
+        {
+            //Arrange
+            var ns = new NoteService(_nr);
+            var usr1 = new ApplicationUser();
+            var usr2 = new ApplicationUser();
+            var usr3 = new ApplicationUser();
+            var notes = new List<Note>
+            {
+                new Note(null, "from usr1", "GetAllPinnedNotes()", "def-ico", usr1, new Directory("Random", usr1)),
+                new Note(null, "from usr2", "GetAllPinnedNotes()", "def-ico", usr2, new Directory("Random", usr2)),
+                new Note(null, "from usr3 - not pinned", "GetAllPinnedNotes()", "def-ico", usr3, new Directory("Random3", usr3)),
+                new Note(null, "from usr3, but pinned", "GetAllPinnedNotes()", "def-ico", usr3, new Directory("Random34", usr3)),
+                new Note(null, "from usr3, but pinned", "GetAllPinnedNotes()", "def-ico", usr3, new Directory("Random35", usr3)),
+            };
+            notes.ElementAt(2).IsPinned = true;
+            notes.ElementAt(3).IsPinned = true;
+            notes.ElementAt(4).IsPinned = true;
+            await ns.AddNotesAsync(notes);
+
+            // Act
+            var notesInBinFromUsr3 = await ns.GetAllPinnedNotesFromUserAsync(usr3.Id);
+
+            // Assert
+            Assert.NotNull(notesInBinFromUsr3);
+            notesInBinFromUsr3.Should().HaveCount(3);
         }
 
         [Fact(DisplayName = "Be able to add a note to the database")]
@@ -327,22 +395,54 @@ namespace Tests.Services
             noteFromDb!.EditedAt.Should().Be(time);
         }
 
-        [Fact(DisplayName = "Be able to mark note as deleted and start timer")]
-        public async Task MarkNoteAsDeletedAndStartTimer()
+        [Fact(DisplayName = "Be able to move single note to bin")]
+        public async Task MoveSingleNoteToBin()
         {
             //Arrange
             var ns = new NoteService(_nr, _ur, _er, _dr, _ir);
             var usr = new ApplicationUser();
-            var note = new Note(null, "Test note", "MarkNoteAsDeletedAndStartTimer()", "def-ico", usr, new Directory("Default", usr));
+            var note = new Note(null, "Test note", "MoveToBin()", "def-ico", usr, new Directory("Default", usr));
             await ns.AddNoteAsync(note);
+            await _dr.AddAsync(new Directory("Bin", usr));
 
             // Act
-            await ns.MarkNoteAsDeletedAndStartTimerAsync(note.NoteId);
+            await ns.MoveSingleNoteToBinAsync(note.NoteId);
 
             // Assert
             var noteFromDb = await ns.GetNoteByIdAsync(note.NoteId);
             noteFromDb.Should().NotBeNull();
-            noteFromDb!.IsMarkedAsDeleted!.Should().BeTrue();
+            noteFromDb!.IsMarkedAsDeleted.Should().BeTrue();
+            noteFromDb!.DeletedAt.Should().BeCloseTo(DateTime.Now, TimeSpan.FromMilliseconds(500));
+            noteFromDb!.Directory.Name.Should().Be("Bin");
+            noteFromDb!.Directory.User.Should().Be(usr);
+        }
+        
+        [Fact(DisplayName = "Be able to restore a single note from bin to existing directory")]
+        public async Task RestoreASingleNote()
+        {
+            //Arrange
+            var ns = new NoteService(_nr, _ur, _er, _dr, _ir);
+            var usr = new ApplicationUser();
+            var targetDir = new Directory("TargetDir", usr);
+            await _dr.AddAsync(new Directory("Bin", usr));
+            await _dr.AddAsync(targetDir);
+            var note = new Note(null, "Test note", "RestoreANote()", "def-ico", usr, new Directory("Some dir", usr));
+            await ns.AddNoteAsync(note);
+
+            // Act
+            await ns.MoveSingleNoteToBinAsync(note.NoteId);
+            await Task.Delay(1000);
+            var result = await ns.RestoreASingleNoteFromTheBinAsync(note.NoteId, (await _dr.GetByIdAsync(targetDir.DirectoryId)).DirectoryId);
+
+            // Assert
+            var noteAfterRestore = await ns.GetNoteByIdAsync(note.NoteId);
+            result.Should().BeTrue();
+
+            noteAfterRestore.Should().NotBeNull();
+            noteAfterRestore!.IsMarkedAsDeleted.Should().BeFalse();
+            noteAfterRestore!.DeletedAt.Should().Be(null);
+            noteAfterRestore!.Directory.Name.Should().Be(targetDir.Name);
+            noteAfterRestore!.Directory.User.Should().Be(usr);
         }
 
         [Fact(DisplayName = "Be able to pin a note")]
@@ -361,26 +461,6 @@ namespace Tests.Services
             var noteFromDb = await ns.GetNoteByIdAsync(note.NoteId);
             noteFromDb.Should().NotBeNull();
             noteFromDb!.IsPinned!.Should().BeTrue();
-        }
-
-        [Fact(DisplayName = "Be able to attach event to a note")]
-        public async Task AttachEventToNoteAsync()
-        {
-            //Arrange
-            var ns = new NoteService(_nr, _ur, _er, _dr, _ir);
-            var usr = new ApplicationUser();
-            var note = new Note(null, "Tst", "AttachEventToNote()", "def-ico", usr, new Directory("Default", usr));
-            await ns.AddNoteAsync(note);
-            var ev = new Event(Guid.NewGuid(), "Con", DateTime.Now, DateTime.Now.AddMinutes(2), usr);
-            await _er.AddAsync(ev);
-
-            // Act
-            await ns.AttachEventToNoteAsync(ev.EventId, note.NoteId);
-
-            // Assert
-            var noteFromDb = await ns.GetNoteByIdAsync(note.NoteId);
-            noteFromDb.Should().NotBeNull();
-            noteFromDb!.Event!.Should().Be(ev);
         }
 
         [Fact(DisplayName = "Be able to edit note content")]

@@ -233,13 +233,109 @@ namespace Tests.Repositories
             await nr.AddAsync(note);
 
             // Act
-            var result = await nr.GetNoteByTitleAsync("Test note");
+            var result = await nr.GetNoteByTitleAsync("Test note", usr.Id);
 
             // Assert
             Assert.NotNull(result);
             Assert.Equal(note.NoteId, result!.NoteId);
             result.Should().BeAssignableTo<Note>();
             await nr.DeleteAsync(note);
+        }
+        
+        [Fact(DisplayName = "User is able to get recently edited and created notes")]
+        public async Task GetRecentlyEditedOrCreatedNotes()
+        {
+            // Arrange
+            var nr = new NoteRepository(_context);
+            var usr = new ApplicationUser();
+            var dir = new Directory("Default", usr);
+            var notes = new List<Note>()
+            {
+                new Note
+                {
+                    CreatedAt = DateTime.Now,
+                    NoteId = Guid.NewGuid(),
+                    Title = "3",
+                    Content = "for GetRecentlyEditedOrCreatedNotes()",
+                    IconName = "",
+                    Owner = usr,
+                    Directory = dir
+
+                },
+                new Note
+                {
+                    CreatedAt = DateTime.Now.AddMinutes(1),
+                    NoteId = Guid.NewGuid(),
+                    Title = "2",
+                    Content = "for GetRecentlyEditedOrCreatedNotes()",
+                    IconName = "",
+                    Owner = usr,
+                    Directory = dir
+
+                },
+                new Note
+                {
+                    CreatedAt = new DateTime(1920, 12, 12),
+                    EditedAt = DateTime.Now.AddHours(1),
+                    NoteId = Guid.NewGuid(),
+                    Title = "1",
+                    Content = "for GetRecentlyEditedOrCreatedNotes()",
+                    IconName = "",
+                    Owner = usr,
+                    Directory = dir
+
+                },
+
+            };
+
+            await nr.AddManyAsync(notes);
+
+            // Act
+            var result = await nr.GetRecentlyEditedOrCreatedNotesAsync(usr.Id, 5);
+
+            // Assert
+            result.Should().NotBeEmpty().And.HaveCount(3);
+            result.Select(t => t.Title).Should().BeInAscendingOrder();
+        }
+        
+        [Fact(DisplayName = "User is able to mark a note as deleted")]
+        public async Task MarkNoteAsDeleted()
+        {
+            // Arrange
+            var nr = new NoteRepository(_context);
+            var usr = new ApplicationUser();
+            var note = new Note(null, "Test note", "for GetNoteByTitle()", "def-ico", usr, new Directory("Default", usr));
+            await nr.AddAsync(note);
+
+            // Act
+            var result = await nr.MarkNoteAsDeletedAsync(note.NoteId);
+
+            // Assert
+            Assert.True(result);
+            var noteFromDb = (await nr.GetByIdAsync(note.NoteId));
+            noteFromDb.IsMarkedAsDeleted.Should().Be(true);
+            noteFromDb.DeletedAt.Should().BeCloseTo(DateTime.Now, TimeSpan.FromMilliseconds(20));
+        }
+        
+        [Fact(DisplayName = "User is able to mark a note as not deleted")]
+        public async Task MarkNoteAsNotDeleted()
+        {
+            // Arrange
+            var nr = new NoteRepository(_context);
+            var usr = new ApplicationUser();
+            var note = new Note(null, "Test note", "for GetNoteByTitle()", "def-ico", usr, new Directory("Default", usr));
+            note.IsMarkedAsDeleted = true;
+            note.DeletedAt = DateTime.Now;
+            await nr.AddAsync(note);
+
+            // Act
+            var result = await nr.MarkNoteAsNotDeletedAsync(note.NoteId);
+
+            // Assert
+            Assert.True(result);
+            var noteFromDb = (await nr.GetByIdAsync(note.NoteId));
+            noteFromDb.IsMarkedAsDeleted.Should().Be(false);
+            noteFromDb.DeletedAt.Should().Be(null);
         }
     }
 }
