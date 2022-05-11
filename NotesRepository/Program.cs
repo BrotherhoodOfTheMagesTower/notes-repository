@@ -42,6 +42,7 @@ builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<AzureStorageHelper>();
 
 builder.Services.AddScoped<NoteService>();
+builder.Services.AddScoped<EventService>();
 builder.Services.AddScoped<DirectoryService>();
 
 builder.Services.AddBlazoredToast();

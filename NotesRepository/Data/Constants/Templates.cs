@@ -1,6 +1,6 @@
 ﻿namespace NotesRepository.Data.Constants
 {
-    public class Templates
+    public static class Templates
     {
         public static readonly string ToDoTemplate = @"## ToDo List
 
@@ -12,32 +12,19 @@ Things that I need to do this weekend:
     * wash the car
     * wash the bike";
 
-            
-        public static readonly string ToDoWithColumnTemplate = @"# ToDo List
-~~Przekreślenie~~tekstu
+
+        public static readonly string ToDoWithTableTemplate = @"## ToDo List
 
 ---
-lub
-___
+Things that I need to do this weekend:
 
-> Akapit? Czy coś innego Xd
+|  to do  | doing  |  done |
+|----------|----------|---------|
+| pay the bills  |  wash the car | do grocery shopping   |   
+| wash the bike |  |  |";
 
-[Mój Github] (https://github.com/jacek13)
+        public static Dictionary<string, string> NotesTemplates { get; set; }
+            = new Dictionary<string, string>() { { "To-do list", ToDoTemplate }, { "To-do list with table", ToDoWithTableTemplate } };
 
-> Lista:
-* element 1
-* element 2
-* element 3
-    * dzieli sie na pod element
-    * podelement prim
-
-> Lista numerowana:
-1. element 1
-2. element 2
-3. element 3
-
-`Jakis tekst`
-
-![zdjecie] (https://avatars.githubusercontent.com/u/56163434?s=400&u=b60309cd30e98cc4c84079a406350c6d4b6f9c20&v=4)";
     }
 }

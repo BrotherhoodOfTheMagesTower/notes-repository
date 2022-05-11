@@ -12,6 +12,6 @@ namespace NotesRepository.Repositories.Interfaces
         Task<List<Note>> SearchNoteByTitleAndContentAsync(string searchText, string userId);
         Task<bool> SetNoteAsCurrentlyEditedAsync(Guid noteId);
         Task<bool> SetNoteAsCurrentlyNotEditedAsync(Guid noteId);
-        ICollection<Note> GetAllNotesForParticularDirectory(Guid directoryId)
+        ICollection<Note> GetAllNotesForParticularDirectory(Guid directoryId);
     }
 }

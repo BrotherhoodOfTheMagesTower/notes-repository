@@ -11,7 +11,7 @@
 @inject Microsoft.Extensions.Localization.IStringLocalizer<Resource> localizer
 @inject NavigationManager navigationManager
 
-@if (preview.Item1 is null || content is null)
+@if (previewKey is null)
 {
     <p><em>Loading...</em></p>
 }
@@ -21,11 +21,10 @@ else
         <div class="my-sub-container p-2 ">
             <center><h3>@localizer["templates"]</h3> </center>
             <ul>
-                @for(int i = 0; i < content.Count; i++)
+                @foreach(KeyValuePair<string, string> kvp in Templates.NotesTemplates)
                 {
-                    var local = i;
                     <li>
-                        <button type="button" class="btn btn-primary" @onclick="() => changePreview(local)">@content[local].Item1</button>
+                        <button type="button" class="btn btn-primary" @onclick="() => changePreview(kvp.Key)">@kvp.Key</button>
                     </li>
                 }
             </ul>
@@ -33,7 +32,7 @@ else
         <div class="my-sub-container p-2">
              <center><h3>@localizer["preview"]</h3></center>
             <div class="my-preview">
-                @((MarkupString)Markdown.ToHtml(preview.Item1, pipeline))
+                @((MarkupString)Markdown.ToHtml(Templates.NotesTemplates[previewKey], pipeline))
             </div>
             <center>
                 <button type="button" class="btn btn-primary" @onclick="changePageToEditNote">@localizer["edit"]</button>
@@ -44,22 +43,18 @@ else
 
 @code
 {
-    private List<(string, string)> content; // first item = title, second item = tempalte content
-    private (string, int) preview;          // first item = preview content, second item = template index
+    private string? previewKey = null;
     private MarkdownPipeline? pipeline;
 
     protected override async Task OnParametersSetAsync()
     {
-        content = new List<(string, string)>();
-        content.Add(("To-do list", Templates.ToDoTemplate));
-        content.Add(("Test, remove me later!", Templates.ToDoWithColumnTemplate));
-        preview = init();
+        previewKey = init();
         pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build(); // Uruchomienie rozszerzeń markdown
     }
 
-    private void changePreview(int index) => preview = index >= 0 && index <= content.Count ? (content[index].Item2, index) : ("Wrong index", -1);
+    private void changePreview(string key) => previewKey = key;
 
-    private (string, int) init() => content.Count > 0 ? (content[0].Item2, 0) : ("No templates in the system", -1);
+    private string init() => Templates.NotesTemplates.Count > 0 ? Templates.NotesTemplates.Keys.First() : null;
 
-    private void changePageToEditNote() => navigationManager.NavigateTo($"/editNote/{preview.Item2.ToString()}");
+    private void changePageToEditNote() => navigationManager.NavigateTo($"/editNote/{previewKey}");
 }
