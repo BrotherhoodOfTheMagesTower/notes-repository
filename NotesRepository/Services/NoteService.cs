@@ -52,8 +52,6 @@ namespace NotesRepository.Services
 
         /// <summary>
         /// Gets all notes from the database, that are were moved to the bin by single delete.
-        /// Note objects does not include other properties. If you want to get more properties from the entity call
-        /// GetNoteByIdAsync()
         /// </summary>
         /// <param name="userId">The unique ID of user</param>
         /// <returns>A collection of notes from particular user that are were moved to the bin by single delete</returns>
@@ -61,13 +59,11 @@ namespace NotesRepository.Services
             => await _nr.GetAllNotesFromParticularUserThatAreCurrentlyInRecycleBinAsync(userId);
 
         /// <summary>
-        /// Gets all notes from the database, that are were moved to the bin by single delete 
-        /// Note objects does not include other properties. If you want to get more properties from the entity call
-        /// GetNoteByIdAsync()
+        /// Gets all notes from the database, that are were moved to the bin by single delete
         /// </summary>
         /// <param name="userId">The unique ID of user</param>
         /// <returns>A collection of notes from particular user that are were moved to the bin by single delete</returns>
-        public async Task<ICollection<Note>> GetAllPinnedNotesFromUser(string userId)
+        public async Task<ICollection<Note>> GetAllPinnedNotesFromUserAsync(string userId)
             => await _nr.GetAllPinnedNotesFromUserAsync(userId);
 
         public async Task<ICollection<Note>> GetRecentlyEditedOrCreatedNotes(string userId, int count = 10)
@@ -77,9 +73,6 @@ namespace NotesRepository.Services
             => await _nr.SearchNoteByTitleAndContentAsync(searchText, userId);
 
         public async Task<bool> AddNoteAsync(Note note)
-            => await _nr.AddAsync(note);
-        
-        public async Task<bool> AddNoteToDefaultDirectoryAsync(Note note)
             => await _nr.AddAsync(note);
         
         public async Task<bool> AddNotesAsync(ICollection<Note> notes)
@@ -164,6 +157,17 @@ namespace NotesRepository.Services
             if (note is not null)
             {
                 note.IsPinned = true;
+                return await _nr.UpdateAsync(note);
+            }
+            return false;
+        }
+        
+        public async Task<bool> UnpinNoteAsync(Guid noteId)
+        {
+            var note = await _nr.GetByIdAsync(noteId);
+            if (note is not null)
+            {
+                note.IsPinned = false;
                 return await _nr.UpdateAsync(note);
             }
             return false;

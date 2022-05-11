@@ -145,6 +145,60 @@ namespace Tests.Services
             noMatch1.Should().BeEmpty();
             noMatch2.Should().BeEmpty();
         }
+        
+        [Fact(DisplayName = "Be able to get all single notes from bin")]
+        public async Task GetAllSingleNotesFromBin()
+        {
+            //Arrange
+            var ns = new NoteService(_nr);
+            var usr1 = new ApplicationUser();
+            var usr2 = new ApplicationUser();
+            var usr3 = new ApplicationUser();
+            var notes = new List<Note>
+            {
+                new Note(null, "from usr1", "GetAllSingleNotesFromBin()", "def-ico", usr1, new Directory("Bin", usr1)),
+                new Note(null, "from usr2", "GetAllSingleNotesFromBin()", "def-ico", usr2, new Directory("Bin", usr2)),
+                new Note(null, "from usr3", "GetAllSingleNotesFromBin()", "def-ico", usr3, new Directory("Bin", usr3)),
+                new Note(null, "from usr3", "GetAllSingleNotesFromBin()", "def-ico", usr3, new Directory("Bin", usr3)),
+            };
+            await ns.AddNotesAsync(notes);
+
+            // Act
+            var notesInBinFromUsr3 = await ns.GetAllSingleNotesFromUserThatAreCurrentlyInRecycleBin(usr3.Id);
+
+            // Assert
+            Assert.NotNull(notesInBinFromUsr3);
+            notesInBinFromUsr3.Should().HaveCount(2);
+        }
+        
+        [Fact(DisplayName = "Be able to get all pinned notes from particular user")]
+        public async Task GetAllPinnedNotes()
+        {
+            //Arrange
+            var ns = new NoteService(_nr);
+            var usr1 = new ApplicationUser();
+            var usr2 = new ApplicationUser();
+            var usr3 = new ApplicationUser();
+            var notes = new List<Note>
+            {
+                new Note(null, "from usr1", "GetAllPinnedNotes()", "def-ico", usr1, new Directory("Random", usr1)),
+                new Note(null, "from usr2", "GetAllPinnedNotes()", "def-ico", usr2, new Directory("Random", usr2)),
+                new Note(null, "from usr3 - not pinned", "GetAllPinnedNotes()", "def-ico", usr3, new Directory("Random3", usr3)),
+                new Note(null, "from usr3, but pinned", "GetAllPinnedNotes()", "def-ico", usr3, new Directory("Random34", usr3)),
+                new Note(null, "from usr3, but pinned", "GetAllPinnedNotes()", "def-ico", usr3, new Directory("Random35", usr3)),
+            };
+            notes.ElementAt(2).IsPinned = true;
+            notes.ElementAt(3).IsPinned = true;
+            notes.ElementAt(4).IsPinned = true;
+            await ns.AddNotesAsync(notes);
+
+            // Act
+            var notesInBinFromUsr3 = await ns.GetAllPinnedNotesFromUserAsync(usr3.Id);
+
+            // Assert
+            Assert.NotNull(notesInBinFromUsr3);
+            notesInBinFromUsr3.Should().HaveCount(3);
+        }
 
         [Fact(DisplayName = "Be able to add a note to the database")]
         public async Task AddNote()
