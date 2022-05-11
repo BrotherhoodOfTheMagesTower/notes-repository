@@ -60,6 +60,9 @@ namespace NotesRepository.Services
         public async Task<ICollection<Directory>?> GetAllSubDirectoriesOfParticularDirectoryAsync(Guid directoryId)
         => await _dr.GetAllSubDirectoriesOfParticularDirectory(directoryId);
 
+        public ICollection<Directory>? GetAllSubDirectoriesOfParticularDirectorySync(Guid directoryId)
+            => _dr.GetAllSubDirectoriesOfParticularDirectorySync(directoryId);
+
         public async Task<(ICollection<Directory>?, ICollection<Note>?)> GetAllSubDirectoriesAndNotesOfParticularDirectoryAsync(Guid directoryId)
         {
             ICollection<Directory>? directories = await _dr.GetAllSubDirectoriesOfParticularDirectory(directoryId);
