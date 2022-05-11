@@ -1,6 +1,7 @@
 ﻿using Azure.Storage;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.WindowsAzure.Storage;
 
 namespace NotesRepository.Services
@@ -41,7 +42,7 @@ namespace NotesRepository.Services
             return files;
         }
 
-        public async Task<string> UploadFileToAzureAsync(IFormFile file, string containerName, string destFileName, bool overWrite = false)
+        public async Task<string> UploadFileToAzureAsync(IBrowserFile file, string containerName, string destFileName, bool overWrite = false)
         {
             var container = OpenContianer(containerName);
             if (container == null) return "";
@@ -66,7 +67,7 @@ namespace NotesRepository.Services
 
                 var cloudBlobClient = cloudStorageAccount.CreateCloudBlobClient();
                 var cloudBlobContainer = cloudBlobClient.GetContainerReference(containerName);
-                var cloudBlockBlob = cloudBlobContainer.GetBlockBlobReference(file.FileName);
+                var cloudBlockBlob = cloudBlobContainer.GetBlockBlobReference(file.Name);
                 cloudBlockBlob.Properties.ContentType = file.ContentType;
                 await cloudBlockBlob.UploadFromStreamAsync(file.OpenReadStream());
 

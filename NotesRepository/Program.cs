@@ -42,6 +42,7 @@ builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<AzureStorageHelper>();
 
 builder.Services.AddScoped<NoteService>();
+builder.Services.AddScoped<ImageService>();
 builder.Services.AddScoped<EventService>();
 builder.Services.AddScoped<CollaboratorsNotesService>();
 builder.Services.AddScoped<ImageService>();
