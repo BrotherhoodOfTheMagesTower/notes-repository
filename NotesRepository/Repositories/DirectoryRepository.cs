@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NotesRepository.Data;
-using Directory = NotesRepository.Data.Models.Directory;
 using NotesRepository.Repositories.Interfaces;
+using Directory = NotesRepository.Data.Models.Directory;
 
 namespace NotesRepository.Repositories
 {
@@ -32,16 +32,13 @@ namespace NotesRepository.Repositories
         /// <param name="subDirectory">The subdirectory entity</param>
         /// <param name="directoryId">The unique ID of directory</param>
         /// <returns>true if subdirectory was successfully added; otherwise false</returns>
-        public async Task<bool> AttachSubDirectoryToParticularDirectoryAsync(Guid subDirectoryId, Guid directoryId)
+        public async Task<bool> ChangeParentDirectoryForSubDirectory(Guid subDirectoryId, Guid directoryId)
         {
             var dir = await ctx.Directories.SingleOrDefaultAsync(x => x.DirectoryId == directoryId);
             var subDir = await ctx.Directories.SingleOrDefaultAsync(x => x.DirectoryId == subDirectoryId);
             if (dir is not null && subDir is not null)
             {
-                if (dir.SubDirectories is not null)
-                    dir.SubDirectories.Add(subDir);
-                else
-                    dir.SubDirectories = new List<Directory> { subDir };
+                subDir.ParentDir = dir;
 
                 ctx.Directories.Update(dir);
                 var result = await ctx.SaveChangesAsync();
@@ -130,9 +127,10 @@ namespace NotesRepository.Repositories
         /// </summary>
         /// <param name="name">The name of a directory</param>
         /// <returns>A directory entity if it exists in the db; otherwise null</returns>
-        public async Task<Directory?> GetDirectoryByNameAsync(string name)
+        public async Task<Directory?> GetDirectoryByNameAsync(string name, string userId)
         {
             return await ctx.Directories
+                .Where(u => u.User.Id == userId)
                 .Include(n => n.Notes)
                 .Include(s => s.SubDirectories)
                 .FirstOrDefaultAsync(i => i.Name == name);
@@ -166,17 +164,29 @@ namespace NotesRepository.Repositories
                 .ToListAsync();
         }
 
+        public ICollection<Directory>? GetAllSubDirectoriesOfParticularDirectorySync(Guid directoryId)
+        {
+            return ctx.Directories
+                .Include(s => s.SubDirectories)
+                .Include(s => s.Notes)
+                .Where(d => d.ParentDir.DirectoryId == directoryId)
+                .ToList();
+        }
+
         /// <summary>
-        /// Gets the default directory for specific user
+        /// Gets all subdirectories for specific directory
         /// </summary>
-        /// <param name="directoryId">The unique ID of the user</param>
+        /// <param name="directoryId">The unique ID of the directory</param>
         /// <returns>A collection of subdirectories for specific directory</returns>
-        public async Task<Directory?> GetDefaultDirectoryForParticularUserAsync(string userId)
+        public async Task<ICollection<Directory>?> GetAllDirectoriesWithoutParentDirectoryForParticularUserAsync(string userId)
         {
             return await ctx.Directories
                 .Where(u => u.User.Id == userId)
-                .Where(n => n.Name == "Default")
-                .SingleOrDefaultAsync();
+                .Where(d => d.ParentDir == null)
+                .Where(n => n.Name != "Bin")
+                .Include(s => s.SubDirectories)
+                .Include(s => s.Notes)
+                .ToListAsync();
         }
 
         /// <summary>

@@ -1,6 +1,18 @@
-﻿@inject DialogService DialogService
-@using NotesRepository.Data.Models
-<RadzenTemplateForm TItem="Event" Data="@model" Submit=@OnSubmit>
+﻿@using NotesRepository.Data.Models
+@using NotesRepository.Repositories
+@using NotesRepository.Services
+@using System.Collections.ObjectModel
+
+@inject DialogService DialogService
+@inject IToastService toastService;
+@inject NoteService noteService;
+@inject UserRepository userRepository;
+@inject EventService eventService;
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor
+
+
+
+<RadzenTemplateForm TItem="Event" Data="@model" Submit="async () => await OnSubmit(model)">
 <div class="row" style="margin-bottom: 16px">
     <div class="col-md-3">
         <RadzenLabel Text="Text" />
@@ -31,6 +43,27 @@
 <div class="row">
     <div class="col-md-3"></div>
     <div class="col">
+      <div class="form-check my-2">
+  <input class="form-check-input" type="checkbox" value="" id="checkingRemainder"> @*TO DO  sprawdzenie eventu i podpinanie remaindera*@
+  <label class="form-check-label" for="flexCheckDefault">
+    Set remainder
+  </label>
+</div>
+    </div>
+    <div class="col">
+        <RadzenLabel Text="Note Title" />
+        <InputSelect @bind-Value="@noteId">
+            @foreach (var note in allNotes)
+                    {
+                        <option value=@note.NoteId>@note.Title</option>
+                    }
+        </InputSelect>
+        @*<RadzenTextBox Placeholder ="to do"  Name="Note Title" />*@
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3"></div>
+    <div class="col">
         <RadzenButton ButtonType="ButtonType.Submit" Text="Save" />
     </div>
 </div>
@@ -43,6 +76,17 @@
     public DateTime EndAt { get; set; }
 
     Event model = new Event();
+    private List<Note>? allNotes = new();
+    private Note note = new();
+    private string noteId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        ApplicationUser loggedUser = await userRepository.GetUserByEmailAsync(httpContextAccessor.HttpContext.User.Identity.Name);
+        model.User = loggedUser;
+        model.EventId = Guid.NewGuid();
+        allNotes = await noteService.GetAllUserNotesByIdAsync(loggedUser.Id);
+    }
 
     protected override void OnParametersSet()
     {
@@ -50,8 +94,16 @@
         model.EndAt = EndAt;
     }
 
-    void OnSubmit(Event model)
+    async Task OnSubmit(Event model)
     {
-        DialogService.Close(model);
+        //DialogService.Close(model);
+
+        var added = await eventService.AddAsync(model);
+        var returned = await eventService.GetByIdAsync(model.EventId);
+        var attached = await eventService.AttachNoteToEventAsync(model.EventId, Guid.Parse(noteId));
+
+        
+        //TO DO zapisanie do bazy danych
     }
+
 }

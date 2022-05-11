@@ -133,7 +133,7 @@ namespace Tests.Repositories
             await nr.AddAsync(directory);
 
             // Act
-            var result = await nr.GetDirectoryByNameAsync(directory.Name);
+            var result = await nr.GetDirectoryByNameAsync(directory.Name, usr.Id);
 
             // Assert
             Assert.NotNull(result);
@@ -236,7 +236,7 @@ namespace Tests.Repositories
             await nr.AddAsync(subDirectory1);
 
             // Act
-            var result = await nr.AttachSubDirectoryToParticularDirectoryAsync(subDirectory1.DirectoryId, directory1.DirectoryId);  
+            var result = await nr.ChangeParentDirectoryForSubDirectory(subDirectory1.DirectoryId, directory1.DirectoryId);  
             
             // Assert
             var directories = await _context.Directories.ToListAsync();

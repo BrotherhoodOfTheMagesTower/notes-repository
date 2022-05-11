@@ -39,7 +39,6 @@
     padding-bottom: 0.4rem;
     overflow: hidden;
 }
-
     .nav-item:first-of-type {
         padding-top: 1rem;
     }
@@ -71,8 +70,8 @@
 
 @media (min-width: 750px) {
     .my-nav-item {
-        margin-left: 38px;
-        margin-right: 38px;
+        margin-left: 22px;
+        margin-right: 1rem;
     }
 
     .navbar-brand {

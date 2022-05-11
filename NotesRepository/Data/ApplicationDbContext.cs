@@ -1,7 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using NotesRepository.Areas.Identity.Data;
 using NotesRepository.Data.Models;
 using Directory = NotesRepository.Data.Models.Directory;
@@ -52,6 +50,9 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             .WithOne(p => p.ParentDir)
             .HasForeignKey("SubDirectoryId");
 
+        builder.Entity<Directory>()
+            .Ignore(t => t.IsToggled);
+
 
         // collaborators
         builder.Entity<CollaboratorsNotes>()
@@ -78,6 +79,6 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             .HasOne(n => n.Note)
             .WithOne(e => e.Event)
             .IsRequired(false)
-            .HasForeignKey<Event>(n => n.EventId);
+            .HasForeignKey<Event>(n => n.NoteId);
     }
 }

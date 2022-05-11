@@ -13,12 +13,12 @@ namespace NotesRepository.Data
         /// This method is responsible for seeding default directories, notes & events for one particular user - admin@admin.com
         /// </summary>
         /// <param name="serviceProvider"></param>
-        public static void SeedDefaultEntities(this IServiceProvider serviceProvider)
+        public static async void SeedDefaultEntities(this IServiceProvider serviceProvider)
         {
             var context = serviceProvider.GetService<ApplicationDbContext>();
             var ns = new NoteService(new NoteRepository(context), new UserRepository(context), new EventRepository(context), new DirectoryRepository(context), new ImageRepository(context));
 
-            // seed Admin
+            // Admin data
             var user = new ApplicationUser
             {
                 Id = "ba6c78a4-9cff-4bb1-acbd-f4c23a063616",
@@ -30,7 +30,7 @@ namespace NotesRepository.Data
                 SecurityStamp = Guid.NewGuid().ToString()
             };
 
-            // seed default directory
+            // default directory data
             var defDir = new Directory
             {
                 DirectoryId = Guid.Parse("5357fe5b-e0c5-40a3-98be-6776844dbaf7"),
@@ -38,7 +38,7 @@ namespace NotesRepository.Data
                 User = user
             };
 
-            //seed bin directory
+            // bin directory data
             var defBinDir = new Directory
             {
                 DirectoryId = Guid.Parse("e7ce7d86-314c-4ab6-a33e-4c6349b5a1cc"),
@@ -46,7 +46,7 @@ namespace NotesRepository.Data
                 User = user
             };
 
-            //seed subdirectories for default directory
+            // subdirectories for default directory data
             var subDirsOfDefault = new List<Directory>
             {
                 new Directory { DirectoryId = Guid.Parse("1125c320-d885-4d32-a8cb-2f11fe1b64ef"), Name = "SubDirOfDefault_1", ParentDir = defDir, User = user },
@@ -61,7 +61,7 @@ namespace NotesRepository.Data
                 },
             };
 
-            //seed custom directory with subdirectories
+            // custom directory with subdirectories data
             var customDirWithSubDirs = new Directory
             {
                 DirectoryId = Guid.Parse("ec3720dd-8d33-406d-b3f5-cdc70d5a9955"),
@@ -71,22 +71,15 @@ namespace NotesRepository.Data
                     new Directory { DirectoryId = Guid.Parse("9833eefb-b902-4d4e-93d8-bc760325e576"), Name = "SubDirOfCustom_2", User = user } }
             };
 
-            //seed 4 events with(out) remainder & with(out) attached note
-            var events = new List<Event>
-            {
-                new Event(Guid.Parse("64fb58cd-a344-4dfb-88e0-594e3cabecec"), "Mommy's 50th birthday", new DateTime(2022, 5, 28), new DateTime(2022, 5, 28), user, new DateTime(2022, 5, 27, 8, 0, 0)),
-                new Event(Guid.Parse("a9436543-5db5-4756-b8b7-07854d1678d0"), "Cinema with Emily", new DateTime(2022, 6, 12), new DateTime(2022, 6, 12), user),
-                new Event(Guid.Parse("78e16732-1e76-4a3e-a830-3aadd62e99fd"), "Trip to Berlin", new DateTime(2022, 6, 17), new DateTime(2022, 6, 22), user),
-                new Event(Guid.Parse("d0deef49-e9b1-4c2c-b248-218642f44504"), "Buy gift for aunt", new DateTime(2022, 6, 19), new DateTime(2022, 6, 19), user, null, new Note(null, "Gift ideas for aunt's birthday", "Samsung Galaxy S20 // Oppo Reno 5", "", user, defDir))
-            };
-
-            #region seedDirectories
             if (!context.Users.Any(x => x.Id == user.Id))
             {
                 user.HashPassword("Admin123!");
                 context.Users.Add(user);
                 context.SaveChanges();
             }
+
+            #region seedDirectories
+
 
             if (!context.Directories.Any(x => x.DirectoryId == defDir.DirectoryId))
             {
@@ -244,33 +237,64 @@ namespace NotesRepository.Data
                 context.Notes.Add(note);
                 context.SaveChanges();
             }
+            
+            if (!context.Notes.Any(x => x.NoteId == Guid.Parse("426c6d6c-8c0a-4b34-933c-7df94a205127")))
+            {
+                var note = new Note
+                {
+                    NoteId = Guid.Parse("426c6d6c-8c0a-4b34-933c-7df94a205127"),
+                    Title = "Gift ideas for aunt's birthday",
+                    Content = "Samsung Galaxy S20 // Oppo Reno 5",
+                    IconName = "",
+                    CreatedAt = new DateTime(2022, 2, 14, 9, 43, 0),
+                    Owner = user,
+                    Directory = defDir
+                };
+                context.Notes.Add(note);
+                context.SaveChanges();
+            }
             #endregion
 
-            //#region seedEvents
-            //if (!context.Events.Any(x => x.EventId == events.ElementAt(0).EventId))
-            //{
-            //    context.Events.Update(events.ElementAt(0));
-            //    context.SaveChanges();
-            //}
-            
-            //if(!context.Events.Any(x => x.EventId == events.ElementAt(1).EventId))
-            //{
-            //    context.Events.Add(events.ElementAt(1));
-            //    context.SaveChanges();
-            //}
-            
-            //if(!context.Events.Any(x => x.EventId == events.ElementAt(2).EventId))
-            //{
-            //    context.Events.Add(events.ElementAt(2));
-            //    context.SaveChanges();
-            //}
-            
-            //if(!context.Events.Any(x => x.EventId == events.ElementAt(3).EventId))
-            //{
-            //    context.Events.Add(events.ElementAt(3));
-            //    context.SaveChanges();
-            //}
-            //#endregion
+            #region seedEvents
+            var ur = new UserRepository(context);
+            var adminUser = await ur.GetUserByIdAsync(user.Id);
+            var noteForEvent = await ns.GetNoteByIdAsync(Guid.Parse("426c6d6c-8c0a-4b34-933c-7df94a205127"));
+            if (adminUser is not null && noteForEvent is not null)
+            {
+                //seed 4 events with(out) remainder & with(out) attached note
+                var events = new List<Event>
+                {
+                    new Event(Guid.Parse("64fb58cd-a344-4dfb-88e0-594e3cabecec"), "Mommy's 50th birthday", new DateTime(2022, 5, 28), new DateTime(2022, 5, 28), adminUser, new DateTime(2022, 5, 27, 8, 0, 0)),
+                    new Event(Guid.Parse("a9436543-5db5-4756-b8b7-07854d1678d0"), "Cinema with Emily", new DateTime(2022, 6, 12), new DateTime(2022, 6, 12), adminUser),
+                    new Event(Guid.Parse("78e16732-1e76-4a3e-a830-3aadd62e99fd"), "Trip to Berlin", new DateTime(2022, 6, 17), new DateTime(2022, 6, 22), adminUser),
+                    new Event(Guid.Parse("d0deef49-e9b1-4c2c-b248-218642f44504"), "Buy gift for aunt", new DateTime(2022, 6, 19), new DateTime(2022, 6, 19), adminUser, new DateTime(2022, 6, 18), noteForEvent)
+                };
+                if (!context.Events.Any(x => x.EventId == events.ElementAt(0).EventId))
+                {
+                    context.Events.Add(events.ElementAt(0));
+                    context.SaveChanges();
+                }
+
+                if (!context.Events.Any(x => x.EventId == events.ElementAt(1).EventId))
+                {
+                    context.Events.Add(events.ElementAt(1));
+                    context.SaveChanges();
+                }
+
+                if (!context.Events.Any(x => x.EventId == events.ElementAt(2).EventId))
+                {
+                    context.Events.Add(events.ElementAt(2));
+                    context.SaveChanges();
+                }
+
+                if (!context.Events.Any(x => x.EventId == events.ElementAt(3).EventId))
+                {
+                    context.Events.Add(events.ElementAt(3));
+                    context.SaveChanges();
+                }
+            }
+
+            #endregion
         }
 
         private static void HashPassword(this ApplicationUser user, string psswd = "Password123!")

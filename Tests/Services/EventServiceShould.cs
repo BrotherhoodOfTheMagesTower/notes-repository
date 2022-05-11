@@ -17,6 +17,7 @@ namespace Tests.Services
     public class EventServiceShould
     {
         private readonly EventRepository _er;
+        private readonly NoteRepository _nr;
         private readonly ApplicationDbContext ctx;
         private DbContextOptions<ApplicationDbContext> _options;
 
@@ -27,6 +28,7 @@ namespace Tests.Services
                 .Options;
             ctx = CreateDbContext();
             _er = new EventRepository(ctx);
+            _nr = new NoteRepository(ctx);
         }
         public ApplicationDbContext CreateDbContext()
         {
@@ -224,6 +226,30 @@ namespace Tests.Services
             Assert.True(result);
             Assert.Null(ev1);
             Assert.Null(ev2);
+        }
+
+        [Fact(DisplayName = "Be able to attach event to a note")]
+        public async Task AttachEventToNoteAsync()
+        {
+            //Arrange
+            var ns = new NoteService(_nr);
+            var es = new EventService(_er);
+            var usr = new ApplicationUser();
+            var note = new Note(null, "Tst", "AttachEventToNote()", "def-ico", usr, new Directory("Default", usr));
+            await ns.AddNoteAsync(note);
+            var ev = new Event(Guid.NewGuid(), "Con", DateTime.Now, DateTime.Now.AddMinutes(2), usr);
+            await _er.AddAsync(ev);
+
+            // Act
+            await es.AttachNoteToEventAsync(ev.EventId, note.NoteId);
+
+            // Assert
+            var noteFromDb = await ns.GetNoteByIdAsync(note.NoteId);
+            var eventFromDb = await es.GetByIdAsync(ev.EventId);
+            noteFromDb.Should().NotBeNull();
+            noteFromDb!.Event!.Should().Be(ev);
+            eventFromDb!.Note!.Should().Be(note);
+            eventFromDb!.Note.NoteId!.Should().Be(note.NoteId);
         }
     }
 }
