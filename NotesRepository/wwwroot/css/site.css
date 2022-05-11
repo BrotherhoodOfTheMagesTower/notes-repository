@@ -80,3 +80,7 @@ a, .btn-link {
 img, svg {
     width: min(90%,450px);
 }
+
+.dropdown-toggle::after{
+    content:unset;
+}
