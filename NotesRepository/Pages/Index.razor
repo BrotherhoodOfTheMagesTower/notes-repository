@@ -1,25 +1,6 @@
 ﻿@page "/"
+@using NotesRepository.Pages.LoggedUser
 @inject IToastService tstService;
-<PageTitle>Index</PageTitle>
+<PageTitle>NotesRepository</PageTitle>
 
-<h1>Hello, world!</h1>
-
-Welcome to your new app.
-
-<SurveyPrompt Title="How is Blazor working for you?" />
-
-
-<button class="btn-lg btn-success" @onclick="ShowSuccess">Show success</button>
-<button class="btn-lg btn-danger" @onclick="ShowError">Show error</button>
-
-@code{
-    private void ShowSuccess()
-    {
-        tstService.ShowSuccess("It works fine", "Congrats!");
-    }
-
-    private void ShowError()
-    {
-        tstService.ShowError("It works fine", "OOPS!");
-    }
-}
+<Home/>

@@ -34,6 +34,23 @@
     margin-right: 30px;
 }
 
+.my-custom-nav-item {
+    color: white;
+   
+}
+
+.folder-child:hover{
+   color:black;
+   cursor:pointer;
+}
+
+.my-nav-item-parent:first-child{
+    color:red;
+}
+.my-options:hover {
+    color: black;
+    cursor: pointer;
+}
 .nav-item {
     font-size: 0.8rem;
     padding-bottom: 0.4rem;
