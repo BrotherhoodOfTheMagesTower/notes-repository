@@ -8,9 +8,9 @@
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor
 @inject Microsoft.Extensions.Localization.IStringLocalizer<Resource> localizer
 @inject UserRepository _ur;
-@inject DirectoryRepository _dr;
 @inject IModalService modal;
 @inject DirectoryService _ds;
+@inject NoteService _ns;
 @inject NavigationManager NavigationManager;
 
 <nav class="flex-column navigation">
@@ -133,8 +133,8 @@
         return currentUserId;
     }
 
-    private ICollection<Directory>? GetAllSubDirectoriesForSpecificDirectory(Guid directoryId)
-    => _dr.GetAllSubDirectoriesOfParticularDirectorySync(directoryId);
+    //private ICollection<Directory>? GetAllSubDirectoriesForSpecificDirectory(Guid directoryId)
+    //=> _ds.GetAllSubDirectoriesOfParticularDirectorySync(directoryId);
 
     private void SearchPhrase()
     {
@@ -158,18 +158,19 @@
         }
         else
         {
-            allCurrentSubdirectiories = GetAllSubDirectoriesForSpecificDirectory(directory.DirectoryId);
+            allCurrentSubdirectiories = _ds.GetAllSubDirectoriesOfParticularDirectorySync(directory.DirectoryId);
         }
 
         @if (allCurrentSubdirectiories is not null)
         {
             foreach (var dir in allCurrentSubdirectiories)
             {
+                var notesFromCurrentSubirectory = _ns.GetAllNotesForParticularDirectory(dir.DirectoryId);
                 <div class="d-flex align-items-baseline justify-content-between nav-item my-nav-item dropdown-toggle nav-link my-custom-nav-item">
                     <div class="folder-child " @onclick="@(() => ToggleSubDirectory(dir))">
                         <i class="oi oi-folder" aria-hidden="true"></i>
                         @PrintName(dir.Name)
-                        @if (dir.SubDirectories!= null && dir.SubDirectories.Count() > 0 || dir.Notes!=null && dir.Notes.Count() > 0)
+                        @if (dir.SubDirectories!= null && dir.SubDirectories.Count() > 0 || notesFromCurrentSubirectory!=null && notesFromCurrentSubirectory.Count() > 0)
                         {
                             if (!dir.IsToggled)
                             {
@@ -195,9 +196,10 @@
             }
         }
 
-        if (directory?.Notes is not null)
+        var notes = _ns.GetAllNotesForParticularDirectory(directory.DirectoryId);
+        if (notes is not null)
         {
-            foreach (var note in directory.Notes)
+            foreach (var note in notes)
             {
                 <div class="d-flex align-items-baseline justify-content-between nav-item my-nav-item dropdown-toggle nav-link my-custom-nav-item">
                     <div class="folder-child" @onclick="() => GoToNote(note.NoteId.ToString())">
@@ -222,7 +224,7 @@
         }
         else
         {
-            allCurrentSubdirectiories = GetAllSubDirectoriesForSpecificDirectory(directory.DirectoryId);
+            allCurrentSubdirectiories = _ds.GetAllSubDirectoriesOfParticularDirectorySync(directory.DirectoryId);
         }
 
         @if (allCurrentSubdirectiories is not null)
