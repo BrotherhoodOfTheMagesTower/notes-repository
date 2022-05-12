@@ -8,9 +8,9 @@
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor
 @inject Microsoft.Extensions.Localization.IStringLocalizer<Resource> localizer
 @inject UserRepository _ur;
-@inject DirectoryRepository _dr;
 @inject IModalService modal;
 @inject DirectoryService _ds;
+@inject NoteService _ns;
 @inject NavigationManager NavigationManager;
 
 <nav class="flex-column navigation">
@@ -36,13 +36,13 @@
             </BlazoredTypeahead>
             <br />
             <div class="nav-item px-3">
-                <NavLink class="nav-link" href="/editNote/-1">
+                <NavLink class="nav-link" href="/editNote/newNote">
                     <span class="oi oi-copywriting" aria-hidden="true"></span> @localizer["newNote"]
                 </NavLink>
             </div>
 
             <div class="nav-item px-3">
-                <NavLink class="nav-link" href="/Home" Match="NavLinkMatch.All">
+                <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">
                     <span class="oi oi-home" aria-hidden="true"></span> @localizer["homePage"]
                 </NavLink>
             </div>
@@ -133,8 +133,8 @@
         return currentUserId;
     }
 
-    private ICollection<Directory>? GetAllSubDirectoriesForSpecificDirectory(Guid directoryId)
-    => _dr.GetAllSubDirectoriesOfParticularDirectorySync(directoryId);
+    //private ICollection<Directory>? GetAllSubDirectoriesForSpecificDirectory(Guid directoryId)
+    //=> _ds.GetAllSubDirectoriesOfParticularDirectorySync(directoryId);
 
     private void SearchPhrase()
     {
@@ -158,23 +158,34 @@
         }
         else
         {
-            allCurrentSubdirectiories = GetAllSubDirectoriesForSpecificDirectory(directory.DirectoryId);
+            allCurrentSubdirectiories = _ds.GetAllSubDirectoriesOfParticularDirectorySync(directory.DirectoryId);
         }
 
         @if (allCurrentSubdirectiories is not null)
         {
-
             foreach (var dir in allCurrentSubdirectiories)
             {
-                <div class="nav-item my-nav-item">
-                    <NavLink class="dropdown-toggle nav-link justify-content-between" @onclick="@(() => ToggleSubDirectory(dir))">
-                        <div class="my-inside-nav-link">
-                            <i class="oi oi-folder" aria-hidden="true"></i>
-                            @PrintDirectoryName(dir)
-                            <i class="fa-solid fa-chevron-down"></i>
-                        </div>
+                var notesFromCurrentSubirectory = _ns.GetAllNotesForParticularDirectory(dir.DirectoryId);
+                <div class="d-flex align-items-baseline justify-content-between nav-item my-nav-item dropdown-toggle nav-link my-custom-nav-item">
+                    <div class="folder-child " @onclick="@(() => ToggleSubDirectory(dir))">
+                        <i class="oi oi-folder" aria-hidden="true"></i>
+                        @PrintName(dir.Name)
+                        @if (dir.SubDirectories!= null && dir.SubDirectories.Count() > 0 || notesFromCurrentSubirectory!=null && notesFromCurrentSubirectory.Count() > 0)
+                        {
+                            if (!dir.IsToggled)
+                            {
+                                <i class="fa-solid fa-chevron-down"></i>
+
+                            }
+                            else
+                            {
+                                <i class="fa-solid fa-chevron-up"></i>
+                            }
+                        }
+                    </div>
+                    <div class="my-options">
                         <i class="fa-solid fa-ellipsis " @onclick="@(() => modal.Show<FolderMenu>(@dir.Name,options))"></i>
-                    </NavLink>
+                    </div>
                 </div>
 
                 @if (dir.IsToggled)
@@ -184,18 +195,20 @@
                 }
             }
         }
-        
-        if (directory?.Notes is not null)
+
+        var notes = _ns.GetAllNotesForParticularDirectory(directory.DirectoryId);
+        if (notes is not null)
         {
-            foreach (var note in directory.Notes)
+            foreach (var note in notes)
             {
-                <div class="nav-item my-nav-item">
-                    <NavLink class="dropdown-toggle nav-link justify-content-between" @onclick="() => GoToNote(note.NoteId.ToString())">
-                        <div class="my-inside-nav-link">
-                            <i class="oi oi-file" aria-hidden="true"></i>
-                            @note.Title
-                        </div>
-                    </NavLink>
+                <div class="d-flex align-items-baseline justify-content-between nav-item my-nav-item dropdown-toggle nav-link my-custom-nav-item">
+                    <div class="folder-child" @onclick="() => GoToNote(note.NoteId.ToString())">
+                        <i class="oi oi-file" aria-hidden="true"></i>
+                        @PrintName(note.Title)
+                    </div>
+                    <div class="my-options">
+                        <i class="fa-solid fa-ellipsis " @onclick="@(() => modal.Show<NoteMenu>(@note.Title,options))"></i>
+                    </div>
                 </div>
             }
         }
@@ -211,7 +224,7 @@
         }
         else
         {
-            allCurrentSubdirectiories = GetAllSubDirectoriesForSpecificDirectory(directory.DirectoryId);
+            allCurrentSubdirectiories = _ds.GetAllSubDirectoriesOfParticularDirectorySync(directory.DirectoryId);
         }
 
         @if (allCurrentSubdirectiories is not null)
@@ -223,8 +236,19 @@
                     <NavLink class="dropdown-toggle nav-link justify-content-between" @onclick="@(() => ToggleSubDirectory(dir))">
                         <div class="my-inside-nav-link">
                             <i class="oi oi-folder" aria-hidden="true"></i>
-                            @PrintDirectoryName(dir)
-                            <i class="fa-solid fa-chevron-down"></i>
+                            @PrintName(dir.Name)
+                            @if (dir.SubDirectories!= null && dir.SubDirectories.Count() > 0)
+                            {
+                                if (!dir.IsToggled)
+                                {
+                                    <i class="fa-solid fa-chevron-down"></i>
+
+                                }
+                                else
+                                {
+                                    <i class="fa-solid fa-chevron-up"></i>
+                                }
+                            }
                         </div>
                         <i class="fa-solid fa-ellipsis " @onclick="@(() => modal.Show<FolderMenu>(@dir.Name,options))"></i>
                     </NavLink>
@@ -240,12 +264,11 @@
 
     };
 
-    private RenderFragment PrintDirectoryName(Directory dir) => __builder =>
+    private RenderFragment PrintName(string name) => __builder =>
     {
-        string name = dir.Name;
-        @if (@dir.Name.Count() > 7)
+        @if (name.Count() > 10)
         {
-            name = name.Remove(6);
+            name = name.Remove(9);
             name += "...";
             <span class="p-1">@name</span>
         }
@@ -258,7 +281,7 @@
     //toDo implement this fuction
     private void GoToNote(string Id)
     {
-           NavigationManager.NavigateTo($"/editNote/{Id}");
+        NavigationManager.NavigateTo($"/editNote/{Id}");
     }
 
     private void NavigateToShareed()

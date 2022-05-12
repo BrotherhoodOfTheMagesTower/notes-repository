@@ -291,7 +291,7 @@ namespace Tests.Repositories
             await nr.AddManyAsync(notes);
 
             // Act
-            var result = await nr.GetRecentlyEditedOrCreatedNotes(usr.Id, 5);
+            var result = await nr.GetRecentlyEditedOrCreatedNotesAsync(usr.Id, 5);
 
             // Assert
             result.Should().NotBeEmpty().And.HaveCount(3);

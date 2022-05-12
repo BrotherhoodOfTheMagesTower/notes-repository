@@ -88,6 +88,15 @@ namespace NotesRepository.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Change folder.
+        /// </summary>
+        public static string changeFolder {
+            get {
+                return ResourceManager.GetString("changeFolder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Clear.
         /// </summary>
         public static string clear {
@@ -115,6 +124,15 @@ namespace NotesRepository.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete note.
+        /// </summary>
+        public static string deleteNote {
+            get {
+                return ResourceManager.GetString("deleteNote", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Draft.
         /// </summary>
         public static string draft {
@@ -129,6 +147,15 @@ namespace NotesRepository.Shared.Resources {
         public static string edit {
             get {
                 return ResourceManager.GetString("edit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit name.
+        /// </summary>
+        public static string editName {
+            get {
+                return ResourceManager.GetString("editName", resourceCulture);
             }
         }
         
@@ -246,6 +273,15 @@ namespace NotesRepository.Shared.Resources {
         public static string shared {
             get {
                 return ResourceManager.GetString("shared", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Share note.
+        /// </summary>
+        public static string shareNote {
+            get {
+                return ResourceManager.GetString("shareNote", resourceCulture);
             }
         }
         
