@@ -12,6 +12,11 @@
 @inject IToastService toastService;
 
 
+<PageTitle>@title</PageTitle>
+<HeadContent>
+    <meta name="description" content="@description">
+</HeadContent>
+
 <div class = "Calendar" style="display:flex; align-items:center; justify-content:center;">
 <RadzenExample Name="Scheduler" AdditionalSourceCodePages=@(new List<string>() { "AddEventPage.razor", "EditEventPage.razor" })/>
     <RadzenScheduler @ref=@scheduler LoadData=@OnLoad SlotRender=@OnSlotRender style="height: 768px; width:70%;" TItem="Event" Data=@data StartProperty="StartAt" EndProperty="EndAt"
@@ -25,9 +30,13 @@
 @code {
     RadzenScheduler<Event> scheduler;
     Dictionary<DateTime, string> events = new Dictionary<DateTime, string>();
-    Event model = new Event();
 
+    private string description = "calendar page";
+    private string title = "calendar";
+    Event model = new Event();
+    
     ICollection<Event> data = new List<Event>
+
     {
       // EXAMPLE added manually 
         new Event {StartAt = DateTime.Today.AddDays(-1), EndAt = DateTime.Today.AddDays(-1), Content ="Testing"}

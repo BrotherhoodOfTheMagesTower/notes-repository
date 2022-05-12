@@ -11,6 +11,11 @@
 @inject NavigationManager navigationManager
 @inject CollaboratorsNotesService _cns;
 
+<PageTitle>@title</PageTitle>
+<HeadContent>
+    <meta name="description" content="@description">
+</HeadContent>
+
 @if ((sharedNotes is null) || (sharedNotes.Count() == 0))
 {
     @localizer["noSharedNotes"]
@@ -42,6 +47,8 @@ else
 
     private MarkdownPipeline? pipeline;
     private List<Note>? sharedNotes = null;
+    private string description = "View/edit shared notes page";
+    private string title = "shared notes";
 
     protected override async Task OnInitializedAsync()
     {

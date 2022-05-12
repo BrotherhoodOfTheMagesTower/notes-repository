@@ -17,6 +17,11 @@
 @inject DirectoryService _ds;
 @inject IToastService toastService;
 
+<PageTitle>@title</PageTitle>
+<HeadContent>
+    <meta name="description" content="@description">
+</HeadContent>
+
 @if (content is null || imagesFromUser is null)
 {
     <p><em>Loading...</em></p>
@@ -81,6 +86,8 @@ else
     private bool validId = false;
     private Guid parsedId;
     private List<Image> imagesFromUser;
+    private string description = "edit note";
+    private string title = "edit note";
 
     protected override async Task OnParametersSetAsync()
     {
