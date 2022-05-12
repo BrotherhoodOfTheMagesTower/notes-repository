@@ -1,10 +1,13 @@
 ﻿@using NotesRepository.Data.Models
+@using NotesRepository.Repositories
 @using NotesRepository.Services
 
 @inject DialogService DialogService
-@inject IToastService toastService
-@inject EventService eventService
-
+@inject IToastService toastService;
+@inject NoteService noteService;
+@inject UserRepository userRepository;
+@inject EventService eventService;
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor
 
 <RadzenTemplateForm TItem="Event" Data="@model" Submit=@OnSubmit>
 <div class="row" style="margin-bottom: 16px">
@@ -47,9 +50,24 @@
       <div class="col">
         <RadzenLabel Text="Note Title" />
           <InputSelect @bind-Value="@noteId">
+                @if (noteId==null)
+                    {
+                        <option selected value=>---</option>
+                    }
+                    else 
+                    {
+                        <option value=>---</option>
+                    }
                 @foreach (var note in allNotes)
                 {
-                    <option value=@note.NoteId>@note.Title</option>
+                    @if (note.NoteId.ToString().Equals(noteId))
+                    {
+                        <option selected value=@note.NoteId>@note.Title</option>
+                    }
+                    else
+                    {
+                        <option value=@note.NoteId>@note.Title</option>
+                    }
                 }
             </InputSelect>
     </div>
@@ -66,24 +84,43 @@
     public Event Event { get; set; }
 
     Event model = new Event();
-      private List<Note>? allNotes = new();
+    private List<Note>? allNotes = new();
     private Note note = new();
     private string noteId;
 
-    protected override void OnParametersSet()
+    protected override async Task OnInitializedAsync()
     {
         model = Event;
+        ApplicationUser loggedUser = await userRepository.GetUserByEmailAsync(httpContextAccessor.HttpContext.User.Identity.Name);
+        allNotes = await noteService.GetAllUserNotesByIdAsync(loggedUser.Id);
+        
+        if(model.Note != null)
+        {
+            note = await noteService.GetNoteByIdAsync(model.Note.NoteId);
+            noteId = note.NoteId.ToString();
+        }
+        else noteId = null;
+
     }
+
+
 
     async Task OnSubmit(Event model)
     {
 
-       var update = await eventService.UpdateAsync(model);
-        var returned = await eventService.GetByIdAsync(model.EventId);
-        var attached = await eventService.AttachNoteToEventAsync(model.EventId, Guid.Parse(noteId));
+        var attached = true;
+
+        if(noteId != null && noteId!="")
+        attached = await eventService.AttachNoteToEventAsync(model.EventId, Guid.Parse(noteId));
+        else 
+            {
+                toastService.ShowError("it is not possible to detach the note from the event yet");
+                attached = false;
+            }
+        var update = await eventService.UpdateAsync(model);
 
         DialogService.Close(model);
-        if (update && attached && returned != null)
+        if (update && attached)
             toastService.ShowSuccess("Success");
         else
             toastService.ShowError("Error");

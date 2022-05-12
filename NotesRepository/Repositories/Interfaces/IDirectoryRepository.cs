@@ -7,6 +7,7 @@ namespace NotesRepository.Repositories.Interfaces
     {
         Task<Directory?> GetDirectoryByNameAsync(string name, string userId);
         Task<ICollection<Directory>> GetAllDirectoriesForParticularUserAsync(string userId);
+        ICollection<Directory> GetAllSubDirectoriesOfParticularDirectorySync(Guid directoryId);
         Task<ICollection<Directory>?> GetAllSubDirectoriesOfParticularDirectory(Guid directoryId);
         Task<ICollection<Directory>?> GetAllDirectoriesWithoutParentDirectoryForParticularUserAsync(string userId);
         Task<bool> ChangeParentDirectoryForSubDirectory(Guid subDirectoryId, Guid directoryId);
