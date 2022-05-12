@@ -78,22 +78,29 @@ else
 
     private async Task<string> init() // TODO narazie init obsługuje tylko wczytywanie templateów, trzeba dodać obsługę wczytywania z bazy
     {
-        validId = Guid.TryParse(templateIndex, out parsedId);
-        if (validId == false)
+        if (templateIndex is null)
         {
-            return Templates.NotesTemplates[templateIndex];
-        }
-        else
-        {
-            var note = await _ns.GetNoteByIdAsync(Guid.Parse(templateIndex));
-            if (note is not null)
+            validId = Guid.TryParse(templateIndex, out parsedId);
+            if (validId == false)
             {
-                return note.Content;
+                return Templates.NotesTemplates[templateIndex];
             }
             else
             {
-                return " ";    //TODO 404
+                var note = await _ns.GetNoteByIdAsync(Guid.Parse(templateIndex));
+                if (note is not null)
+                {
+                    return note.Content;
+                }
+                else
+                {
+                    return " ";    //TODO 404
+                }
             }
+        }
+        else
+        {
+             return " ";
         }
     }
     }

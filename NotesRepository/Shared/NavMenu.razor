@@ -71,7 +71,7 @@
                 </NavLink>
             </div>
             <div class="nav-item px-3">
-                <NavLink class="dropdown-toggle nav-link">
+                <NavLink class="dropdown-toggle nav-link" @onclick="()=> NavigateToShareed()">
                     <span class="oi oi-share" aria-hidden="true"></span> @localizer["shared"]
                 </NavLink>
             </div>
@@ -259,6 +259,11 @@
     private void GoToNote(string Id)
     {
            NavigationManager.NavigateTo($"/editNote/{Id}");
+    }
+
+    private void NavigateToShareed()
+    {
+           NavigationManager.NavigateTo($"/sharedNotes");
     }
 
 }

@@ -153,6 +153,9 @@
   <data name="newNote" xml:space="preserve">
     <value>Nowa notatka</value>
   </data>
+  <data name="noSharedNotes" xml:space="preserve">
+    <value>Brak udostępnionych notatek!</value>
+  </data>
   <data name="pinned" xml:space="preserve">
     <value>Przypiete</value>
   </data>

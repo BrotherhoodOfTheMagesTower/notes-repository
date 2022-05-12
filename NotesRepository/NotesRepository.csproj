@@ -11,11 +11,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Pages\LoggedUser\SharedNotesPage.razor.css" />
     <None Remove="Pages\LoggedUser\TemplatePreview.razor.css" />
+    <None Remove="Pages\LoggedUser\TrashPage.razor.css" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Pages\LoggedUser\SharedNotesPage.razor.css" />
     <Content Include="Pages\LoggedUser\TemplatePreview.razor.css" />
+    <Content Include="Pages\LoggedUser\TrashPage.razor.css" />
   </ItemGroup>
 
   <ItemGroup>
