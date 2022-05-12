@@ -4,7 +4,7 @@ using Azure.Storage.Blobs.Models;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.WindowsAzure.Storage;
 
-namespace NotesRepository.Services
+namespace NotesRepository.Services.Azure
 {
     public class AzureStorageHelper
     {

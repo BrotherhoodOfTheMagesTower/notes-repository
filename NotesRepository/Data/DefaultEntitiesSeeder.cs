@@ -253,6 +253,23 @@ namespace NotesRepository.Data
                 context.Notes.Add(note);
                 context.SaveChanges();
             }
+            if (!context.Notes.Any(x => x.NoteId == Guid.Parse("c258aff3-5e0a-4a9f-8bba-15dce9b27a0a")))
+            {
+                var note = new Note
+                {
+                    NoteId = Guid.Parse("c258aff3-5e0a-4a9f-8bba-15dce9b27a0a"),
+                    Title = "From start in the bin.",
+                    Content = "This note was seeded, being already in recycle bin.",
+                    IconName = "",
+                    CreatedAt = new DateTime(2018, 2, 14, 9, 43, 0),
+                    DeletedAt = DateTime.Now,
+                    IsMarkedAsDeleted = true,
+                    Owner = user,
+                    Directory = defBinDir
+                };
+                context.Notes.Add(note);
+                context.SaveChanges();
+            }
             #endregion
 
             #region seedEvents

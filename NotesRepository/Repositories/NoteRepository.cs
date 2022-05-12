@@ -62,6 +62,18 @@ namespace NotesRepository.Repositories
             var result = await ctx.SaveChangesAsync();
             return result > 0;
         }
+        
+        /// <summary>
+        /// Removes multiple notes entities from the database
+        /// </summary>
+        /// <param name="note">The note entity</param>
+        /// <returns>true if notes were successfully removed; otherwise false</returns>
+        public bool DeleteMany(ICollection<Note> notes)
+        {
+            ctx.Notes.RemoveRange(notes);
+            var result = ctx.SaveChanges();
+            return result > 0;
+        }
 
         /// <summary>
         /// Removes a note entity from the database by noteId
@@ -322,5 +334,16 @@ namespace NotesRepository.Repositories
             var allNotes = await GetAllUserNotesAsync(userId);
             return allNotes.OrderByDescending(x => x.EditedAt).ThenByDescending(x => x.CreatedAt).Take(count).ToArray();
         }
+
+        /// <summary>
+        /// Gets all notes, which were transferred 'in bulk' to bin at least 30 days ago
+        /// </summary>
+        /// <returns>An ICollection of Note entities, which were transferred 'in bulk' to bin at least 30 days ago</returns>
+        public ICollection<Note> GetAllSingleNotesWhichShouldBeRemovedFromDb()
+            => ctx.Notes
+            .Where(x => x.DeletedAt < DateTime.Now.AddDays(-30) 
+                && x.Directory.Name == "Bin" 
+                && x.IsMarkedAsDeleted == true)
+            .ToArray();
     }
 }
