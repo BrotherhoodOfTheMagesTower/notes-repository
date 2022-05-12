@@ -1,12 +1,20 @@
 ﻿@page "/calendar"
-
-@inject DialogService DialogService
 @using NotesRepository.Data.Models
 @using Radzen
+@using NotesRepository.Services
+@using NotesRepository.Repositories
+
+@inject NoteService noteService
+@inject EventService eventService
+@inject UserRepository userRepository
+@inject DialogService DialogService
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor
+@inject IToastService toastService;
+
 
 <div class = "Calendar" style="display:flex; align-items:center; justify-content:center;">
 <RadzenExample Name="Scheduler" AdditionalSourceCodePages=@(new List<string>() { "AddEventPage.razor", "EditEventPage.razor" })/>
-    <RadzenScheduler @ref=@scheduler SlotRender=@OnSlotRender style="height: 768px; width:70%;" TItem="Event" Data=@data StartProperty="StartAt" EndProperty="EndAt"
+    <RadzenScheduler @ref=@scheduler LoadData=@OnLoad SlotRender=@OnSlotRender style="height: 768px; width:70%;" TItem="Event" Data=@data StartProperty="StartAt" EndProperty="EndAt"
         TextProperty="Content" SelectedIndex="2"
         SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentSelect AppointmentRender=@OnAppointmentRender>
         <RadzenDayView />
@@ -17,9 +25,9 @@
 @code {
     RadzenScheduler<Event> scheduler;
     Dictionary<DateTime, string> events = new Dictionary<DateTime, string>();
+    Event model = new Event();
 
-
-    IList<Event> data = new List<Event>
+    ICollection<Event> data = new List<Event>
     {
       // EXAMPLE added manually 
         new Event {StartAt = DateTime.Today.AddDays(-1), EndAt = DateTime.Today.AddDays(-1), Content ="Testing"}
@@ -27,32 +35,45 @@
 
 
 
-   void OnSlotRender(SchedulerSlotRenderEventArgs args) 
+    void OnSlotRender(SchedulerSlotRenderEventArgs args) 
     {
-        
+
         if (args.View.Text == "Month" && args.Start.Date == DateTime.Today)
         {
             args.Attributes["style"] = "background: rgba(255,220,40,.2);";
         }
 
-        
+
         if ((args.View.Text == "Week" || args.View.Text == "Day") && args.Start.Hour > 7 && args.Start.Hour < 16)
         {
             args.Attributes["style"] = "background: rgba(255,220,40,.2);";
         }
     }
+    async Task OnLoad()
+    {
+        ApplicationUser loggedUser = await userRepository.GetUserByEmailAsync(httpContextAccessor.HttpContext.User.Identity.Name);
+        model.User = loggedUser;
+        data = await eventService.GetAllUserEventsAsync(loggedUser.Id);
+
+    }
 
     async Task OnSlotSelect(SchedulerSlotSelectEventArgs args)
     {
-
-        Event datas = await DialogService.OpenAsync<AddEventPage>("Add Event",
-            new Dictionary<string, object> { { "StartAt", args.Start }, { "EndAt", args.End } });
-
-        if (datas != null)
+        if (args.Start < DateTime.Now)
         {
-            data.Add(datas);
-            await scheduler.Reload();
-            
+            toastService.ShowError("Error you cant do this");
+        }
+        else
+        {
+            Event datas = await DialogService.OpenAsync<AddEventPage>("Add Event",
+                new Dictionary<string, object> { { "StartAt", args.Start }, { "EndAt", args.End } });
+          
+            if (datas != null)
+            {
+                data.Add(datas);
+                await scheduler.Reload();
+
+            }
         }
     }
       async Task OnAppointmentSelect(SchedulerAppointmentSelectEventArgs<Event> args)
