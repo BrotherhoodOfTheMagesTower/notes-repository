@@ -116,41 +116,45 @@ else
 
     private async Task<string> init() // TODO narazie init obsługuje tylko wczytywanie templateów, trzeba dodać obsługę wczytywania z bazy
     {
-        if (templateIndex is null)
+        if (templateIndex is not null)
         {
-            return Templates.NotesTemplates[templateIndex];
-        }
-        else
-        {
-            string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (currentUserId != null)
+            validId = Guid.TryParse(templateIndex, out parsedId);
+            if (validId == false)
             {
-                var note = await _ns.GetNoteByIdAsync(Guid.Parse(templateIndex));
-                if (note is not null)
-                {
-                    var noteImages = await _is.GetAllUserImagesAsync(currentUserId);
-                    if(noteImages.Count > 0)
-                    {
-                        foreach(var image in noteImages)
-                        {
-                            imagesFromUser.Add(image);
-                        }
-                    }
-                    return note.Content;
-                }
-                else
-                {
-                    return " ";    //TODO 404
-                }
+                return Templates.NotesTemplates[templateIndex];
             }
             else
             {
-                return " ";
+                string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (currentUserId != null)
+                {
+                    var note = await _ns.GetNoteByIdAsync(Guid.Parse(templateIndex));
+                    if (note is not null)
+                    {
+                        var noteImages = await _is.GetAllUserImagesAsync(currentUserId);
+                        if (noteImages.Count > 0)
+                        {
+                            foreach (var image in noteImages)
+                            {
+                                imagesFromUser.Add(image);
+                            }
+                        }
+                        return note.Content;
+                    }
+                    else
+                    {
+                        return " ";
+                    }
+                }
+                else
+                {
+                    return " ";
+                }
             }
         }
         else
         {
-             return " ";
+            return " ";
         }
     }
 
