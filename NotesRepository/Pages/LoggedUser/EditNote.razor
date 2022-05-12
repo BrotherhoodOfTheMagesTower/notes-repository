@@ -116,8 +116,7 @@ else
 
     private async Task<string> init() // TODO narazie init obsługuje tylko wczytywanie templateów, trzeba dodać obsługę wczytywania z bazy
     {
-        validId = Guid.TryParse(templateIndex, out parsedId);
-        if (validId == false)
+        if (templateIndex is null)
         {
             return Templates.NotesTemplates[templateIndex];
         }
@@ -148,6 +147,10 @@ else
             {
                 return " ";
             }
+        }
+        else
+        {
+             return " ";
         }
     }
 

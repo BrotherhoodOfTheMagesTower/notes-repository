@@ -162,6 +162,9 @@
   <data name="newNote" xml:space="preserve">
     <value>New note</value>
   </data>
+  <data name="noSharedNotes" xml:space="preserve">
+    <value>No shared notes!</value>
+  </data>
   <data name="pinned" xml:space="preserve">
     <value>Pinned</value>
   </data>

@@ -196,6 +196,15 @@ namespace NotesRepository.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No shared notes!.
+        /// </summary>
+        public static string noSharedNotes {
+            get {
+                return ResourceManager.GetString("noSharedNotes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Pinned.
         /// </summary>
         public static string pinned {

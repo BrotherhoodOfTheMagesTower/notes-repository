@@ -47,6 +47,7 @@ builder.Services.AddScoped<EventService>();
 builder.Services.AddScoped<CollaboratorsNotesService>();
 builder.Services.AddScoped<ImageService>();
 builder.Services.AddScoped<DirectoryService>();
+builder.Services.AddScoped<CollaboratorsNotesService>();
 
 builder.Services.AddBlazoredToast();
 builder.Services.AddBlazoredModal();
