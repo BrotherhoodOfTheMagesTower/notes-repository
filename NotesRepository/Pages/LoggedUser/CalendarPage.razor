@@ -4,6 +4,11 @@
 @using NotesRepository.Data.Models
 @using Radzen
 
+<PageTitle>@title</PageTitle>
+<HeadContent>
+    <meta name="description" content="@description">
+</HeadContent>
+
 <div class = "Calendar" style="display:flex; align-items:center; justify-content:center;">
 <RadzenExample Name="Scheduler" AdditionalSourceCodePages=@(new List<string>() { "AddEventPage.razor", "EditEventPage.razor" })/>
     <RadzenScheduler @ref=@scheduler SlotRender=@OnSlotRender style="height: 768px; width:70%;" TItem="Event" Data=@data StartProperty="StartAt" EndProperty="EndAt"
@@ -17,7 +22,8 @@
 @code {
     RadzenScheduler<Event> scheduler;
     Dictionary<DateTime, string> events = new Dictionary<DateTime, string>();
-
+     private string description = "calendar page";
+    private string title = "calendar";
 
     IList<Event> data = new List<Event>
     {
