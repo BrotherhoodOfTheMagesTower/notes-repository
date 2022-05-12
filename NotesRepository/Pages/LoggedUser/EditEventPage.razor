@@ -2,7 +2,8 @@
 @using NotesRepository.Services
 
 @inject DialogService DialogService
-@inject IToastService toastService;
+@inject IToastService toastService
+@inject EventService eventService
 
 
 <RadzenTemplateForm TItem="Event" Data="@model" Submit=@OnSubmit>
@@ -45,7 +46,12 @@
     </div>
       <div class="col">
         <RadzenLabel Text="Note Title" />
-        <RadzenTextBox Placeholder ="to do"  Name="Note Title" />
+          <InputSelect @bind-Value="@noteId">
+                @foreach (var note in allNotes)
+                {
+                    <option value=@note.NoteId>@note.Title</option>
+                }
+            </InputSelect>
     </div>
 </div>
 <div class="row">
@@ -60,15 +66,26 @@
     public Event Event { get; set; }
 
     Event model = new Event();
+      private List<Note>? allNotes = new();
+    private Note note = new();
+    private string noteId;
 
     protected override void OnParametersSet()
     {
         model = Event;
     }
 
-    void OnSubmit(Event model)
+    async Task OnSubmit(Event model)
     {
+
+       var update = await eventService.UpdateAsync(model);
+        var returned = await eventService.GetByIdAsync(model.EventId);
+        var attached = await eventService.AttachNoteToEventAsync(model.EventId, Guid.Parse(noteId));
+
         DialogService.Close(model);
-        toastService.ShowSuccess("The event was edited.");
+        if (update && attached && returned != null)
+            toastService.ShowSuccess("Success");
+        else
+            toastService.ShowError("Error");
     }
 } 
