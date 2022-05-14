@@ -86,7 +86,7 @@
         ApplicationUser loggedUser = await userRepository.GetUserByEmailAsync(httpContextAccessor.HttpContext.User.Identity.Name);
         model.User = loggedUser;
         model.EventId = Guid.NewGuid();
-        allNotes = await noteService.GetAllUserNotesByIdAsync(loggedUser.Id);
+        allNotes = await noteService.GetAllUserNotesWithoutEventAsync(loggedUser.Id);
     }
 
     protected override void OnParametersSet()

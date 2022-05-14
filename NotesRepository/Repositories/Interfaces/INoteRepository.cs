@@ -5,6 +5,7 @@ namespace NotesRepository.Repositories.Interfaces
     public interface INoteRepository : IRepository<Note>
     {
         Task<ICollection<Note>> GetAllUserNotesAsync(string userId);
+        Task<ICollection<Note>> GetAllUserNotesWithoutEventAsync(string userId);
         Task<Note?> GetNoteByTitleAsync(string title, string userId);
         Task<ICollection<Note>> GetAllNotesForParticularDirectoryAsync(Guid directoryId);
         Task<bool> AddManyAsync(ICollection<Note> notes);
@@ -13,5 +14,6 @@ namespace NotesRepository.Repositories.Interfaces
         Task<bool> SetNoteAsCurrentlyEditedAsync(Guid noteId);
         Task<bool> SetNoteAsCurrentlyNotEditedAsync(Guid noteId);
         ICollection<Note> GetAllNotesForParticularDirectory(Guid directoryId);
+        
     }
 }

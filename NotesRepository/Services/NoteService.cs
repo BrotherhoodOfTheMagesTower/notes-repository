@@ -31,6 +31,9 @@ namespace NotesRepository.Services
         public async Task<List<Note>> GetAllUserNotesByIdAsync(string userId)
             => (await _nr.GetAllUserNotesAsync(userId)).ToList();
 
+        public async Task<List<Note>> GetAllUserNotesWithoutEventAsync(string userId)
+            => (await _nr.GetAllUserNotesWithoutEventAsync(userId)).ToList();
+
         public async Task<Note?> GetNoteByTitleAsync(string title, string userId)
             => await _nr.GetNoteByTitleAsync(title, userId);
 

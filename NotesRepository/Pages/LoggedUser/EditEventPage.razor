@@ -57,17 +57,13 @@
                     else 
                     {
                         <option value=>---</option>
-                    }
-                @foreach (var note in allNotes)
-                {
-                    @if (note.NoteId.ToString().Equals(noteId))
-                    {
                         <option selected value=@note.NoteId>@note.Title</option>
-                    }
-                    else
-                    {
+                    }                 
+                @foreach (var note in allNotes)
+                {                   
+
                         <option value=@note.NoteId>@note.Title</option>
-                    }
+                    
                 }
             </InputSelect>
     </div>
@@ -92,7 +88,7 @@
     {
         model = Event;
         ApplicationUser loggedUser = await userRepository.GetUserByEmailAsync(httpContextAccessor.HttpContext.User.Identity.Name);
-        allNotes = await noteService.GetAllUserNotesByIdAsync(loggedUser.Id);
+        allNotes = await noteService.GetAllUserNotesWithoutEventAsync(loggedUser.Id);
         
         if(model.Note != null)
         {
@@ -114,8 +110,9 @@
         attached = await eventService.AttachNoteToEventAsync(model.EventId, Guid.Parse(noteId));
         else 
             {
-                toastService.ShowError("it is not possible to detach the note from the event yet");
-                attached = false;
+                //toastService.ShowError("it is not possible to detach the note from the event yet");
+                attached = await eventService.DeleteNoteFromEventAsync(model.EventId);
+
             }
         var update = await eventService.UpdateAsync(model);
 

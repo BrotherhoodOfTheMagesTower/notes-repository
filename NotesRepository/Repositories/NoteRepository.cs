@@ -111,6 +111,25 @@ namespace NotesRepository.Repositories
         }
 
         /// <summary>
+        /// Gets all notes without event from the database, that are assigned to specific user 
+        /// </summary>
+        /// <param name="userId">The unique ID of User, whose notes will be returned</param>
+        /// <returns>A collection of notes without event assigned to particulat user, that are currently stored in the database</returns>
+        public async Task<ICollection<Note>> GetAllUserNotesWithoutEventAsync(string userId)
+        {
+            return await ctx.Notes
+                .Where(n => n.Owner.Id == userId)
+                .Where(e => e.Event == null)
+                .Include(d => d.Directory)
+                .Include(o => o.Owner)
+                .Include(i => i.Images)
+                .Include(e => e.EditedBy)
+                .Include(ev => ev.Event)
+                .Include(c => c.CollaboratorsNotes)
+                .ToListAsync();
+        }
+
+        /// <summary>
         /// Gets the note from the database by noteId
         /// </summary>
         /// <param name="noteId">The unique ID of note</param>

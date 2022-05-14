@@ -53,5 +53,16 @@ namespace NotesRepository.Services
             }
             return false;
         }
+
+        public async Task<bool> DeleteNoteFromEventAsync(Guid eventId)
+        {
+            var _event = await _er.GetByIdAsync(eventId);
+            if (_event is not null)
+            {
+                _event.NoteId = null;
+                return await _er.UpdateAsync(_event);
+            }
+            return false;
+        }
     }
 }
