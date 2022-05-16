@@ -3,6 +3,7 @@ using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using NotesRepository.Data.Models;
 using NotesRepository.Repositories;
+using NotesRepository.Services.Azure;
 
 namespace NotesRepository.Services
 {
