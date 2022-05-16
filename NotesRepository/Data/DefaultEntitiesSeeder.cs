@@ -314,6 +314,129 @@ namespace NotesRepository.Data
             #endregion
         }
 
+        /// <summary>
+        /// This method is responsible for seeding 2 collaborators, which have 2 shared notes with user admin@admin.com
+        /// </summary>
+        /// <param name="serviceProvider"></param>
+        public static void SeedCollaboratorsWithSharedNotes(this IServiceProvider serviceProvider)
+        {
+            var context = serviceProvider.GetService<ApplicationDbContext>();
+
+            // user1 data
+            var user1 = new ApplicationUser
+            {
+                Id = "66657710-2688-4bca-b5d7-c07752d53460",
+                Email = "friend@1.com",
+                NormalizedEmail = "FRIEND@1.COM",
+                UserName = "friend@1.com",
+                NormalizedUserName = "FRIEND@1.COM",
+                EmailConfirmed = true,
+                SecurityStamp = Guid.NewGuid().ToString()
+            };
+
+            // default directory data
+            var defDir1 = new Directory
+            {
+                DirectoryId = Guid.Parse("f9a777b3-be99-4883-b8aa-70cc3d8fe70c"),
+                Name = "Default",
+                User = user1
+            };
+
+            // bin directory data
+            var defBinDir1 = new Directory
+            {
+                DirectoryId = Guid.Parse("9ef5ccaf-7b38-4dbe-baf5-86b4ed50e61f"),
+                Name = "Bin",
+                User = user1
+            };
+
+            user1.Directories = new[] { defDir1, defBinDir1 };
+            Task.Delay(1000).Wait();
+
+            if (!context.Users.Any(x => x.Id == user1.Id))
+            {
+                user1.HashPassword("Admin123!");
+                context.Users.Add(user1);
+                context.SaveChanges();
+            }
+
+            if(!context.CollaboratorsNotes.Any(x => x.ApplicationUserId == user1.Id && x.NoteId == Guid.Parse("9c755080-ba6b-48f1-854d-1816ad5fa74a")))
+            {
+                context.CollaboratorsNotes.Add(new CollaboratorsNotes
+                {
+                    ApplicationUserId = user1.Id,
+                    NoteId = Guid.Parse("9c755080-ba6b-48f1-854d-1816ad5fa74a")
+                });
+            }
+
+            if (!context.CollaboratorsNotes.Any(x => x.ApplicationUserId == user1.Id && x.NoteId == Guid.Parse("9bb2e297-6a70-4517-82b5-7fca43550c3e")))
+            {
+                context.CollaboratorsNotes.Add(new CollaboratorsNotes
+                {
+                    ApplicationUserId = user1.Id,
+                    NoteId = Guid.Parse("9bb2e297-6a70-4517-82b5-7fca43550c3e")
+                });
+            }
+            
+            // user2 data
+            var user2 = new ApplicationUser
+            {
+                Id = "06154886-0051-4167-b6c1-ffeb7e0bf974",
+                Email = "friend@2.com",
+                NormalizedEmail = "FRIEND@2.COM",
+                UserName = "friend@2.com",
+                NormalizedUserName = "FRIEND@2.COM",
+                EmailConfirmed = true,
+                SecurityStamp = Guid.NewGuid().ToString()
+            };
+
+            // default directory data
+            var defDir2 = new Directory
+            {
+                DirectoryId = Guid.Parse("e92bb8f8-ab1f-4813-9d00-73fca5187044"),
+                Name = "Default",
+                User = user2
+            };
+
+            // bin directory data
+            var defBinDir2 = new Directory
+            {
+                DirectoryId = Guid.Parse("853db056-25de-40a1-bd45-8cb3f824a7f0"),
+                Name = "Bin",
+                User = user2
+            };
+
+            user2.Directories = new[] { defDir2, defBinDir2 };
+            Task.Delay(1000).Wait();
+
+            if (!context.Users.Any(x => x.Id == user2.Id))
+            {
+                user1.HashPassword("Admin123!");
+                context.Users.Add(user2);
+                context.SaveChanges();
+            }
+
+            if (!context.CollaboratorsNotes.Any(x => x.ApplicationUserId == user1.Id && x.NoteId == Guid.Parse("8d44780e-592d-4003-a271-69c186653dda")))
+            {
+                context.CollaboratorsNotes.Add(new CollaboratorsNotes
+                {
+                    ApplicationUserId = user2.Id,
+                    NoteId = Guid.Parse("8d44780e-592d-4003-a271-69c186653dda")
+                });
+            }
+
+            if (!context.CollaboratorsNotes.Any(x => x.ApplicationUserId == user1.Id && x.NoteId == Guid.Parse("c32c63ec-308c-4051-82fb-1a62548b333a")))
+            {
+                context.CollaboratorsNotes.Add(new CollaboratorsNotes
+                {
+                    ApplicationUserId = user2.Id,
+                    NoteId = Guid.Parse("c32c63ec-308c-4051-82fb-1a62548b333a")
+                });
+            }
+                
+            context.SaveChanges();
+        }
+
         private static void HashPassword(this ApplicationUser user, string psswd = "Password123!")
         {
             var password = new PasswordHasher<ApplicationUser>();

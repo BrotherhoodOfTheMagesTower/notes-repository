@@ -116,5 +116,6 @@ var serviceProvider = app.Services?.GetService<IServiceScopeFactory>()?.CreateSc
 serviceProvider!.GetService<ApplicationDbContext>()!.Database.Migrate();
 
 serviceProvider!.SeedDefaultEntities();
+serviceProvider!.SeedCollaboratorsWithSharedNotes();
 
 app.Run();
