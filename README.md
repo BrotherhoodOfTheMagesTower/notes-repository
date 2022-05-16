@@ -15,6 +15,8 @@ Web application which allows user to take notes and share them across all of the
 The purpose of this application is to provide the user with a complex solution to take notes. App makes use of Markdown language 
 which allows quick and effective text formatting as well as nesting html code inside of the note.
 
+![PP_EditNote_Demo](https://user-images.githubusercontent.com/56163434/168643472-ca17ce3d-2735-4963-b7e1-402b770b6f43.gif)
+
 ### Images
 
 <img src="https://user-images.githubusercontent.com/56251920/168623700-8560b9f9-a3d7-480f-8068-d72601844902.png" width="70%"/>
