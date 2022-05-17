@@ -15,6 +15,7 @@
 @inject UserRepository _ur;
 @inject ImageService _is;
 @inject DirectoryService _ds;
+@inject Data.Flags flags;
 @inject IToastService toastService;
 
 <PageTitle>@title</PageTitle>
@@ -91,6 +92,13 @@ else
 
     protected override async Task OnParametersSetAsync()
     {
+        int numberOfWaits = 1;
+        while(flags.getNavMenuLoadingStatus())
+        {
+            System.Console.WriteLine($"Thread number {Thread.CurrentThread.ManagedThreadId} from {navigationManager.Uri} -> waits {numberOfWaits++ * 5} [ms] for NavMenu to render.");
+            Thread.Sleep(5); // Wait 5 ms until navbar ends rendering
+        }
+
         imagesFromUser = new List<Image>();
         content = templateIndex == "newNote" ? "" : await init();
         pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build(); // Uruchomienie rozszerzeń markdown

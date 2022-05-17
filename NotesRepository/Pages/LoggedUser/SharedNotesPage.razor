@@ -9,6 +9,7 @@
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor
 @inject Microsoft.Extensions.Localization.IStringLocalizer<Resource> localizer
 @inject NavigationManager navigationManager
+@inject Data.Flags flags;
 @inject CollaboratorsNotesService _cns;
 
 <PageTitle>@title</PageTitle>
@@ -52,6 +53,13 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        int numberOfWaits = 1;
+        while(flags.getNavMenuLoadingStatus())
+        {
+            System.Console.WriteLine($"Thread number {Thread.CurrentThread.ManagedThreadId} from {navigationManager.Uri} -> waits {numberOfWaits++ * 5} [ms] for NavMenu to render.");
+            Thread.Sleep(5); // Wait 5 ms until navbar ends rendering
+        }
+
         string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (currentUserId is not null)
             sharedNotes = (await _cns.GetAllSharedNotesForUserAsync(currentUserId)).ToList();

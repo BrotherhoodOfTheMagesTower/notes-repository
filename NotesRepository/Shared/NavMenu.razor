@@ -11,6 +11,7 @@
 @inject IModalService modal;
 @inject DirectoryService _ds;
 @inject NoteService _ns;
+@inject Data.Flags flags;
 @inject NavigationManager NavigationManager;
 
 <nav class="flex-column navigation">
@@ -99,7 +100,16 @@
 
     protected override async Task OnInitializedAsync()
     {
+        flags.setNavMenuLoadingStatus(true);
+        Thread threadForInit = new Thread(async () => await init());
+        threadForInit.Start();
+    }
+
+    private async Task init()
+    {
+        flags.setNavMenuLoadingStatus(true);
         mainDirs = await _ds.GetAllDirectoriesWithoutParentDirectoryForParticularUserAsync(GetCurrentUserId()!);
+        flags.setNavMenuLoadingStatus(false);
     }
 
     protected override void OnInitialized()

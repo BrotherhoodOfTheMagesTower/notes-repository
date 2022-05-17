@@ -79,6 +79,7 @@ builder.Services.AddScoped<ImageService>();
 builder.Services.AddScoped<EventService>();
 builder.Services.AddScoped<DirectoryService>();
 builder.Services.AddScoped<CollaboratorsNotesService>();
+builder.Services.AddScoped<Flags>();
 
 builder.Services.AddBlazoredToast();
 builder.Services.AddBlazoredModal();
