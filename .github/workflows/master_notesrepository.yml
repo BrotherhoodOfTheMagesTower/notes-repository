@@ -31,7 +31,7 @@ jobs:
       with:
         push: true
         tags: mcr.microsoft.com/${{ secrets.AzureAppService_ContainerUsername_9e1c826dcbe5406289fe4c01f8c8ec5c }}/appsvc/staticsite:${{ github.sha }}
-        file: ./Dockerfile
+        file: ./NotesRepository/Dockerfile
 
   deploy:
     runs-on: ubuntu-latest
