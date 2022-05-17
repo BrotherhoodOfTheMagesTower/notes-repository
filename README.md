@@ -25,6 +25,9 @@ which allows quick and effective text formatting as well as nesting html code in
 
 <img src="https://user-images.githubusercontent.com/56251920/168623896-662e6dd1-1aec-487f-902f-eb301b8eb80a.png" width="70%"/>
 
+<img src="https://user-images.githubusercontent.com/56397163/168771756-f62f5ef3-d252-4b70-a8c7-f62a969e622e.png" width="70%"/>
+
+
 ### Features
 
 - uses the power of **Markdown** and **html**
