@@ -20,4 +20,4 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 RUN sed -i 's/DEFAULT@SECLEVEL=2/DEFAULT@SECLEVEL=1/g' /etc/ssl/openssl.cnf
-ENTRYPOINT ["dotnet", "NotesRepository.dll", "--environment=Development"]
+ENTRYPOINT ["dotnet", "NotesRepository.dll"]
