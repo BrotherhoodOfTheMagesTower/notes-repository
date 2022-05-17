@@ -416,25 +416,26 @@ namespace NotesRepository.Data
                 context.SaveChanges();
             }
 
-            if (!context.CollaboratorsNotes.Any(x => x.ApplicationUserId == user1.Id && x.NoteId == Guid.Parse("8d44780e-592d-4003-a271-69c186653dda")))
+            if (!context.CollaboratorsNotes.Any(x => x.ApplicationUserId == user2.Id && x.NoteId == Guid.Parse("8d44780e-592d-4003-a271-69c186653dda")))
             {
                 context.CollaboratorsNotes.Add(new CollaboratorsNotes
                 {
                     ApplicationUserId = user2.Id,
                     NoteId = Guid.Parse("8d44780e-592d-4003-a271-69c186653dda")
                 });
+                context.SaveChanges();
             }
 
-            if (!context.CollaboratorsNotes.Any(x => x.ApplicationUserId == user1.Id && x.NoteId == Guid.Parse("c32c63ec-308c-4051-82fb-1a62548b333a")))
+            if (!context.CollaboratorsNotes.Any(x => x.ApplicationUserId == user2.Id && x.NoteId == Guid.Parse("c32c63ec-308c-4051-82fb-1a62548b333a")))
             {
                 context.CollaboratorsNotes.Add(new CollaboratorsNotes
                 {
                     ApplicationUserId = user2.Id,
                     NoteId = Guid.Parse("c32c63ec-308c-4051-82fb-1a62548b333a")
                 });
+                context.SaveChanges();
             }
                 
-            context.SaveChanges();
         }
 
         private static void HashPassword(this ApplicationUser user, string psswd = "Password123!")
