@@ -141,6 +141,9 @@
   <data name="deleteNote" xml:space="preserve">
     <value>Usuń notatkę</value>
   </data>
+  <data name="directory" xml:space="preserve">
+    <value>Folder</value>
+  </data>
   <data name="draft" xml:space="preserve">
     <value>Brudnopis</value>
   </data>
@@ -158,6 +161,9 @@
   </data>
   <data name="logIn" xml:space="preserve">
     <value>Zaloguj się</value>
+  </data>
+  <data name="name" xml:space="preserve">
+    <value>Nazwa</value>
   </data>
   <data name="newNote" xml:space="preserve">
     <value>Nowa notatka</value>
@@ -197,6 +203,12 @@
   </data>
   <data name="theLatest" xml:space="preserve">
     <value>Ostatnie</value>
+  </data>
+  <data name="title" xml:space="preserve">
+    <value>Tytuł</value>
+  </data>
+  <data name="toUpload" xml:space="preserve">
+    <value>Aby wysłać zdjęcie, musisz najpierw zapisać notatkę.</value>
   </data>
   <data name="trash" xml:space="preserve">
     <value>Kosz</value>

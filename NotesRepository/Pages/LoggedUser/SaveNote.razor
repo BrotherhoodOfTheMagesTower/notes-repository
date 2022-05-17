@@ -1,0 +1,183 @@
+﻿@using NotesRepository.Services;
+@using NotesRepository.Data;
+@using NotesRepository.Data.Models;
+@using NotesRepository.Repositories;
+@using System.Security.Claims;
+@using System.ComponentModel.DataAnnotations;
+
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor;
+@inject Microsoft.Extensions.Localization.IStringLocalizer<Resource> localizer;
+@inject NavigationManager navigationManager;
+@inject UserRepository _ur;
+@inject DirectoryService _ds;
+@inject NoteService _ns;
+@inject IToastService toastService;
+
+<!--TODO Wprowadź tytuł notatki, wybór ikony (emoji), wybór folderu-->
+<EditForm Model="@inputFromUser" OnValidSubmit="saveNote">
+    <DataAnnotationsValidator/>
+    <div>
+        <div>
+            <row>@localizer["name"]</row>
+            <row>
+                <InputText id="noteTitle" @bind-Value="@inputFromUser.Title"></InputText>
+                <ValidationMessage For="() => inputFromUser.Title"/>
+            </row>
+        </div>
+        <div>
+            <row>@localizer["directory"]</row>
+            <row>
+            <InputText id="noteTitle" @bind-Value="@inputFromUser.Directory"></InputText>
+            <ValidationMessage For="() => inputFromUser.Directory"/>
+            </row>
+        </div>
+        <div>
+            <row>Emoji</row>
+            <row>
+            <InputSelect id="emoji"  @bind-Value="inputFromUser.Emoji">
+                @foreach(var e in emoji)
+                {
+                    <option value="@e">@e</option>
+                }
+            </InputSelect>
+            </row>
+        </div>
+    </div>
+    <center>
+        <button type="submit" class="btn btn-primary">@localizer["save"]</button>
+    </center>
+</EditForm>
+
+
+@code 
+{
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+    [Parameter] public string content { get; set; }
+    [Parameter] public string Title { get; set; } = "New note";
+    [Parameter] public string IconName { get; set; } = "📜";
+    [Parameter] public Note? noteFromDb { get; set; } = null;
+    private Directory? selectedDirectory;
+    private NoteValidation inputFromUser;
+    // TODO trzeba to przemyśleć
+    private string[] emoji = {  "⌚️", "📱", "📲", "💻", "📞", "☎️",
+                                "📟", "📠", "📺","📻","🎙","🎚",
+                                "🎛", "🧭", "⏱","⏲","⏰","🕰",
+                                "📜", "📃", "📄","📑","🧾", "📊",
+                                "📈", "📉", "🗒","🗑","📇", "🗃",
+                                "🗳", "🗄", "📋","📁", "📂","🗂",
+                                "🗞", "📰", "📓","📔","📒", "📕",
+                                "📗", "📘", "📙","📚", "📖","🔖",
+                                "🧷", "🔗", "📎","🖇", "📐","📏",
+                                "🧮", "📌", "📍","✂️", "🖊","🖋",
+                                "✒️", "🖌 ","🖍","📝","✏️", "🔍",
+                                "🔎", "🔏", "🔐","🔒","🔓"};
+
+    protected override void OnInitialized()
+    {
+        inputFromUser = noteFromDb == null ? new NoteValidation(Title, IconName, "Default") : new NoteValidation(noteFromDb.Title, noteFromDb.IconName, noteFromDb.Directory.Name);
+    }
+
+    private string? GetCurrentUserId()
+    {
+        string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        return currentUserId;
+    }
+
+    private async Task saveNote()
+    {
+        if (content.Length <= 0)
+        {
+            toastService.ShowError("Your note is empty.", "OOPS!");
+        }
+        else
+        {
+            try
+            {
+                await validateDirectory(inputFromUser.Directory);
+                string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (currentUserId != null)
+                {
+                    var usr = await _ur.GetUserByIdAsync(currentUserId);
+                    if (usr is not null && selectedDirectory is not null)
+                    {
+                        if(noteFromDb == null)
+                        {
+                            // Save new note
+                            var note = new Note(null, inputFromUser.Title, content, inputFromUser.Emoji, usr, selectedDirectory);
+                            var result = await _ns.AddNoteAsync(note);
+                            if (result)
+                                toastService.ShowSuccess("The note was saved.", "Congrats!");
+                            submitForm(note);
+                        }
+                        else
+                        {
+                            // Update existing note
+                            if (inputFromUser.Directory == noteFromDb.Directory.Name &&
+                                inputFromUser.Title == noteFromDb.Title &&
+                                inputFromUser.Emoji == noteFromDb.IconName)
+                            {
+                                noteFromDb.Content = content;
+                                var result = await _ns.UpdateNoteAsync(noteFromDb);
+                                if (result)
+                                    toastService.ShowSuccess("The note has been overwritten.", "Congrats!");
+                                submitForm(noteFromDb);
+                            }
+                            else // Save existing note in another place (nie wiem czy potrzebne, narazie zostawię)
+                            {
+                                var note = new Note(null, inputFromUser.Title, content, inputFromUser.Emoji, usr, selectedDirectory);
+                                var result = await _ns.AddNoteAsync(note);
+                                if (result)
+                                    toastService.ShowSuccess("The note was saved.", "Congrats!");
+                                submitForm(note);
+                            }
+                        }
+
+                    }
+                }
+            }
+            catch(Exception e)
+            {
+                toastService.ShowError(e.Message, "OOPS!");
+            }
+        }
+    }
+
+    private void submitForm(Note note)
+    {
+        ModalInstance.CloseAsync(ModalResult.Ok(note.NoteId.ToString()));
+    }
+
+    private async Task validateDirectory(string name)
+    {
+        var userId = GetCurrentUserId()!;
+        if (userId != null)
+        {
+            selectedDirectory = await _ds.GetDirectoryByNameAsync(name, userId);
+            if (selectedDirectory == null)
+                throw new Exception("There is no such folder!");
+        }
+    }
+
+    public class NoteValidation
+    {
+        public NoteValidation(string title, string emoji, string directory)
+        {
+            Title = title;
+            Directory = directory;
+            Emoji = emoji;
+        }
+
+        [Required(ErrorMessage = "Required field!")]
+        [StringLength(32, ErrorMessage = "Too long!")]
+        [MinLength(2, ErrorMessage = "Too short!")]
+        public string Title { get; set; }
+
+        [Required(ErrorMessage = "Required field!")]
+        [StringLength(32, ErrorMessage = "Too long!")]
+        [MinLength(2, ErrorMessage = "Too short!")]
+        public string Directory { get; set; }
+
+        [Required(ErrorMessage = "Required field!")]
+        public string Emoji { get; set; }
+    }
+}
