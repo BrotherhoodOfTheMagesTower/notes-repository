@@ -39,7 +39,7 @@ builder.Services.AddScoped<DirectoryRepository>();
 builder.Services.AddScoped<ImageRepository>();
 builder.Services.AddScoped<EventRepository>();
 builder.Services.AddScoped<UserRepository>();
-//builder.Services.AddScoped<AzureStorageHelper>();
+builder.Services.AddScoped<AzureStorageHelper>();
 
 builder.Services.AddScoped<NoteService>();
 builder.Services.AddScoped<EventService>();
