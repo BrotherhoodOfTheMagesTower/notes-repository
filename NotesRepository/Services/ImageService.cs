@@ -9,18 +9,18 @@ namespace NotesRepository.Services
     {
         private readonly ImageRepository _ir;
         private readonly string containerName = "imagecontainer";
-        private AzureStorageHelper _azureHelper;
+        //private AzureStorageHelper _azureHelper;
 
         public ImageService(ImageRepository imageRepository)
         {
             _ir = imageRepository;
         }
         
-        public ImageService(ImageRepository imageRepository, AzureStorageHelper azureStorageHelper)
-        {
-            _ir = imageRepository;
-            _azureHelper = azureStorageHelper;
-        }
+        //public ImageService(ImageRepository imageRepository, AzureStorageHelper azureStorageHelper)
+        //{
+        //    _ir = imageRepository;
+        //    _azureHelper = azureStorageHelper;
+        //}
 
         public async Task<ICollection<Image>> GetAllNoteImagesAsync(Guid noteId)
             => await _ir.GetAllNoteImagesAsync(noteId);
@@ -36,12 +36,12 @@ namespace NotesRepository.Services
 
         public async Task<bool> AddImageAsync(Image image, IFormFile file)
         {
-            var url = await _azureHelper.UploadFileToAzureAsync(file, containerName, image.Name);
-            if (!string.IsNullOrEmpty(url))
-            {
-                image.FileUrl = url;
-                return await _ir.AddAsync(image);
-            }
+            //var url = await _azureHelper.UploadFileToAzureAsync(file, containerName, image.Name);
+            //if (!string.IsNullOrEmpty(url))
+            //{
+            //    image.FileUrl = url;
+            //    return await _ir.AddAsync(image);
+            //}
             return false;
         }
         
@@ -57,13 +57,13 @@ namespace NotesRepository.Services
         {
             foreach(var image in images)
             {
-                var url = await _azureHelper.UploadFileToAzureAsync(image.Item2, containerName, image.Item1.Name);
-                if (!string.IsNullOrEmpty(url))
-                {
-                    image.Item1.FileUrl = url;
-                }
-                else
-                    return false;
+                //var url = await _azureHelper.UploadFileToAzureAsync(image.Item2, containerName, image.Item1.Name);
+                //if (!string.IsNullOrEmpty(url))
+                //{
+                //    image.Item1.FileUrl = url;
+                //}
+                //else
+                //    return false;
             }
             return await _ir.AddManyAsync(images.Select(x => x.Item1).ToList());
         } 
@@ -79,7 +79,7 @@ namespace NotesRepository.Services
         
         public async Task<bool> DeleteImageAsync(Image image)
         {
-            await _azureHelper.DeleteImageFromAzure(image.Name, containerName);
+            //await _azureHelper.DeleteImageFromAzure(image.Name, containerName);
             return await _ir.DeleteAsync(image);
         }
 
@@ -96,7 +96,7 @@ namespace NotesRepository.Services
             var image = await _ir.GetByIdAsync(imageId);
             if(image is not null)
             {
-                await _azureHelper.DeleteImageFromAzure(image.Name, containerName);
+                //await _azureHelper.DeleteImageFromAzure(image.Name, containerName);
                 return await _ir.DeleteByIdAsync(imageId);
             }
             return false;
@@ -112,8 +112,8 @@ namespace NotesRepository.Services
 
         public async Task<bool> DeleteImagesAsync(ICollection<Tuple<Image, IFormFile>> images)
         {
-            foreach (var image in images)
-                await _azureHelper.DeleteImageFromAzure(image.Item1.Name, containerName);
+            //foreach (var image in images)
+                //await _azureHelper.DeleteImageFromAzure(image.Item1.Name, containerName);
 
             return await _ir.DeleteManyAsync(images.Select(x => x.Item1).ToList());
         }
