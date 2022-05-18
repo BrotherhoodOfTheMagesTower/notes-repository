@@ -1,6 +1,7 @@
 ﻿@inject Data.ViewOptionService ViewOption
 @using Microsoft.Extensions.Localization
 @using System.Security.Claims
+@using NotesRepository.Pages.LoggedUser
 @using NotesRepository.Repositories
 @using Blazored.Typeahead
 @using Data.Models
@@ -97,6 +98,7 @@
 
             Animation = ModalAnimation.FadeInOut(0.1),
         };
+    ModalParameters noteParameters = new ModalParameters();
 
     protected override async Task OnInitializedAsync()
     {
@@ -180,7 +182,7 @@
                     <div class="folder-child " @onclick="@(() => ToggleSubDirectory(dir))">
                         <i class="oi oi-folder" aria-hidden="true"></i>
                         @PrintName(dir.Name)
-                        @if (dir.SubDirectories!= null && dir.SubDirectories.Count() > 0 || notesFromCurrentSubirectory!=null && notesFromCurrentSubirectory.Count() > 0)
+                        @if (dir.SubDirectories != null && dir.SubDirectories.Count() > 0 || notesFromCurrentSubirectory != null && notesFromCurrentSubirectory.Count() > 0)
                         {
                             if (!dir.IsToggled)
                             {
@@ -211,13 +213,15 @@
         {
             foreach (var note in notes)
             {
+
+
                 <div class="d-flex align-items-baseline justify-content-between nav-item my-nav-item dropdown-toggle nav-link my-custom-nav-item">
                     <div class="folder-child" @onclick="() => GoToNote(note.NoteId.ToString())">
                         <i class="oi oi-file" aria-hidden="true"></i>
                         @PrintName(note.Title)
                     </div>
                     <div class="my-options">
-                        <i class="fa-solid fa-ellipsis " @onclick="@(() => modal.Show<NoteMenu>(@note.Title,options))"></i>
+                        <i class="fa-solid fa-ellipsis " @onclick="()=> HandleNotesPopup(note)"></i>
                     </div>
                 </div>
             }
@@ -247,7 +251,7 @@
                         <div class="my-inside-nav-link">
                             <i class="oi oi-folder" aria-hidden="true"></i>
                             @PrintName(dir.Name)
-                            @if (dir.SubDirectories!= null && dir.SubDirectories.Count() > 0)
+                            @if (dir.SubDirectories != null && dir.SubDirectories.Count() > 0)
                             {
                                 if (!dir.IsToggled)
                                 {
@@ -296,7 +300,14 @@
 
     private void NavigateToShareed()
     {
-           NavigationManager.NavigateTo($"/sharedNotes");
+        NavigationManager.NavigateTo($"/sharedNotes");
+    }
+
+    private void HandleNotesPopup(Note note)
+    {
+        noteParameters = new ModalParameters();
+        noteParameters.Add("noteFromDb", note);
+        modal.Show<NoteMenu>(note.Title, noteParameters, options);
     }
 
 }
