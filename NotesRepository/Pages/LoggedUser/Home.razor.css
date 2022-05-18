@@ -1,9 +1,35 @@
 ﻿
 .home-page {
+    display: grid;
+    width: auto;
+    height: auto;
+    position: relative;
+}
+
+.user-view {
     display: flex;
     justify-content: space-around;
     width: auto;
     height: auto;
+    margin-top: 3%
+}
+
+.my-header{
+    margin-top: 5%;
+    z-index:10;
+}
+
+.my-text {
+    text-shadow: 1px 1px grey
+}
+
+.my-image{
+    top: 0;
+    left: 0;
+    height: 60%;
+    width: 100%;
+    background-image:url("tlo.jpg");
+    position: absolute;
 }
 
 ::-webkit-scrollbar {
@@ -30,6 +56,7 @@
     width: 50%;
     height: auto;
     align-items: flex-start;
+    z-index: 10;
 }
 
 
@@ -40,20 +67,25 @@
     overflow-x: auto;
     display: flex;
     align-items: center;
+    background: white;
+    border-radius: 5px;
+    box-shadow: 5px 5px 5px #009BBF;
 }
 
 .note {
     height: 140px;
     width: 100px;
-    border: 1px solid #1B5EAB;
+    border: 2px solid #009BBF;
     margin-left: 10px;
     display: flex;
     align-items: center;
+    border-radius: 5px;
 }
 
     .note:hover {
         border: 1px solid #ACE1AF;
         box-shadow: 5px 5px 10px #ACE1AF;
+        cursor: pointer;
     }
 
 .my-button {
@@ -63,32 +95,41 @@
 
     .my-button:hover {
         color: #ACE1AF;
+        cursor: pointer;
     }
 
 .draft {
     display: block;
     width: 45%;
     height: auto;
+    z-index: 10;
 }
 
 .button-bar {
     width: 100%;
     height: auto;
     background: #009BBF;
-    display:flex;
-    justify-content: space-around
+    display: flex;
+    justify-content: space-around;
+    border-top-right-radius: 5px;
+    border-top-left-radius: 5px;
+    box-shadow: 5px 5px 5px #009BBF;
 }
 
 .my-text-area {
     height: 90%;
     border: 2px solid #009BBF;
     width: 100%;
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+    box-shadow: 5px 5px 5px #009BBF;
 }
 
 @media (max-width: 750px) {
 
-    .home-page {
-       display: block
+    .user-view {
+       display: block;
+       z-index: 1;
     }
     .user-notes {
         width: 100%;

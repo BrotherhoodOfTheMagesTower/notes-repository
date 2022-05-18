@@ -130,3 +130,7 @@ img, svg {
 .dropdown-toggle::after {
     content: unset;
 }
+
+.my-dragdrop{
+    display: flex;
+}

@@ -1,40 +1,44 @@
 ﻿@using Data.Models
+@using Plk.Blazor.DragDrop;
 
 @inject Microsoft.Extensions.Localization.IStringLocalizer<Resource> localizer
 
-<h2>@localizer["homePage"]</h2>
+   
+
 <div class="home-page">
+    <div class="my-image">
+    </div>
+    <h2 class="my-header my-text">@localizer["homePage"]</h2> 
+    <div class="user-view">
     <div class="user-notes">
         <br />
-        <h5>@localizer["pinned"]</h5>
+        <h5 class="my-text">@localizer["pinned"]</h5>
         <div class="notes">
-            @foreach(var note in noteList)
-            {
-                <div class="note" @onclick="()=>NavigateToNote(note.NoteId.ToString())">
+            <Dropzone Class="my-dragdrop" Items="noteList" InstantReplace =" true ">
+                <div class="note" @onclick="()=>NavigateToNote(context.NoteId.ToString())">
                     <center>
-                    <h5>@note.Content</h5>
+                    <h5>@context.Content</h5>
                     <br>
                     <h6>@date</h6>
                     </center>
                 </div>
-            }
+            </Dropzone>
         </div>
         <br />
-        <h5>@localizer["theLatest"]</h5>
+        <h5 class="my-text">@localizer["theLatest"]</h5>
         <div class="notes">
-            @foreach(var note in noteList)
-            {
-                <div class="note" @onclick="()=>NavigateToNote(note.NoteId.ToString())">
+                <Dropzone Class="my-dragdrop" Items="noteList" InstantReplace =" true ">
+                <div class="note" @onclick="()=>NavigateToNote(context.NoteId.ToString())">
                     <center>
-                    <h5>@note.Content</h5>
+                    <h5>@context.Content</h5>
                     <br>
                     <h6>@date</h6>
                     </center>
                 </div>
-            }
+                </Dropzone>
         </div>
         <br />
-        <h5>@localizer["upcomingEvents"]</h5>
+        <h5 class="my-text">@localizer["upcomingEvents"]</h5>
         <div class="notes">
             @foreach(var note in noteList)
             {
@@ -53,13 +57,14 @@
     
     <div class="draft">
         <br />
-        <h5>@localizer["draft"]</h5>
+        <h5 class="my-text">@localizer["draft"]</h5>
         <div class="button-bar">
             <a  class="my-button" @onclick="ClearDraft">@localizer["clear"]</a>
             <a class="my-button" @onclick="SaveDraft">@localizer["save"]</a>
         </div>
         <textarea class="my-text-area" @bind-value="content" @bind-value:event="oninput"></textarea>
     </div>
+</div>
 </div>
 
 @code
@@ -91,5 +96,10 @@
     private void NavigateToNote(string noteId)
     {
         //przejście do podglądu notatki
+    }
+
+    private void DisplayLatest()
+    {
+        
     }
 }

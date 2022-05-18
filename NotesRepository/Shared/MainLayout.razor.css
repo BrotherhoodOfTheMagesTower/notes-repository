@@ -52,6 +52,12 @@ article {
     cursor: pointer;
 }
 
+article{
+    padding:0 !important;
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
 @media (max-width: 640.98px) {
     .top-row a, .top-row .btn-link {
         margin-left: 20px;
