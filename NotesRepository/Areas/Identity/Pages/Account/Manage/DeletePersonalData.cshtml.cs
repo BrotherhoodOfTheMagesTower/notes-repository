@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using NotesRepository.Areas.Identity.Data;
+using NotesRepository.Services;
 
 namespace NotesRepository.Areas.Identity.Pages.Account.Manage
 {
@@ -18,15 +19,18 @@ namespace NotesRepository.Areas.Identity.Pages.Account.Manage
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger<DeletePersonalDataModel> _logger;
+        private readonly CollaboratorsNotesService _cns;
 
         public DeletePersonalDataModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            ILogger<DeletePersonalDataModel> logger)
+            ILogger<DeletePersonalDataModel> logger,
+            CollaboratorsNotesService collaboratorsNotesService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
+            _cns = collaboratorsNotesService;
         }
 
         /// <summary>
@@ -86,7 +90,12 @@ namespace NotesRepository.Areas.Identity.Pages.Account.Manage
                     return Page();
                 }
             }
-
+            var sharedNotes = await _cns.GetAllSharedNotesForUserAsync(user.Id);
+            if(sharedNotes.Count > 0)
+            {
+                foreach (var note in sharedNotes)
+                    await _cns.DeleteCollaboratorFromNoteAsync(user.Id, note.NoteId);
+            }
             var result = await _userManager.DeleteAsync(user);
             var userId = await _userManager.GetUserIdAsync(user);
             if (!result.Succeeded)

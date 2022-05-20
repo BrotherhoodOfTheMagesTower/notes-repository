@@ -1,6 +1,7 @@
 ﻿@inject Data.ViewOptionService ViewOption
 @using Microsoft.Extensions.Localization
 @using System.Security.Claims
+@using NotesRepository.Pages.LoggedUser
 @using NotesRepository.Repositories
 @using Blazored.Typeahead
 @using Data.Models
@@ -8,15 +9,16 @@
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor
 @inject Microsoft.Extensions.Localization.IStringLocalizer<Resource> localizer
 @inject UserRepository _ur;
-@inject DirectoryRepository _dr;
 @inject IModalService modal;
 @inject DirectoryService _ds;
+@inject NoteService _ns;
+@inject Data.Flags flags;
 @inject NavigationManager NavigationManager;
 
 <nav class="flex-column navigation">
     <div class="top-row ps-3 navbar navbar-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/Home">NotesRepository</a>
+            <a class="navbar-brand" href="/">NotesRepository</a>
         </div>
     </div>
     <br />
@@ -36,7 +38,7 @@
             </BlazoredTypeahead>
             <br />
             <div class="nav-item px-3">
-                <NavLink class="nav-link" href="/editNote/-1">
+                <NavLink class="nav-link" href="/editNote/newNote">
                     <span class="oi oi-copywriting" aria-hidden="true"></span> @localizer["newNote"]
                 </NavLink>
             </div>
@@ -71,7 +73,7 @@
                 </NavLink>
             </div>
             <div class="nav-item px-3">
-                <NavLink class="dropdown-toggle nav-link">
+                <NavLink class="dropdown-toggle nav-link" @onclick="()=> NavigateToShareed()">
                     <span class="oi oi-share" aria-hidden="true"></span> @localizer["shared"]
                 </NavLink>
             </div>
@@ -96,10 +98,20 @@
 
             Animation = ModalAnimation.FadeInOut(0.1),
         };
+    ModalParameters noteParameters = new ModalParameters();
 
     protected override async Task OnInitializedAsync()
     {
+        flags.setNavMenuLoadingStatus(true);
+        Thread threadForInit = new Thread(async () => await init());
+        threadForInit.Start();
+    }
+
+    private async Task init()
+    {
+        flags.setNavMenuLoadingStatus(true);
         mainDirs = await _ds.GetAllDirectoriesWithoutParentDirectoryForParticularUserAsync(GetCurrentUserId()!);
+        flags.setNavMenuLoadingStatus(false);
     }
 
     protected override void OnInitialized()
@@ -133,8 +145,8 @@
         return currentUserId;
     }
 
-    private ICollection<Directory>? GetAllSubDirectoriesForSpecificDirectory(Guid directoryId)
-    => _dr.GetAllSubDirectoriesOfParticularDirectorySync(directoryId);
+    //private ICollection<Directory>? GetAllSubDirectoriesForSpecificDirectory(Guid directoryId)
+    //=> _ds.GetAllSubDirectoriesOfParticularDirectorySync(directoryId);
 
     private void SearchPhrase()
     {
@@ -158,18 +170,19 @@
         }
         else
         {
-            allCurrentSubdirectiories = GetAllSubDirectoriesForSpecificDirectory(directory.DirectoryId);
+            allCurrentSubdirectiories = _ds.GetAllSubDirectoriesOfParticularDirectorySync(directory.DirectoryId);
         }
 
         @if (allCurrentSubdirectiories is not null)
         {
             foreach (var dir in allCurrentSubdirectiories)
             {
+                var notesFromCurrentSubirectory = _ns.GetAllNotesForParticularDirectory(dir.DirectoryId);
                 <div class="d-flex align-items-baseline justify-content-between nav-item my-nav-item dropdown-toggle nav-link my-custom-nav-item">
                     <div class="folder-child " @onclick="@(() => ToggleSubDirectory(dir))">
                         <i class="oi oi-folder" aria-hidden="true"></i>
                         @PrintName(dir.Name)
-                        @if (dir.SubDirectories!= null && dir.SubDirectories.Count() > 0 || dir.Notes!=null && dir.Notes.Count() > 0)
+                        @if (dir.SubDirectories != null && dir.SubDirectories.Count() > 0 || notesFromCurrentSubirectory != null && notesFromCurrentSubirectory.Count() > 0)
                         {
                             if (!dir.IsToggled)
                             {
@@ -195,17 +208,20 @@
             }
         }
 
-        if (directory?.Notes is not null)
+        var notes = _ns.GetAllNotesForParticularDirectory(directory.DirectoryId);
+        if (notes is not null)
         {
-            foreach (var note in directory.Notes)
+            foreach (var note in notes)
             {
+
+
                 <div class="d-flex align-items-baseline justify-content-between nav-item my-nav-item dropdown-toggle nav-link my-custom-nav-item">
                     <div class="folder-child" @onclick="() => GoToNote(note.NoteId.ToString())">
                         <i class="oi oi-file" aria-hidden="true"></i>
                         @PrintName(note.Title)
                     </div>
                     <div class="my-options">
-                        <i class="fa-solid fa-ellipsis " @onclick="@(() => modal.Show<NoteMenu>(@note.Title,options))"></i>
+                        <i class="fa-solid fa-ellipsis " @onclick="()=> HandleNotesPopup(note)"></i>
                     </div>
                 </div>
             }
@@ -222,7 +238,7 @@
         }
         else
         {
-            allCurrentSubdirectiories = GetAllSubDirectoriesForSpecificDirectory(directory.DirectoryId);
+            allCurrentSubdirectiories = _ds.GetAllSubDirectoriesOfParticularDirectorySync(directory.DirectoryId);
         }
 
         @if (allCurrentSubdirectiories is not null)
@@ -235,7 +251,7 @@
                         <div class="my-inside-nav-link">
                             <i class="oi oi-folder" aria-hidden="true"></i>
                             @PrintName(dir.Name)
-                            @if (dir.SubDirectories!= null && dir.SubDirectories.Count() > 0)
+                            @if (dir.SubDirectories != null && dir.SubDirectories.Count() > 0)
                             {
                                 if (!dir.IsToggled)
                                 {
@@ -280,6 +296,18 @@
     private void GoToNote(string Id)
     {
         NavigationManager.NavigateTo($"/editNote/{Id}");
+    }
+
+    private void NavigateToShareed()
+    {
+        NavigationManager.NavigateTo($"/sharedNotes");
+    }
+
+    private void HandleNotesPopup(Note note)
+    {
+        noteParameters = new ModalParameters();
+        noteParameters.Add("noteFromDb", note);
+        modal.Show<NoteMenu>(note.Title, noteParameters, options);
     }
 
 }

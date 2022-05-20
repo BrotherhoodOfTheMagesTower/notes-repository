@@ -13,9 +13,17 @@
 @inject NavigationManager navigationManager
 @inject NoteService _ns;
 @inject UserRepository _ur;
+@inject ImageService _is;
+@inject DirectoryService _ds;
+@inject Data.Flags flags;
 @inject IToastService toastService;
 
-@if (content is null)
+<PageTitle>@title</PageTitle>
+<HeadContent>
+    <meta name="description" content="@description">
+</HeadContent>
+
+@if (content is null || imagesFromUser is null)
 {
     <p><em>Loading...</em></p>
 }
@@ -23,10 +31,33 @@ else
 {
     <div class="my-container">
         <div class="my-sub-container p-2 ">
-            <center><h3>@localizer["content"]</h3> </center>
+            <center>
+                    @if(@validId && @noteFromDb is not null)
+                    {
+                        <h3>@noteFromDb.Title @noteFromDb.IconName</h3>
+                    }
+                    else
+                    {
+                        <h3>@localizer["content"]</h3> 
+                    }
+            </center>
             <textarea class="my-text-area" @bind-value="content" @bind-value:event="oninput"></textarea>
             <center>
-                <button type="button" class="btn btn-primary" @onclick="saveNote">@localizer["save"]</button>
+                <row>
+                    @if(@validId && @noteFromDb is not null)
+                    {
+                        <colulmn>
+                            <InputFile OnChange="@LoadFile" accept=".jpg, .png"/>
+                        </colulmn>
+                    }
+                    else
+                    {
+                        <h4>@localizer["toUpload"]</h4>
+                    }
+                    <colulmn>
+                        <button type="button" class="btn btn-primary" @onclick="saveNote">@localizer["save"]</button>
+                    </colulmn>
+                </row>
             </center>
         </div>
         <div class="my-sub-container p-2">
@@ -35,21 +66,58 @@ else
                 @((MarkupString)Markdown.ToHtml(content, pipeline))
             </div>
         </div>
+            <center>
+            @if(imagesFromUser.Count > 0)
+            {
+                <div>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>URL</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @foreach(var image in imagesFromUser)
+                        { 
+                            <tr>
+                                <th>@image.Name</th>
+                                <th>@image.FileUrl</th>
+                                <th><button type="button" class="btn btn-primary" @onclick="() => deleteImageFromNote(image)">@localizer["delete"]</button></th>
+                            </tr>        
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            </center>
     </div>
 }
 
 @code
 {
-    [Parameter]
-    public string templateIndex { get; set; }
+    [CascadingParameter] public IModalService Modal { get; set; }
+    [Parameter] public string templateIndex { get; set; }
     private string content = "";
     private MarkdownPipeline? pipeline;
     private bool validId = false;
     private Guid parsedId;
+    private List<Image> imagesFromUser;
+    private string description = "edit note";
+    private string title = "edit note";
+    private Note? noteFromDb;
 
     protected override async Task OnParametersSetAsync()
     {
-        content = await init();
+        int numberOfWaits = 1;
+        while(flags.getNavMenuLoadingStatus())
+        {
+            System.Console.WriteLine($"Thread number {Thread.CurrentThread.ManagedThreadId} from {navigationManager.Uri} -> waits {numberOfWaits++ * 5} [ms] for NavMenu to render.");
+            Thread.Sleep(5); // Wait 5 ms until navbar ends rendering
+        }
+
+        imagesFromUser = new List<Image>();
+        content = templateIndex == "newNote" ? "" : await init();
         pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build(); // Uruchomienie rozszerzeń markdown
     }
 
@@ -61,40 +129,159 @@ else
         }
         else
         {
-            string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (currentUserId != null)
+            try
             {
-                var usr = await _ur.GetUserByIdAsync(currentUserId);
-                if (usr is not null)
+                // Making popup
+                var parameters = new ModalParameters();
+
+                if (noteFromDb != null)
                 {
-                    var result = await _ns.AddNoteAsync(new Note(null, "default", content, "", usr, new Directory("Def", usr)));
-                    if (result)
-                        toastService.ShowSuccess("The note was saved.", "Congrats!");
+                    parameters = new ModalParameters();
+                    parameters.Add(nameof(content), content);
+                    parameters.Add(nameof(noteFromDb), noteFromDb);
+                }
+                else
+                {
+                    parameters = new ModalParameters();
+                    parameters.Add(nameof(content), content);
+                }
+
+                var saveForm = Modal.Show<SaveNote>(localizer["saveNote"], parameters);
+                var result = await saveForm.Result;
+
+                // We must check if user cancel popup (null) or submit form (result.data == Guid)
+                if (result.Data != null)
+                {
+                    var tmpGuid = new Guid();
+                    if (Guid.TryParse(result.Data.ToString(), out tmpGuid))
+                    {
+                        var uri = "/editNote/" + result.Data.ToString();
+                        navigationManager.NavigateTo(uri);
+                    }
                 }
             }
-
+            catch(Exception e)
+            {
+                toastService.ShowError(e.Message, "OOPS!");
+            }
         }
     }
 
     private async Task<string> init() // TODO narazie init obsługuje tylko wczytywanie templateów, trzeba dodać obsługę wczytywania z bazy
     {
-        validId = Guid.TryParse(templateIndex, out parsedId);
-        if (validId == false)
+        if (templateIndex is not null)
         {
-            return Templates.NotesTemplates[templateIndex];
-        }
-        else
-        {
-            var note = await _ns.GetNoteByIdAsync(Guid.Parse(templateIndex));
-            if (note is not null)
+            validId = Guid.TryParse(templateIndex, out parsedId);
+            if (validId == false)
             {
-                return note.Content;
+                return Templates.NotesTemplates[templateIndex];
             }
             else
             {
-                return " ";    //TODO 404
+                string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (currentUserId != null)
+                {
+                    noteFromDb = await _ns.GetNoteByIdAsync(Guid.Parse(templateIndex));
+                    if (noteFromDb is not null)
+                    {
+                        var noteImages = await _is.GetAllNoteImagesAsync(noteFromDb.NoteId);
+                        if (noteImages.Count > 0)
+                        {
+                            foreach (var image in noteImages)
+                            {
+                                imagesFromUser.Add(image);
+                            }
+                        }
+                        return noteFromDb.Content;
+                    }
+                    else
+                    {
+                        return " ";
+                    }
+                }
+                else
+                {
+                    return " ";
+                }
+            }
+        }
+        else
+        {
+            return " ";
+        }
+    }
+
+    private async void LoadFile(InputFileChangeEventArgs e) // TODO wprowadzanie więcej niż jednego pliku
+    {
+        var image = await e.File.RequestImageFileAsync("image/jpg", 1920, 1080);
+        if (image != null)
+        {
+            try
+            {
+                string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (currentUserId != null)
+                {
+                    var loggedUser = await _ur.GetUserByIdAsync(currentUserId);
+                    Image newImage;
+                    if (noteFromDb != null)
+                    {
+                        var uniqueImageName = /* generateUniqueCharacters() + */ image.Name;    // TODO unikalna ścieżka
+                        newImage = new Image(null, uniqueImageName, "", noteFromDb);            // TODO W aktualnie wersji każda zdjęcie jest przypisaywana tej samej notatki
+                        var resultAndUrl = await _is.AddImageAsync(newImage, image);            // First element is bool value, second is a url to image
+                        if (resultAndUrl.Item1)
+                        {
+                            content += $"\n![{image.Name}]({resultAndUrl.Item2})\n";
+                            imagesFromUser.Add(newImage);
+                            this.StateHasChanged();
+                        }
+                    }
+                }
+            }
+            catch(Exception exception)
+            {
+                toastService.ShowError(exception.Message, "OOPS!");
+            }
+        }
+        else
+        {
+            toastService.ShowError("A wrong file has been entered.", "OOPS!");
+        }
+    }
+
+    // TODO usuwanie zdjęcia z danej notatki -> przycisk w tabeli -> usuwanie zdjęcia z Azure
+    private async void deleteImageFromNote(Image image)
+    {
+        string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (currentUserId != null)
+        {
+            try
+            {
+                var result = await _is.DeleteImageAsync(image);
+                if (result)
+                {
+                    toastService.ShowSuccess("Image has been deleted");
+                    string substringWithImage = $"![{image.Name}]({image.FileUrl})"; // TODO nie działa do końca 
+                    content.Replace(substringWithImage, " ");
+                    imagesFromUser.Remove(image);
+                }
+                else
+                {
+                    toastService.ShowError("Something went wrong!");
+                }
+                this.StateHasChanged();
+            }
+            catch(Exception e)
+            {
+                // DEBUG potem mnie proszę usunąć
+                toastService.ShowError(e.Message);
             }
         }
     }
+
+    private string generateUniqueCharacters()
+    {
+        string guid = Guid.NewGuid().ToString();
+        var split = guid.Split('-');
+        return split[0];
     }
 }

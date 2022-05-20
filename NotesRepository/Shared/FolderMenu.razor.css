@@ -1,0 +1,8 @@
+.nav-item ::deep a {
+    color: black;
+}
+
+    .nav-item ::deep a:hover {
+        color: var(--secondary-color);
+        cursor: pointer;
+    }

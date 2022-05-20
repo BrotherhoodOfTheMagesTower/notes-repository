@@ -14,9 +14,10 @@
 }
 
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: "lato", "Arial", sans-serif;
     text-rendering: optimizeLegibility;
     font-size: 16px;
+    font-weight: 500;
 }
 
 tbody, td, tfoot, th, thead, tr {
@@ -35,6 +36,40 @@ h1:focus {
 
 a, .btn-link {
     color: #0071c1;
+}
+
+h1,
+h2 {
+    text-transform: uppercase;
+    letter-spacing: 1.7px;
+}
+
+h1 {
+    font-weight: 200;
+    word-spacing: 7px;
+    font-size: 280%;
+}
+
+h2 {
+    margin-top: 10px;
+    font-weight: 500;
+    font-size: 180%;
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+h3:after {
+    display: block;
+    height: 2px;
+    background-color: var(--main-color);
+    content: " ";
+    width: 130px;
+    margin-top: 6px;
+}
+
+h3 {
+    padding-bottom: 10px;
+    letter-spacing: 0.3px;
 }
 
 .btn-primary {
@@ -87,10 +122,15 @@ a, .btn-link {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+
 img, svg {
     width: min(90%,450px);
 }
 
-.dropdown-toggle::after{
-    content:unset;
+.dropdown-toggle::after {
+    content: unset;
+}
+
+.my-dragdrop{
+    display: flex;
 }

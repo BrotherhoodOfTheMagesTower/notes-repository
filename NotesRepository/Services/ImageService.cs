@@ -1,7 +1,9 @@
-﻿using Microsoft.WindowsAzure.Storage;
+﻿using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using NotesRepository.Data.Models;
 using NotesRepository.Repositories;
+using NotesRepository.Services.Azure;
 
 namespace NotesRepository.Services
 {
@@ -34,15 +36,16 @@ namespace NotesRepository.Services
         public async Task<Image?> GetImageByUrlAsync(string imageUrl)
             => await _ir.GetImageByUrlAsync(imageUrl);
 
-        public async Task<bool> AddImageAsync(Image image, IFormFile file)
+        public async Task<(bool, string)> AddImageAsync(Image image, IBrowserFile file)
         {
             var url = await _azureHelper.UploadFileToAzureAsync(file, containerName, image.Name);
             if (!string.IsNullOrEmpty(url))
             {
                 image.FileUrl = url;
-                return await _ir.AddAsync(image);
+                var result = await _ir.AddAsync(image);
+                return (result, url);
             }
-            return false;
+            return (false,"");
         }
         
         /// <summary>
@@ -53,7 +56,7 @@ namespace NotesRepository.Services
         public async Task<bool> AddImageWithoutAzureUploadAsync(Image image)
             => await _ir.AddAsync(image);
 
-        public async Task<bool> AddImagesAsync(ICollection<Tuple<Image, IFormFile>> images)
+        public async Task<bool> AddImagesAsync(ICollection<Tuple<Image, IBrowserFile>> images)
         {
             foreach(var image in images)
             {
@@ -110,7 +113,7 @@ namespace NotesRepository.Services
         public async Task<bool> DeleteImageByIdWithoutAzureAsync(Guid imageId)
             => await _ir.DeleteByIdAsync(imageId);
 
-        public async Task<bool> DeleteImagesAsync(ICollection<Tuple<Image, IFormFile>> images)
+        public async Task<bool> DeleteImagesAsync(ICollection<Tuple<Image, IBrowserFile>> images)
         {
             foreach (var image in images)
                 await _azureHelper.DeleteImageFromAzure(image.Item1.Name, containerName);

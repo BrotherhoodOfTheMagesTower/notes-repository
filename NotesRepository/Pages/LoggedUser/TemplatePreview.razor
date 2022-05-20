@@ -11,6 +11,11 @@
 @inject Microsoft.Extensions.Localization.IStringLocalizer<Resource> localizer
 @inject NavigationManager navigationManager
 
+<PageTitle>@title</PageTitle>
+<HeadContent>
+    <meta name="description" content="@description">
+</HeadContent>
+
 @if (previewKey is null)
 {
     <p><em>Loading...</em></p>
@@ -45,6 +50,9 @@ else
 {
     private string? previewKey = null;
     private MarkdownPipeline? pipeline;
+
+    private string description = "select template";
+    private string title = "select template";
 
     protected override async Task OnParametersSetAsync()
     {

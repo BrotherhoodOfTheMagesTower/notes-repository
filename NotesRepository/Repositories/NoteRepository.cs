@@ -62,6 +62,18 @@ namespace NotesRepository.Repositories
             var result = await ctx.SaveChangesAsync();
             return result > 0;
         }
+        
+        /// <summary>
+        /// Removes multiple notes entities from the database
+        /// </summary>
+        /// <param name="note">The note entity</param>
+        /// <returns>true if notes were successfully removed; otherwise false</returns>
+        public bool DeleteMany(ICollection<Note> notes)
+        {
+            ctx.Notes.RemoveRange(notes);
+            var result = ctx.SaveChanges();
+            return result > 0;
+        }
 
         /// <summary>
         /// Removes a note entity from the database by noteId
@@ -101,6 +113,25 @@ namespace NotesRepository.Repositories
         {
             return await ctx.Notes
                 .Where(n => n.Owner.Id == userId)
+                .Include(d => d.Directory)
+                .Include(o => o.Owner)
+                .Include(i => i.Images)
+                .Include(e => e.EditedBy)
+                .Include(ev => ev.Event)
+                .Include(c => c.CollaboratorsNotes)
+                .ToListAsync();
+        }
+
+        /// <summary>
+        /// Gets all notes without event from the database, that are assigned to specific user 
+        /// </summary>
+        /// <param name="userId">The unique ID of User, whose notes will be returned</param>
+        /// <returns>A collection of notes without event assigned to particulat user, that are currently stored in the database</returns>
+        public async Task<ICollection<Note>> GetAllUserNotesWithoutEventAsync(string userId)
+        {
+            return await ctx.Notes
+                .Where(n => n.Owner.Id == userId)
+                .Where(e => e.Event == null)
                 .Include(d => d.Directory)
                 .Include(o => o.Owner)
                 .Include(i => i.Images)
@@ -303,5 +334,16 @@ namespace NotesRepository.Repositories
             var allNotes = await GetAllUserNotesAsync(userId);
             return allNotes.OrderByDescending(x => x.EditedAt).ThenByDescending(x => x.CreatedAt).Take(count).ToArray();
         }
+
+        /// <summary>
+        /// Gets all notes, which were transferred 'in bulk' to bin at least 30 days ago
+        /// </summary>
+        /// <returns>An ICollection of Note entities, which were transferred 'in bulk' to bin at least 30 days ago</returns>
+        public ICollection<Note> GetAllSingleNotesWhichShouldBeRemovedFromDb()
+            => ctx.Notes
+            .Where(x => x.DeletedAt < DateTime.Now.AddDays(-30) 
+                && x.Directory.Name == "Bin" 
+                && x.IsMarkedAsDeleted == true)
+            .ToArray();
     }
 }

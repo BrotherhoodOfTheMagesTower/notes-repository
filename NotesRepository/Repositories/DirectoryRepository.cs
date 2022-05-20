@@ -26,13 +26,14 @@ namespace NotesRepository.Repositories
             return result > 0;
         }
 
-        /// <summary>
-        /// Attaches a subdirectory entity to the particular directory. 
-        /// </summary>
-        /// <param name="subDirectory">The subdirectory entity</param>
-        /// <param name="directoryId">The unique ID of directory</param>
-        /// <returns>true if subdirectory was successfully added; otherwise false</returns>
-        public async Task<bool> ChangeParentDirectoryForSubDirectory(Guid subDirectoryId, Guid directoryId)
+
+/// <summary>
+/// Attaches a subdirectory entity to the particular directory. 
+/// </summary>
+/// <param name="subDirectory">The subdirectory entity</param>
+/// <param name="directoryId">The unique ID of directory</param>
+/// <returns>true if subdirectory was successfully added; otherwise false</returns>
+public async Task<bool> ChangeParentDirectoryForSubDirectory(Guid subDirectoryId, Guid directoryId)
         {
             var dir = await ctx.Directories.SingleOrDefaultAsync(x => x.DirectoryId == directoryId);
             var subDir = await ctx.Directories.SingleOrDefaultAsync(x => x.DirectoryId == subDirectoryId);
@@ -56,6 +57,18 @@ namespace NotesRepository.Repositories
         {
             ctx.Directories.RemoveRange(directories);
             var result = await ctx.SaveChangesAsync();
+            return result > 0;
+        }
+
+        /// <summary>
+        /// Removes multiple directory entities from the database
+        /// </summary>
+        /// <param name="note">The directory entity</param>
+        /// <returns>true if directories were successfully removed; otherwise false</returns>
+        public bool DeleteMany(ICollection<Directory> directories)
+        {
+            ctx.Directories.RemoveRange(directories);
+            var result = ctx.SaveChanges();
             return result > 0;
         }
 
@@ -238,5 +251,16 @@ namespace NotesRepository.Repositories
             }
             return false;
         }
+
+        /// <summary>
+        /// Gets all directroies, which were transferred 'in bulk' to bin at least 30 days ago
+        /// </summary>
+        /// <returns>An ICollection of Directories entities, which were transferred 'in bulk' to bin at least 30 days ago</returns>
+        public ICollection<Directory> GetMainDirectoriesWhichShouldBeRemovedFromDb()
+            => ctx.Directories
+            .Where(x => x.DeletedAt < DateTime.Now.AddDays(-30)
+                && x.ParentDir.Name == "Bin"
+                && x.IsMarkedAsDeleted == true)
+            .ToArray();
     }
 }

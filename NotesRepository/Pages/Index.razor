@@ -1,6 +1,22 @@
 ﻿@page "/"
 @using NotesRepository.Pages.LoggedUser
 @inject IToastService tstService;
-<PageTitle>NotesRepository</PageTitle>
 
-<Home/>
+<PageTitle>@title</PageTitle>
+<HeadContent>
+    <meta name="description" content="@description">
+</HeadContent>
+<AuthorizeView>
+    <Authorized>
+        <Home />
+    </Authorized>
+    <NotAuthorized>
+        @*Todo add not logged home page component here. Component- razor file WITHOUT "@page "/""*@
+        <p>Log in to gain full functionality</p>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private string description = "Web application which allows user to take notes and share them across all of their devices.";
+    private string title = "Notes Repository";
+}

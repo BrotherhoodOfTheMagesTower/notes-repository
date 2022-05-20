@@ -53,6 +53,7 @@ namespace Tests.Services
             var directory4 = new Directory("Directory name4", usr);
             var directory5 = new Directory("Directory name5", usr);
             var directory6 = new Directory("Directory name6", usr);
+            var bin = new Directory("Bin", usr);
 
             await _dr.AddAsync(directory1);
             await _dr.AddAsync(directory2);
@@ -60,6 +61,7 @@ namespace Tests.Services
             await _dr.AddAsync(directory4);
             await _dr.AddAsync(directory5);
             await _dr.AddAsync(directory6);
+            await _dr.AddAsync(bin);
 
             var note1 = new Note(null, "Test note1", "GetNoteById()", "def-ico", usr, directory1);
             var note2 = new Note(null, "Test note2", "GetNoteById()", "def-ico", usr, directory2);
@@ -89,7 +91,7 @@ namespace Tests.Services
             var dirFromDatabase = await ds.GetDirectoryByIdAsync(directory1.DirectoryId);
 
             // Act
-            var result = await ds.MarkDirectorySubdirectoriesAndNotesAsDeleted(dirFromDatabase.DirectoryId);
+            var result = await ds.MoveDirectorySubdirectoriesAndNotesToBin(dirFromDatabase.DirectoryId);
 
             var dirFromDatabase1 = await ds.GetDirectoryByIdAsync(directory1.DirectoryId);
             var dirFromDatabase2 = await ds.GetDirectoryByIdAsync(directory2.DirectoryId);
@@ -107,6 +109,7 @@ namespace Tests.Services
             var noteFromDatabase7 = await ns.GetNoteByIdAsync(note7.NoteId);
             var noteFromDatabase8 = await ns.GetNoteByIdAsync(note8.NoteId);
 
+            var binFromDatabase = await ds.GetBinForParticularUserAsync(dirFromDatabase1.User.Id);
 
             // Assert
             Assert.NotNull(result);
@@ -117,6 +120,7 @@ namespace Tests.Services
             Assert.True(dirFromDatabase4.IsMarkedAsDeleted);
             Assert.True(dirFromDatabase5.IsMarkedAsDeleted);
             Assert.True(dirFromDatabase6.IsMarkedAsDeleted);
+            Assert.False(binFromDatabase.IsMarkedAsDeleted);
 
             Assert.True(noteFromDatabase1.IsMarkedAsDeleted);
             Assert.True(noteFromDatabase2.IsMarkedAsDeleted);
@@ -126,6 +130,8 @@ namespace Tests.Services
             Assert.True(noteFromDatabase6.IsMarkedAsDeleted);
             Assert.True(noteFromDatabase7.IsMarkedAsDeleted);
             Assert.True(noteFromDatabase8.IsMarkedAsDeleted);
+
+            Assert.Equal(dirFromDatabase1.ParentDir.DirectoryId, binFromDatabase.DirectoryId);
 
 
         }

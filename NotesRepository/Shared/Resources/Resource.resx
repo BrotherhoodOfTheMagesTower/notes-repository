@@ -141,6 +141,9 @@
   <data name="deleteNote" xml:space="preserve">
     <value>Delete note</value>
   </data>
+  <data name="directory" xml:space="preserve">
+    <value>Directory</value>
+  </data>
   <data name="draft" xml:space="preserve">
     <value>Draft</value>
   </data>
@@ -159,8 +162,14 @@
   <data name="logIn" xml:space="preserve">
     <value>Log in</value>
   </data>
+  <data name="name" xml:space="preserve">
+    <value>Name</value>
+  </data>
   <data name="newNote" xml:space="preserve">
     <value>New note</value>
+  </data>
+  <data name="noSharedNotes" xml:space="preserve">
+    <value>No shared notes!</value>
   </data>
   <data name="pinned" xml:space="preserve">
     <value>Pinned</value>
@@ -194,6 +203,12 @@
   </data>
   <data name="theLatest" xml:space="preserve">
     <value>The latest</value>
+  </data>
+  <data name="title" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="toUpload" xml:space="preserve">
+    <value>To upload a image, you must first save the note.</value>
   </data>
   <data name="trash" xml:space="preserve">
     <value>Trash</value>

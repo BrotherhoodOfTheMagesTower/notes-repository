@@ -60,11 +60,31 @@ namespace NotesRepository.Services
         public async Task<ICollection<Directory>?> GetAllSubDirectoriesOfParticularDirectoryAsync(Guid directoryId)
         => await _dr.GetAllSubDirectoriesOfParticularDirectory(directoryId);
 
+        public ICollection<Directory>? GetAllSubDirectoriesOfParticularDirectorySync(Guid directoryId)
+            => _dr.GetAllSubDirectoriesOfParticularDirectorySync(directoryId);
+
         public async Task<(ICollection<Directory>?, ICollection<Note>?)> GetAllSubDirectoriesAndNotesOfParticularDirectoryAsync(Guid directoryId)
         {
             ICollection<Directory>? directories = await _dr.GetAllSubDirectoriesOfParticularDirectory(directoryId);
             ICollection<Note>? notes = await _nr.GetAllNotesForParticularDirectoryAsync(directoryId);
             return (directories, notes);
+        }
+
+        public async Task<bool> MoveDirectorySubdirectoriesAndNotesToBin(Guid directoryId)
+        {
+            var directory = await _dr.GetByIdAsync(directoryId);
+          //  var bin = await GetBinForParticularUserAsync(directory.User.Id);
+            var bin = await _dr.GetDirectoryByNameAsync("Bin", directory.User.Id);
+
+            var result = await MarkDirectorySubdirectoriesAndNotesAsDeleted(directoryId);
+
+            if (result == true && bin != null)
+            {
+                await _dr.ChangeParentDirectoryForSubDirectory(directoryId, bin.DirectoryId);
+                return true;
+            }
+            else return false;
+            
         }
 
         public async Task<bool> MarkDirectorySubdirectoriesAndNotesAsDeleted(Guid directoryId) //dodac bin jak nadrzedny
@@ -101,9 +121,9 @@ namespace NotesRepository.Services
                     }
                 }
             }
-         //   var bin = await GetBinForParticularUserAsync();
             await _dr.MarkDirectoryAsDeletedAsync(directoryId);
-           // await _dr.ChangeParentDirectoryForSubDirectory(directoryId, bin.)
+
+
             return true;
         }
     }

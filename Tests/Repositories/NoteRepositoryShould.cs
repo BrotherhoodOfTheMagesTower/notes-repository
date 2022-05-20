@@ -337,5 +337,31 @@ namespace Tests.Repositories
             noteFromDb.IsMarkedAsDeleted.Should().Be(false);
             noteFromDb.DeletedAt.Should().Be(null);
         }
+        
+        [Fact(DisplayName = "Be able to get all single notes which should be deleted")]
+        public async Task GetAllSingleNotesWhichShouldBeRemovedFromDb()
+        {
+            // Arrange
+            var nr = new NoteRepository(_context);
+            var usr = new ApplicationUser();
+            var note = new Note
+            {
+                NoteId = Guid.NewGuid(),
+                Title = "def",
+                Content = "for GetAllSingle...",
+                IconName = "def",
+                Owner = usr,
+                Directory = new Directory("Bin", usr),
+                IsMarkedAsDeleted = true,
+                DeletedAt = new DateTime(2022, 1, 14, 13, 15, 0)
+            };
+            await nr.AddAsync(note);
+
+            // Act
+            var result = nr.GetAllSingleNotesWhichShouldBeRemovedFromDb();
+
+            //// Assert
+            result.Should().HaveCount(1).And.AllBeEquivalentTo(note);
+        }
     }
 }

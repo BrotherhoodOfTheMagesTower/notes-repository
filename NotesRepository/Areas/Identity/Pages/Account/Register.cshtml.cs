@@ -171,7 +171,8 @@ namespace NotesRepository.Areas.Identity.Pages.Account
             try
             {
                 var user = Activator.CreateInstance<ApplicationUser>();
-                user.Directories = new List<Directory> { new Directory("Default", user) };
+                user.Directories = new List<Directory> 
+                { new Directory("Default", user), new Directory("Bin", user) };
                 return user;
             }
             catch
