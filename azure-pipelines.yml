@@ -16,12 +16,12 @@ steps:
  - task: Docker@2
    inputs:
     containerRegistry: 'NoteRepoDockerHub'
-    repository: 'notesrepository'
+    repository: 'domidep479/notesrepository'
     command: 'build'
     Dockerfile: '**/Dockerfile'
 
  - task: Docker@2
    inputs:
     containerRegistry: 'NoteRepoDockerHub'
-    repository: 'notesrepository'
+    repository: 'domidep479/notesrepository'
     command: 'push'
