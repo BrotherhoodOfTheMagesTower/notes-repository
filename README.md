@@ -59,11 +59,11 @@ Development in progress
 
 ### Links
 
-- website: not deployed yet
+- website: https://notesrepository.azurewebsites.net
+- dockerhub repository: https://hub.docker.com/r/domidep479/notesrepository
 
 ### Coming up soon
 
-- deployment to azure
 - enhanced UI
 - new templates
 - email notifications about incoming events
