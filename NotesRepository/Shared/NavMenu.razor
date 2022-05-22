@@ -15,7 +15,7 @@
 @inject Data.Flags flags;
 @inject NavigationManager NavigationManager;
 
-<nav class="flex-column navigation">
+<nav class="flex-column navigation" id="my-nav">
     <div class="top-row ps-3 navbar navbar-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="/">NotesRepository</a>
@@ -61,7 +61,7 @@
 
             @if (areAllFoldersToggled)
             {
-                @if (mainDirs is not null)
+                if (mainDirs is not null)
                 {
                     @ToggleMainFolders(null)
                     ;
@@ -86,19 +86,22 @@
     </AuthorizeView>
 </nav>
 
-
 @code {
     private bool areAllFoldersToggled = false;
     private ICollection<Directory>? mainDirs;
     public Note searchPhrase;
     private bool searching = false;
     private List<Note> notes;
+    private bool toggleCurrentFolder = false;
+    private Directory? currentDir;
+    private int parentDirsCount = 1;
+    private int parentDirsCountForNotes = 0;
     private ModalOptions options = new ModalOptions()
         {
 
             Animation = ModalAnimation.FadeInOut(0.1),
         };
-    ModalParameters noteParameters = new ModalParameters();
+    private ModalParameters noteParameters = new ModalParameters();
 
     protected override async Task OnInitializedAsync()
     {
@@ -145,9 +148,6 @@
         return currentUserId;
     }
 
-    //private ICollection<Directory>? GetAllSubDirectoriesForSpecificDirectory(Guid directoryId)
-    //=> _ds.GetAllSubDirectoriesOfParticularDirectorySync(directoryId);
-
     private void SearchPhrase()
     {
         // Wywołanie funkcji szukającej
@@ -161,9 +161,10 @@
         }
     }
 
+    private ICollection<Directory>? allCurrentSubdirectiories;
+
     private RenderFragment ToggleFolders(Directory directory) => __builder =>
     {
-        ICollection<Directory>? allCurrentSubdirectiories;
         if (directory == null)
         {
             allCurrentSubdirectiories = mainDirs;
@@ -171,60 +172,69 @@
         else
         {
             allCurrentSubdirectiories = _ds.GetAllSubDirectoriesOfParticularDirectorySync(directory.DirectoryId);
+            parentDirsCount = CountParentDir(directory);
         }
 
         @if (allCurrentSubdirectiories is not null)
         {
-            foreach (var dir in allCurrentSubdirectiories)
-            {
-                var notesFromCurrentSubirectory = _ns.GetAllNotesForParticularDirectory(dir.DirectoryId);
-                <div class="d-flex align-items-baseline justify-content-between nav-item my-nav-item dropdown-toggle nav-link my-custom-nav-item">
-                    <div class="folder-child " @onclick="@(() => ToggleSubDirectory(dir))">
-                        <i class="oi oi-folder" aria-hidden="true"></i>
-                        @PrintName(dir.Name)
-                        @if (dir.SubDirectories != null && dir.SubDirectories.Count() > 0 || notesFromCurrentSubirectory != null && notesFromCurrentSubirectory.Count() > 0)
-                        {
-                            if (!dir.IsToggled)
-                            {
-                                <i class="fa-solid fa-chevron-down"></i>
-
-                            }
-                            else
-                            {
-                                <i class="fa-solid fa-chevron-up"></i>
-                            }
-                        }
-                    </div>
-                    <div class="my-options">
-                        <i class="fa-solid fa-ellipsis " @onclick="@(() => modal.Show<FolderMenu>(@dir.Name,options))"></i>
-                    </div>
-                </div>
-
-                @if (dir.IsToggled)
+            string margin = (parentDirsCount * 20).ToString() + "px";
+            <div style="margin-left:@margin;">
+                @foreach (var dir in allCurrentSubdirectiories)
                 {
-                    @ToggleFolders(dir)
-                    ;
+                    var notesFromCurrentSubirectory = _ns.GetAllNotesForParticularDirectory(dir.DirectoryId);
+                    <div class="d-flex align-items-baseline justify-content-between nav-item my-nav-item dropdown-toggle nav-link my-custom-nav-item">
+                        <div class="folder-child " @onclick="@(() => ToggleSubDirectory(dir))">
+                            <i class="oi oi-folder" aria-hidden="true"></i>
+                            @PrintName(dir.Name)
+                            @if (dir.SubDirectories != null && dir.SubDirectories.Count() > 0 || notesFromCurrentSubirectory != null && notesFromCurrentSubirectory.Count() > 0)
+                            {
+                                if (!dir.IsToggled)
+                                {
+                                    <i class="fa-solid fa-chevron-down"></i>
+
+                                }
+                                else
+                                {
+                                    <i class="fa-solid fa-chevron-up"></i>
+                                }
+
+                            }
+                        </div>
+                        <div class="my-options">
+
+                            <i class="fa-solid fa-ellipsis " @onclick="@(() => modal.Show<FolderMenu>(@dir.Name,options))"></i>
+                        </div>
+
+                    </div>
+
+                    @if (dir.IsToggled)
+                    {
+                        @ToggleFolders(dir)
+                        ;
+                    }
                 }
-            }
+            </div>
         }
 
-        var notes = _ns.GetAllNotesForParticularDirectory(directory.DirectoryId);
-        if (notes is not null)
+        var notes = _ns.GetAllNotesForParticularDirectory(directory!.DirectoryId);
+        if (notes is not null && notes.Count() > 0)
         {
-            foreach (var note in notes)
-            {
-
-
-                <div class="d-flex align-items-baseline justify-content-between nav-item my-nav-item dropdown-toggle nav-link my-custom-nav-item">
-                    <div class="folder-child" @onclick="() => GoToNote(note.NoteId.ToString())">
-                        <i class="oi oi-file" aria-hidden="true"></i>
-                        @PrintName(note.Title)
+            parentDirsCountForNotes = CountParentDirForNote(notes.First());
+            string margin = (parentDirsCountForNotes * 20).ToString() + "px";
+            <div style="margin-left:@margin;">
+                @foreach (var note in notes)
+                {
+                    <div class="d-flex align-items-baseline justify-content-between nav-item my-nav-item dropdown-toggle nav-link my-custom-nav-item">
+                        <div class="folder-child" @onclick="() => GoToNote(note.NoteId.ToString())">
+                            <i class="oi oi-file" aria-hidden="true"></i>
+                            @PrintName(note.Title)
+                        </div>
+                        <div class="my-options">
+                            <i class="fa-solid fa-ellipsis " @onclick="()=> HandleNotesPopup(note)"></i>
+                        </div>
                     </div>
-                    <div class="my-options">
-                        <i class="fa-solid fa-ellipsis " @onclick="()=> HandleNotesPopup(note)"></i>
-                    </div>
-                </div>
-            }
+                }
+            </div>
         }
 
     };
@@ -232,17 +242,10 @@
     private RenderFragment ToggleMainFolders(Directory? directory) => __builder =>
     {
         ICollection<Directory>? allCurrentSubdirectiories;
-        if (directory == null)
-        {
-            allCurrentSubdirectiories = mainDirs;
-        }
-        else
-        {
-            allCurrentSubdirectiories = _ds.GetAllSubDirectoriesOfParticularDirectorySync(directory.DirectoryId);
-        }
+        allCurrentSubdirectiories = mainDirs;
+
 
         @if (allCurrentSubdirectiories is not null)
-
         {
             foreach (var dir in allCurrentSubdirectiories)
             {
@@ -292,7 +295,6 @@
         }
     };
 
-    //toDo implement this fuction
     private void GoToNote(string Id)
     {
         NavigationManager.NavigateTo($"/editNote/{Id}");
@@ -307,7 +309,21 @@
     {
         noteParameters = new ModalParameters();
         noteParameters.Add("noteFromDb", note);
-        modal.Show<NoteMenu>(note.Title, noteParameters, options);
+        modal.Show<NoteMenu>
+            (note.Title, noteParameters, options);
     }
 
-}
+    private int CountParentDir(Directory directory)
+    {
+        if (directory == null || directory.ParentDir is null)
+            return 0;
+        return 1 + CountParentDir(directory.ParentDir);
+    }
+
+    private int CountParentDirForNote(Note note)
+    {
+        if (note == null || note.Directory == null || note.Directory.ParentDir == null)
+            return 0;
+        return 1 + CountParentDir(note.Directory.ParentDir);
+    }
+        }

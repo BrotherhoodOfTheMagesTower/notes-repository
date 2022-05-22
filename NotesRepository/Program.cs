@@ -10,9 +10,9 @@ using NotesRepository.Repositories;
 using NotesRepository.Services;
 using NotesRepository.Services.Azure;
 using NotesRepository.Services.QuartzJobs;
+using Plk.Blazor.DragDrop;
 using Quartz;
 using Radzen;
-using Plk.Blazor.DragDrop;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -94,7 +94,6 @@ builder.Services.AddSingleton<ViewOptionService>();
 builder.Services.AddScoped<DialogService>();
 
 builder.Services.AddBlazorDragDrop();
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
