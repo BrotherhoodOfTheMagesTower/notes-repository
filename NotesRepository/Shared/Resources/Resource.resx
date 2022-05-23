@@ -201,6 +201,9 @@
   <data name="templates" xml:space="preserve">
     <value>Templates</value>
   </data>
+  <data name="theBestItSoftware" xml:space="preserve">
+    <value>The Best IT Software for creating notes</value>
+  </data>
   <data name="theLatest" xml:space="preserve">
     <value>The latest</value>
   </data>
@@ -218,5 +221,8 @@
   </data>
   <data name="view" xml:space="preserve">
     <value>View</value>
+  </data>
+  <data name="welcomeToNotes" xml:space="preserve">
+    <value>Welcome to Notes Repository</value>
   </data>
 </root>
