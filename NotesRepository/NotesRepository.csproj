@@ -14,12 +14,14 @@
     <None Remove="Pages\LoggedUser\SharedNotesPage.razor.css" />
     <None Remove="Pages\LoggedUser\TemplatePreview.razor.css" />
     <None Remove="Pages\LoggedUser\TrashPage.razor.css" />
+    <None Remove="Pages\NotLoggedUser\Features.razor.css" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="Pages\LoggedUser\SharedNotesPage.razor.css" />
     <Content Include="Pages\LoggedUser\TemplatePreview.razor.css" />
     <Content Include="Pages\LoggedUser\TrashPage.razor.css" />
+    <Content Include="Pages\NotLoggedUser\Features.razor.css" />
   </ItemGroup>
 
   <ItemGroup>
@@ -54,6 +56,7 @@
 
   <ItemGroup>
     <Folder Include="Data\Enums\" />
+    <Folder Include="wwwroot\images\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -73,7 +73,7 @@
                 </NavLink>
             </div>
             <div class="nav-item px-3">
-                <NavLink class="dropdown-toggle nav-link" @onclick="()=> NavigateToShareed()">
+                <NavLink class="dropdown-toggle nav-link" @onclick="()=> NavigateToShared()">
                     <span class="oi oi-share" aria-hidden="true"></span> @localizer["shared"]
                 </NavLink>
             </div>
@@ -83,6 +83,13 @@
                 </NavLink>
             </div>
         </Authorized>
+        <NotAuthorized>
+            <div class="nav-item px-3">
+                <NavLink class="dropdown-toggle nav-link" @onclick="()=> NavigateToFeatures()">
+                    <span class="oi oi-thumb-up" aria-hidden="true"></span> @localizer["features"]
+                </NavLink>
+            </div>
+        </NotAuthorized>
     </AuthorizeView>
 </nav>
 
@@ -300,9 +307,14 @@
         NavigationManager.NavigateTo($"/editNote/{Id}");
     }
 
-    private void NavigateToShareed()
+    private void NavigateToShared()
     {
         NavigationManager.NavigateTo($"/sharedNotes");
+    }
+
+    private void NavigateToFeatures()
+    {
+        NavigationManager.NavigateTo($"/features");
     }
 
     private void HandleNotesPopup(Note note)
