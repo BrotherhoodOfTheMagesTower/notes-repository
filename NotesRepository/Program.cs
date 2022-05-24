@@ -17,7 +17,11 @@ using Radzen;
 
 var builder = WebApplication.CreateBuilder(args);
 
+#if DEBUG
+var connectionString = builder.Configuration.GetConnectionString("LocalApplicationDbContextConnection");
+#else
 var connectionString = builder.Configuration.GetConnectionString("ApplicationDbContextConnection");
+#endif
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
 
 builder.Services

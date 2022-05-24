@@ -1,0 +1,27 @@
+name: noterepo-docker
+
+trigger:
+  branches:
+    include:
+     - master
+  batch: true
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  buildConfiguration: 'Release'
+
+steps:
+ - task: Docker@2
+   inputs:
+    containerRegistry: 'NoteRepoDockerHub'
+    repository: 'domidep479/notesrepository'
+    command: 'build'
+    Dockerfile: '**/Dockerfile'
+
+ - task: Docker@2
+   inputs:
+    containerRegistry: 'NoteRepoDockerHub'
+    repository: 'domidep479/notesrepository'
+    command: 'push'

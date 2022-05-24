@@ -204,6 +204,9 @@
   <data name="templates" xml:space="preserve">
     <value>Szablony</value>
   </data>
+  <data name="theBestItSoftware" xml:space="preserve">
+    <value>Najlepszym narzędziu do tworzenia notatek</value>
+  </data>
   <data name="theLatest" xml:space="preserve">
     <value>Ostatnie</value>
   </data>
@@ -224,5 +227,8 @@
   </data>
   <data name="view" xml:space="preserve">
     <value>Widok</value>
+  </data>
+  <data name="welcomeToNotes" xml:space="preserve">
+    <value>Witaj w Notes Repository!</value>
   </data>
 </root>
