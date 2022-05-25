@@ -142,6 +142,33 @@ namespace NotesRepository.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You don&apos;t have any notes.
+        /// </summary>
+        public static string dontNotes {
+            get {
+                return ResourceManager.GetString("dontNotes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You don&apos;t have any notes pinned.
+        /// </summary>
+        public static string dontPinned {
+            get {
+                return ResourceManager.GetString("dontPinned", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You don&apos;t have any events anytime soon.
+        /// </summary>
+        public static string dontUpcomingEvents {
+            get {
+                return ResourceManager.GetString("dontUpcomingEvents", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Draft.
         /// </summary>
         public static string draft {

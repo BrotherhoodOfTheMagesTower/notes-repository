@@ -144,6 +144,15 @@
   <data name="directory" xml:space="preserve">
     <value>Directory</value>
   </data>
+  <data name="dontNotes" xml:space="preserve">
+    <value>You don't have any notes</value>
+  </data>
+  <data name="dontPinned" xml:space="preserve">
+    <value>You don't have any notes pinned</value>
+  </data>
+  <data name="dontUpcomingEvents" xml:space="preserve">
+    <value>You don't have any events anytime soon</value>
+  </data>
   <data name="draft" xml:space="preserve">
     <value>Draft</value>
   </data>
