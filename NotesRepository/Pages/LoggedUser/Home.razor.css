@@ -16,7 +16,7 @@
 
 .my-header{
     margin-top: 5%;
-    z-index:10;
+    position: inherit;
 }
 
 .my-text {
@@ -57,6 +57,16 @@
     height: auto;
     align-items: flex-start;
     z-index: 10;
+}
+
+.my-select{
+    border-color: transparent;
+    background-color: transparent;
+    margin-left: 15px;
+}
+
+.my-title{
+    display: flex;
 }
 
 
@@ -102,7 +112,7 @@
     display: block;
     width: 45%;
     height: auto;
-    z-index: 10;
+    position: relative;
 }
 
 .button-bar {

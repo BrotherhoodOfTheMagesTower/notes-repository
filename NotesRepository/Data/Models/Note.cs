@@ -19,6 +19,16 @@ namespace NotesRepository.Data.Models
             Directory = directory;
         }
 
+        public Note(Guid? noteId, string title, string content, ApplicationUser owner, Directory directory)
+        {
+            NoteId = noteId ?? Guid.NewGuid();
+            Title = title;
+            Content = content;
+            CreatedAt = DateTime.Now;
+            Owner = owner;
+            Directory = directory;
+        }
+
         public Note(string content)
         {
             NoteId = new Guid();
