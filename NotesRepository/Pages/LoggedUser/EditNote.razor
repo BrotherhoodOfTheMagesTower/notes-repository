@@ -109,6 +109,8 @@ else
 
     protected override async Task OnParametersSetAsync()
     {
+        noteFromDb = null;
+
         int numberOfWaits = 1;
         while(flags.getNavMenuLoadingStatus())
         {
@@ -126,6 +128,10 @@ else
         if (content.Length <= 0)
         {
             toastService.ShowError("Your note is empty.", "OOPS!");
+        }
+        else if(content.Length > 13500)
+        {
+            toastService.ShowError("Your note is too big.", "OOPS!");
         }
         else
         {
@@ -218,6 +224,9 @@ else
         {
             try
             {
+                if (image.Name.Contains(' '))
+                    throw new Exception("Image name contains white characters!");
+
                 string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if (currentUserId != null)
                 {
@@ -226,7 +235,7 @@ else
                     if (noteFromDb != null)
                     {
                         var uniqueImageName = /* generateUniqueCharacters() + */ image.Name;    // TODO unikalna ścieżka
-                        newImage = new Image(null, uniqueImageName, "", noteFromDb);            // TODO W aktualnie wersji każda zdjęcie jest przypisaywana tej samej notatki
+                        newImage = new Image(null, uniqueImageName, "", noteFromDb);
                         var resultAndUrl = await _is.AddImageAsync(newImage, image);            // First element is bool value, second is a url to image
                         if (resultAndUrl.Item1)
                         {
