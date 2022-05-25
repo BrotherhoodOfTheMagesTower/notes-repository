@@ -2,7 +2,7 @@
 {
     public class Flags
     {
-        public volatile bool navMenuIsLoading = false;
+        private volatile bool navMenuIsLoading = false;
 
         public bool setNavMenuLoadingStatus(bool status) => navMenuIsLoading = status;
 
