@@ -11,6 +11,7 @@
 @inject UserRepository _ur;
 @inject IToastService toastService;
 @inject DirectoryService _ds;
+@inject Data.Flags flags;
 
 
 
@@ -124,7 +125,8 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		userId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+		if(flags.getNavMenuLoadingStatus()==false){
+			userId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 		if (userId != null)
 		{
 			pinnedList = ( await _ns.GetAllPinnedNotesFromUserAsync(userId)).ToList();
@@ -137,6 +139,8 @@
 				new Note("Taaa"),
 			};
 		}
+		}
+		
 	}
 
 	private async void SaveDraft()
