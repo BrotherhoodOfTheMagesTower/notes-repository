@@ -29,7 +29,7 @@
                     <Dropzone Class="my-dragdrop" Items="pinnedList" InstantReplace=" true ">
                         <div class="note" @onclick="()=>NavigateToNote(context.NoteId.ToString())">
                             <center>
-                                <h5>@context.Content</h5>
+                                <h5>@context.Title</h5>
                                 <br>
                                 <h6>@context.CreatedAt</h6>
                             </center>
@@ -38,7 +38,7 @@
                 }
                 else
                 {
-                    <h4>Nie masz przypiętych notatek</h4>
+                    <h4>@localizer["dontPinned"]</h4>
                 }
             </div>
             <br />
@@ -64,7 +64,7 @@
                     <Dropzone Class="my-dragdrop" Items="latestList" InstantReplace=" true ">
                         <div class="note" @onclick="()=>NavigateToNote(context.NoteId.ToString())">
                             <center>
-                                <h5>@context.Content</h5>
+                                <h5>@context.Title</h5>
                                 <br>
                                 <h6>@context.CreatedAt</h6>
                             </center>
@@ -73,7 +73,7 @@
                 }
                 else
                 {
-                    <h4>Nie masz żadnych notatek</h4>
+                    <h4>@localizer["dontNotes"]</h4>
                 }
             </div>
             <br />
@@ -85,7 +85,7 @@
                     {
                         <div class="note">
                             <center>
-                                <h5>@note.Content</h5>
+                                <h5>@note.Title</h5>
                                 <br>
                                 <h6>@date</h6>
                             </center>
@@ -94,7 +94,7 @@
                 }
                 else
                 {
-                    <h4>Nie masz żadnych wydarzeń w najbliższym czasie</h4>
+                    <h4>@localizer["dontUpcomingEvents"]</h4>
                 }
             </div>
         </div>

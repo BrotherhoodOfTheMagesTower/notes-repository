@@ -144,6 +144,15 @@
   <data name="directory" xml:space="preserve">
     <value>Folder</value>
   </data>
+  <data name="dontNotes" xml:space="preserve">
+    <value>Nie masz żadnych notatek</value>
+  </data>
+  <data name="dontPinned" xml:space="preserve">
+    <value>Nie masz przypiętych notatek</value>
+  </data>
+  <data name="dontUpcomingEvents" xml:space="preserve">
+    <value>Nie masz żadnych wydarzeń w najbliższym czasie</value>
+  </data>
   <data name="draft" xml:space="preserve">
     <value>Brudnopis</value>
   </data>
