@@ -90,6 +90,7 @@
     display: flex;
     align-items: center;
     border-radius: 5px;
+    word-break: break-all;
 }
 
     .note:hover {

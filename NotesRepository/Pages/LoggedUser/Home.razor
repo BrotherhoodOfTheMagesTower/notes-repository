@@ -44,7 +44,7 @@
 			<div class="my-title">
 			<h5 class="my-text">@localizer["theLatest"]</h5>
 			<select @onchange="DisplayLatest" class="my-select">
-				@for ( i=5; i < 50; i = i + 5)
+				@for (int i=5; i < 50; i = i + 5)
 				{
 					@if (i == 10)
 					{
@@ -119,8 +119,8 @@
 	private List<Note>? upcomingEventsList= new ();
 	private DateTime date = new DateTime();
 	private string content = "";
-	private string userId;
-	public int i = 5;
+	private string? userId;
+	public int j = 5;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -136,8 +136,6 @@
 				new Note("Ala Jakaś"),
 				new Note("Taaa"),
 			};
-			//latestList=upcomingEventsList;
-			//pinnedList = upcomingEventsList;
 		}
 	}
 
@@ -180,9 +178,9 @@
 		navigationManager.NavigateTo("/editNote/" + noteId);
 	}
 
-	private async void DisplayLatest(ChangeEventArgs e)
+	private async Task DisplayLatest(ChangeEventArgs e)
 	{
-		//i=Int32.Parse(e.Value);
-		latestList = (await (_ns.GetRecentlyEditedOrCreatedNotesAsync(userId, i))).ToList();
+		j=Int32.Parse(e.Value.ToString());
+		latestList = (await (_ns.GetRecentlyEditedOrCreatedNotesAsync(userId, j))).ToList();
 	}
 }
