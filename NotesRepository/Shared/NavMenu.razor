@@ -78,9 +78,14 @@
                 </NavLink>
             </div>
             <div class="nav-item px-3">
-                <NavLink class="dropdown-toggle nav-link">
+                <NavLink class="dropdown-toggle nav-link" @onclick="()=> ToggleTrash()">
                     <span class="oi oi-trash" aria-hidden="true"></span> @localizer["trash"]
                 </NavLink>
+                @if (areTrashToggled)
+                {
+                        @ToggleFoldersInTrash(bin)
+                        ;
+                }
             </div>
         </Authorized>
         <NotAuthorized>
@@ -96,11 +101,15 @@
 @code {
     private bool areAllFoldersToggled = false;
     private ICollection<Directory>? mainDirs;
+    private bool areTrashToggled = false;
+    private ICollection<Directory>? binDirs;
     public Note searchPhrase;
     private bool searching = false;
     private List<Note> notes;
     private int parentDirsCount = 1;
+    private int parentDirsCountForBin = 0;
     private int parentDirsCountForNotes = 0;
+    private Directory? bin;
     private ModalOptions options = new ModalOptions()
         {
 
@@ -122,6 +131,9 @@
         if (currentUserId is not null)
         {
             mainDirs = await _ds.GetAllDirectoriesWithoutParentDirectoryForParticularUserAsync(currentUserId);
+            bin = await _ds.GetBinForParticularUserAsync(currentUserId);
+            //binDirs = await _ds.GetAllSubDirectoriesOfParticularDirectoryAsync(bin.DirectoryId);
+                
         }
         flags.setNavMenuLoadingStatus(false);
     }
@@ -139,6 +151,11 @@
     private void ToggleSubmenu()
     {
         areAllFoldersToggled = !areAllFoldersToggled;
+    }
+    
+    private void ToggleTrash()
+    {
+        areTrashToggled = !areTrashToggled;
     }
 
     private void ToggleSubDirectory(Directory directory)
@@ -184,7 +201,7 @@
             parentDirsCount = CountParentDir(directory);
         }
 
-        @if (allCurrentSubdirectiories is not null)
+        @if (allCurrentSubdirectiories is not null && allCurrentSubdirectiories.Count() > 0)
         {
             string margin = (parentDirsCount * 20).ToString() + "px";
             <div style="margin-left:@margin;">
@@ -253,6 +270,47 @@
         ICollection<Directory>? allCurrentSubdirectiories;
         allCurrentSubdirectiories = mainDirs;
 
+
+        @if (allCurrentSubdirectiories is not null)
+        {
+            foreach (var dir in allCurrentSubdirectiories)
+            {
+                <div class="nav-item my-nav-item">
+                    <NavLink class="dropdown-toggle nav-link justify-content-between" @onclick="@(() => ToggleSubDirectory(dir))">
+                        <div class="my-inside-nav-link">
+                            <i class="oi oi-folder" aria-hidden="true"></i>
+                            @PrintName(dir.Name)
+                            @if (dir.SubDirectories != null && dir.SubDirectories.Count() > 0)
+                            {
+                                if (!dir.IsToggled)
+                                {
+                                    <i class="fa-solid fa-chevron-down"></i>
+
+                                }
+                                else
+                                {
+                                    <i class="fa-solid fa-chevron-up"></i>
+                                }
+                            }
+                        </div>
+                        <i class="fa-solid fa-ellipsis " @onclick="@(() => modal.Show<FolderMenu>(@dir.Name,options))"></i>
+                    </NavLink>
+                </div>
+
+                @if (dir.IsToggled)
+                {
+                    @ToggleFolders(dir)
+                    ;
+                }
+            }
+        }
+
+    };
+     private RenderFragment ToggleFoldersInTrash(Directory? directory) => __builder =>
+    {
+        ICollection<Directory>? allCurrentSubdirectiories;
+        allCurrentSubdirectiories = _ds.GetAllSubDirectoriesOfParticularDirectorySync(directory.DirectoryId);;
+        parentDirsCountForBin = CountParentDir(directory);
 
         @if (allCurrentSubdirectiories is not null)
         {
