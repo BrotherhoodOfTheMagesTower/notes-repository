@@ -56,7 +56,6 @@
 
   <ItemGroup>
     <Folder Include="Data\Enums\" />
-    <Folder Include="wwwroot\images\" />
   </ItemGroup>
 
   <ItemGroup>

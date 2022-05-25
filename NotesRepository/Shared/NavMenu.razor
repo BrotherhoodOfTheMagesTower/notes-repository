@@ -99,8 +99,6 @@
     public Note searchPhrase;
     private bool searching = false;
     private List<Note> notes;
-    private bool toggleCurrentFolder = false;
-    private Directory? currentDir;
     private int parentDirsCount = 1;
     private int parentDirsCountForNotes = 0;
     private ModalOptions options = new ModalOptions()
@@ -120,7 +118,11 @@
     private async Task init()
     {
         flags.setNavMenuLoadingStatus(true);
-        mainDirs = await _ds.GetAllDirectoriesWithoutParentDirectoryForParticularUserAsync(GetCurrentUserId()!);
+        string? currentUserId = GetCurrentUserId();
+        if (currentUserId is not null)
+        {
+            mainDirs = await _ds.GetAllDirectoriesWithoutParentDirectoryForParticularUserAsync(currentUserId);
+        }
         flags.setNavMenuLoadingStatus(false);
     }
 

@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="aboutNotesRepository" xml:space="preserve">
+    <value>O Notes Repository</value>
+  </data>
+  <data name="aboutNotesRepositoryDescryption" xml:space="preserve">
+    <value>Aplikacja webowa, która umożliwia tworzenie notatek i otwieranie ich na wszytskich rodzajach urządzeń. Celem aplikacji jest zapewnienie użytkownikowi kompleksowego sposobu tworzenia notatek. Notes Repository wykorzystuje moc Markdowna, który pozwala na szybkie i efektywne tworzenie notatek, a także na zagnieżdżanie html.</value>
+  </data>
   <data name="addFolder" xml:space="preserve">
     <value>Dodaj nowy folder</value>
   </data>
@@ -134,6 +140,12 @@
   </data>
   <data name="content" xml:space="preserve">
     <value>Treść</value>
+  </data>
+  <data name="crossPlatform" xml:space="preserve">
+    <value>Wieloplatformowość</value>
+  </data>
+  <data name="crossPlatformDescryption" xml:space="preserve">
+    <value>Aplikację można wykorzystywać na różnych urządzeniach, od małych telefonów po duże telewizory.</value>
   </data>
   <data name="deleteFolder" xml:space="preserve">
     <value>Usuń folder</value>
@@ -153,14 +165,44 @@
   <data name="editName" xml:space="preserve">
     <value>Zmień nazwę</value>
   </data>
+  <data name="eventPlanning" xml:space="preserve">
+    <value>Planowanie wydarzeń</value>
+  </data>
+  <data name="eventPlanningDescryption" xml:space="preserve">
+    <value>Czy zdarza Ci się zapominać o nadchodzących wydarzeniach? Jeśli tak, to Notes Repository jest właśnie dla Ciebie.</value>
+  </data>
+  <data name="features" xml:space="preserve">
+    <value>funkcjonalność</value>
+  </data>
   <data name="folders" xml:space="preserve">
     <value>Foldery</value>
+  </data>
+  <data name="folderStructure" xml:space="preserve">
+    <value>Struktura folderów</value>
+  </data>
+  <data name="folderStructureDescryption" xml:space="preserve">
+    <value>Wszytskie notatki znajdują się w folderach, a te z kolei mogą być zagnieżdżone w innych.</value>
+  </data>
+  <data name="freeToUse" xml:space="preserve">
+    <value>Darmowy w użytkowaniu</value>
+  </data>
+  <data name="freeToUseDescryption" xml:space="preserve">
+    <value>Nasza aplikacja jest w pełni darmowa!</value>
+  </data>
+  <data name="GoogleAuhentication" xml:space="preserve">
+    <value>Autoryzacja z Google</value>
+  </data>
+  <data name="GoogleAuhenticationDescryption" xml:space="preserve">
+    <value>Rejestracja/logowanie nigdy nie były tak proste! Z Notes Repository możesz zarejestrować/zalogować się za pomocą Google.</value>
   </data>
   <data name="homePage" xml:space="preserve">
     <value>Strona główna</value>
   </data>
   <data name="logIn" xml:space="preserve">
     <value>Zaloguj się</value>
+  </data>
+  <data name="markdownDescryption" xml:space="preserve">
+    <value>Doświadcz potęgę Markdowna! Pisz notatki szybko i wygodnie.</value>
   </data>
   <data name="name" xml:space="preserve">
     <value>Nazwa</value>
@@ -204,6 +246,9 @@
   <data name="templates" xml:space="preserve">
     <value>Szablony</value>
   </data>
+  <data name="templatesDescryption" xml:space="preserve">
+    <value>Dla użytkownika dostępnych jest wiele gotowych do użycia szablonów, które skracają czas tworzenia notatki.</value>
+  </data>
   <data name="theBestItSoftware" xml:space="preserve">
     <value>Najlepszym narzędziu do tworzenia notatek</value>
   </data>
@@ -224,6 +269,12 @@
   </data>
   <data name="upcomingEvents" xml:space="preserve">
     <value>Nadchodzące wydarzenia</value>
+  </data>
+  <data name="userFriendlyUI" xml:space="preserve">
+    <value>Przyjazny dla użytkownika UI</value>
+  </data>
+  <data name="userFriendlyUIDescryption" xml:space="preserve">
+    <value>Naszym celem było utworzenie prostego, lecz wygodnego w obsłudzę UI.</value>
   </data>
   <data name="view" xml:space="preserve">
     <value>Widok</value>

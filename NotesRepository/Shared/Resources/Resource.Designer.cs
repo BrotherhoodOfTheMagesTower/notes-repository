@@ -61,6 +61,26 @@ namespace NotesRepository.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to About Notes Repository.
+        /// </summary>
+        public static string aboutNotesRepository {
+            get {
+                return ResourceManager.GetString("aboutNotesRepository", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Web application which allows user to take notes and share them across all of their devices.
+        ///        The purpose of this application is to provide the user with a complex solution to take notes.
+        ///        App makes use of Markdown language which allows quick and effective text formatting as well as nesting html code inside of the note..
+        /// </summary>
+        public static string aboutNotesRepositoryDescryption {
+            get {
+                return ResourceManager.GetString("aboutNotesRepositoryDescryption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add new folder.
         /// </summary>
         public static string addFolder {
@@ -111,6 +131,25 @@ namespace NotesRepository.Shared.Resources {
         public static string content {
             get {
                 return ResourceManager.GetString("content", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cross Platform.
+        /// </summary>
+        public static string crossPlatform {
+            get {
+                return ResourceManager.GetString("crossPlatform", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Application can be used on variety of devices ranging from
+        ///                small mobile phones to big TV screens..
+        /// </summary>
+        public static string crossPlatformDescryption {
+            get {
+                return ResourceManager.GetString("crossPlatformDescryption", resourceCulture);
             }
         }
         
@@ -169,11 +208,84 @@ namespace NotesRepository.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Event Planning.
+        /// </summary>
+        public static string eventPlanning {
+            get {
+                return ResourceManager.GetString("eventPlanning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do you tend to forget about incoming events? If so, don&apos;t
+        ///                worry. Notes Repository has got you covered and provides a complex calendar where you can add events and pin notes to them..
+        /// </summary>
+        public static string eventPlanningDescryption {
+            get {
+                return ResourceManager.GetString("eventPlanningDescryption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Folders.
         /// </summary>
         public static string folders {
             get {
                 return ResourceManager.GetString("folders", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Folder structure.
+        /// </summary>
+        public static string folderStructure {
+            get {
+                return ResourceManager.GetString("folderStructure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All notes are nested inside folders which can be nested inside each other..
+        /// </summary>
+        public static string folderStructureDescryption {
+            get {
+                return ResourceManager.GetString("folderStructureDescryption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Free to use.
+        /// </summary>
+        public static string freeToUse {
+            get {
+                return ResourceManager.GetString("freeToUse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Our app is completely free to use!.
+        /// </summary>
+        public static string freeToUseDescryption {
+            get {
+                return ResourceManager.GetString("freeToUseDescryption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Google authentication.
+        /// </summary>
+        public static string GoogleAuhentication {
+            get {
+                return ResourceManager.GetString("GoogleAuhentication", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Registering has never been that easy! With Notes Repository you can register/ login with Google..
+        /// </summary>
+        public static string GoogleAuhenticationDescryption {
+            get {
+                return ResourceManager.GetString("GoogleAuhenticationDescryption", resourceCulture);
             }
         }
         
@@ -192,6 +304,15 @@ namespace NotesRepository.Shared.Resources {
         public static string logIn {
             get {
                 return ResourceManager.GetString("logIn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Experience the power of Markdown language. Write notes in a quick and an efficient way..
+        /// </summary>
+        public static string markdownDescryption {
+            get {
+                return ResourceManager.GetString("markdownDescryption", resourceCulture);
             }
         }
         
@@ -313,6 +434,15 @@ namespace NotesRepository.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to User is provided with a set of ready to use templates thanks to which they can create notes faster..
+        /// </summary>
+        public static string templatesDescryption {
+            get {
+                return ResourceManager.GetString("templatesDescryption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The Best IT Software for creating notes.
         /// </summary>
         public static string theBestItSoftware {
@@ -363,6 +493,24 @@ namespace NotesRepository.Shared.Resources {
         public static string upcomingEvents {
             get {
                 return ResourceManager.GetString("upcomingEvents", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User friendly UI.
+        /// </summary>
+        public static string userFriendlyUI {
+            get {
+                return ResourceManager.GetString("userFriendlyUI", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Our intention was to create a simple yet effective to use UI to make you as productive as possible..
+        /// </summary>
+        public static string userFriendlyUIDescryption {
+            get {
+                return ResourceManager.GetString("userFriendlyUIDescryption", resourceCulture);
             }
         }
         

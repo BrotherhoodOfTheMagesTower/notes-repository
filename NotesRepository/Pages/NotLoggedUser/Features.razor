@@ -2,11 +2,104 @@
 
 @inject Microsoft.Extensions.Localization.IStringLocalizer<Resource> localizer;
 
-@*Todo add application features*@
-<section>
-    <h3>Features</h3>
+<PageTitle>@localizer["features"]</PageTitle>
+<HeadContent>
+    <meta name="description" content=@localizer["FeaturesDescryption"]>
+</HeadContent>
+
+<section class="section-features section-paddings" id="About">
+    <h2> @localizer["aboutNotesRepository"]</h2>
+    <p class="centered-p">
+        @localizer["aboutNotesRepositoryDescryption"]
+    </p>
+    <div class="feauture">
+        <div class="text-ads">
+            <div class="image-container">
+                <div class="img">
+                    <img src="./images/calendar.jpg" alt="Markdown" />
+                </div>
+            </div>
+            <h3>Markdown</h3>
+            <div class="about-me-description">
+                 @localizer["markdownDescryption"]
+            </div>
+        </div>
+        <div class="text-ads">
+            <div class="image-container">
+                <div class="img">
+                    <img src="./images/calendar.jpg" alt="Cross platform" />
+                </div>
+            </div>
+            <h3>@localizer["crossPlatform"]</h3>
+            <div class="about-me-description">
+                @localizer["crossPlatformDescryption"]
+            </div>
+        </div>
+        <div class="text-ads">
+            <div class="image-container">
+                <div class="img">
+                    <img src="./images/calendar.jpg" alt="Templates" />
+                </div>
+            </div>
+            <h3>@localizer["templates"]</h3>
+            <div class="about-me-description">
+                @localizer["templatesDescryption"]
+            </div>
+        </div>
+        <div class="text-ads">
+            <div class="image-container">
+                <div class="img">
+                    <img src="./images/calendar.jpg" alt="Events" />
+                </div>
+            </div>
+            <h3>@localizer["eventPlanning"]</h3>
+            <div class="about-me-description">
+                @localizer["eventPlanningDescryption"]
+            </div>
+        </div>
+        <div class="text-ads">
+            <div class="image-container">
+                <div class="img">
+                    <img src="./images/calendar.jpg" alt="Folder structure" />
+                </div>
+            </div>
+            <h3>@localizer["folderStructure"]</h3>
+            <div class="about-me-description">
+                @localizer["folderStructureDescryption"]
+            </div>
+        </div>
+        <div class="text-ads">
+            <div class="image-container">
+                <div class="img">
+                    <img src="./images/google.jpg" alt="Google authentication" />
+                </div>
+            </div>
+            <h3>@localizer["GoogleAuhentication"]</h3>
+            <div class="about-me-description">
+                @localizer["GoogleAuhenticationDescryption"]
+            </div>
+        </div>
+        <div class="text-ads">
+            <div class="image-container">
+                <div class="img">
+                    <img src="./images/calendar.jpg" alt="User friendly UI" />
+                </div>
+            </div>
+            <h3>@localizer["userFriendlyUI"]</h3>
+            <div class="about-me-description">
+                @localizer["userFriendlyUIDescryption"]
+            </div>
+        </div>
+        <div class="text-ads">
+            <div class="image-container">
+                <div class="img">
+                    <img src="./images/calendar.jpg" alt="Free to use" />
+                </div>
+            </div>
+            <h3>@localizer["freeToUse"]</h3>
+            <div class="about-me-description">
+                @localizer["freeToUseDescryption"]
+            </div>
+        </div>
+    </div>
 </section>
-
-@code {
-
-}
