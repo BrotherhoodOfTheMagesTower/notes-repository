@@ -10,6 +10,7 @@
 @inject DialogService DialogService
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor
 @inject IToastService toastService;
+@inject Microsoft.Extensions.Localization.IStringLocalizer<Resource> localizer
 
 
 <PageTitle>@title</PageTitle>
@@ -21,10 +22,10 @@
 <RadzenExample Name="Scheduler" AdditionalSourceCodePages=@(new List<string>() { "AddEventPage.razor", "EditEventPage.razor" })/>
     <RadzenScheduler @ref=@scheduler LoadData=@OnLoad SlotRender=@OnSlotRender style="height: 768px; width:70%;" TItem="Event" Data=@data StartProperty="StartAt" EndProperty="EndAt"
         TextProperty="Content" SelectedIndex="2"
-        SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentSelect AppointmentRender=@OnAppointmentRender>
-        <RadzenDayView />
-        <RadzenWeekView />
-        <RadzenMonthView />
+        SlotSelect=@OnSlotSelect AppointmentSelect=@OnEventSelect AppointmentRender=@OnEventRender>
+        <RadzenDayView Text=@localizer["Day"] />
+        <RadzenWeekView Text=@localizer["Week"] />
+        <RadzenMonthView Text=@localizer["Month"] />
     </RadzenScheduler>
 </div>
 @code {
@@ -34,26 +35,21 @@
     private string description = "calendar page";
     private string title = "calendar";
     Event model = new Event();
-    
-    ICollection<Event> data = new List<Event>
 
-    {
-      // EXAMPLE added manually 
-        new Event {StartAt = DateTime.Today.AddDays(-1), EndAt = DateTime.Today.AddDays(-1), Content ="Testing"}
-    };
+    ICollection<Event> data;
 
 
 
     void OnSlotRender(SchedulerSlotRenderEventArgs args) 
     {
 
-        if (args.View.Text == "Month" && args.Start.Date == DateTime.Today)
+        if (args.View.Text == @localizer["Month"] && args.Start.Date == DateTime.Today)
         {
             args.Attributes["style"] = "background: rgba(255,220,40,.2);";
         }
 
 
-        if ((args.View.Text == "Week" || args.View.Text == "Day") && args.Start.Hour > 7 && args.Start.Hour < 16)
+        if ((args.View.Text == @localizer["Week"] || args.View.Text == @localizer["Day"]) && args.Start.Hour > 6 && args.Start.Hour < 16)
         {
             args.Attributes["style"] = "background: rgba(255,220,40,.2);";
         }
@@ -68,13 +64,13 @@
 
     async Task OnSlotSelect(SchedulerSlotSelectEventArgs args)
     {
-        if (args.Start < DateTime.Now)
+        if (args.Start < DateTime.Now.AddDays(-1))
         {
-            toastService.ShowError("Error you cant do this");
+            toastService.ShowError("You cannot add an event before today","OOPS!");
         }
         else
         {
-            Event datas = await DialogService.OpenAsync<AddEventPage>("Add Event",
+            Event datas = await DialogService.OpenAsync<AddEventPage>(@localizer["Add Event"],
                 new Dictionary<string, object> { { "StartAt", args.Start }, { "EndAt", args.End } });
           
             if (datas != null)
@@ -85,24 +81,23 @@
             }
         }
     }
-      async Task OnAppointmentSelect(SchedulerAppointmentSelectEventArgs<Event> args)
+      async Task OnEventSelect(SchedulerAppointmentSelectEventArgs<Event> args)
     {
 
 
-        await DialogService.OpenAsync<EditEventPage>("Edit Event", new Dictionary<string, object> { { "Event", args.Data } });
+        await DialogService.OpenAsync<EditEventPage>(@localizer["Edit Event"], new Dictionary<string, object> { { "Event", args.Data } });
         await scheduler.Reload();
         
     }
 
-    void OnAppointmentRender(SchedulerAppointmentRenderEventArgs<Event> args)
+    void OnEventRender(SchedulerAppointmentRenderEventArgs<Event> args)
     {
 
-
-        // EXAMPLE MANUALLY styling
-        if (args.Data.Content == "Testing")
-        {
-            args.Attributes["style"] = "background: green";
-        }
+        // Manually styling when remainder other color maybe TO do after remainder 
+       // if (args.Data.Content == "Testing")
+       // {
+       //    args.Attributes["style"] = "background: green";
+       // }
     }
 
 }
