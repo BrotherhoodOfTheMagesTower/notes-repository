@@ -112,7 +112,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await Task.Delay(4200);
         flags.setNavMenuLoadingStatus(true);
         Thread threadForInit = new Thread(async () => await init());
         threadForInit.Start();
