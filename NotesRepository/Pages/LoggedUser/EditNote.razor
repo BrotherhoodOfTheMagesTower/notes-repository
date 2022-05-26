@@ -15,6 +15,7 @@
 @inject UserRepository _ur;
 @inject ImageService _is;
 @inject DirectoryService _ds;
+@inject CollaboratorsNotesService _cns;
 @inject Data.Flags flags;
 @inject IToastService toastService;
 
@@ -91,6 +92,37 @@ else
                 </div>
             }
             </center>
+
+            <center>  
+                <div>
+                @if (collaborators.Count > 0)
+                {
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Collaborator's e-mail</th>
+                                <th>Collaborator's name and surname</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var collaborator in collaborators)
+                            {
+                                <tr>
+                                    <th>@collaborator.Email</th>
+                                    <th>@collaborator.FirstName @collaborator.LastName</th>
+                                    <th><button type="button" class="btn btn-primary" @onclick="() => deleteCollaboratorFromNote(collaborator)">@localizer["delete"]</button></th>
+                                </tr>
+                            }
+                              </tbody>
+                    </table>
+                }
+            <label>collaborator's email</label>
+            <input class="d-block mb-1 ml-1" @bind-value="collaboratorEmail"></input>
+            <button type="button" class="btn btn-primary" @onclick="() => addCollaboratorToNote()">usuń</button>
+             
+            </div>
+            
+            </center>
     </div>
 }
 
@@ -106,6 +138,10 @@ else
     private string description = "edit note";
     private string title = "edit note";
     private Note? noteFromDb;
+    private List<ApplicationUser> collaborators;
+    private string collaboratorEmail;
+
+
 
     protected override async Task OnParametersSetAsync()
     {
@@ -119,6 +155,8 @@ else
         }
 
         imagesFromUser = new List<Image>();
+        collaborators = new List<ApplicationUser>();
+
         content = templateIndex == "newNote" ? "" : await init();
         pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build(); // Uruchomienie rozszerzeń markdown
     }
@@ -188,9 +226,16 @@ else
                 if (currentUserId != null)
                 {
                     noteFromDb = await _ns.GetNoteByIdAsync(Guid.Parse(templateIndex));
+
+                    if (noteFromDb is not null)
+                    {
+                        collaborators =(await _cns.GetAllCollaboratorsForNoteAsync(noteFromDb.NoteId)).ToList();
+                    }
+
                     if (noteFromDb is not null)
                     {
                         var noteImages = await _is.GetAllNoteImagesAsync(noteFromDb.NoteId);
+
                         if (noteImages.Count > 0)
                         {
                             foreach (var image in noteImages)
@@ -285,6 +330,32 @@ else
                 toastService.ShowError(e.Message);
             }
         }
+    }
+
+    private async void deleteCollaboratorFromNote(ApplicationUser collaborator)
+    {
+        await _cns.DeleteCollaboratorFromNoteAsync(collaborator.Id, noteFromDb.NoteId);
+    }
+
+    private async void addCollaboratorToNote()
+    {
+        var collaboratorToAdd = await _ur.GetUserByEmailAsync(collaboratorEmail);
+        string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if(collaboratorToAdd == null)
+            toastService.ShowError("User doesn't exists!"); 
+
+        else if(collaboratorToAdd.Id == currentUserId)
+            toastService.ShowError("You can't add yourself as a collaborator!"); 
+
+        else if(collaborators.Contains(collaboratorToAdd))
+            toastService.ShowError("Collaborator is already added!"); 
+        else 
+        {
+            await _cns.AddCollaboratorToNoteAsync(collaboratorToAdd.Id, noteFromDb.NoteId);
+            toastService.ShowSuccess("Collaborator was sucessfully added!"); 
+        }
+        
     }
 
     private string generateUniqueCharacters()
