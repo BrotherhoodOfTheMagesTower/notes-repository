@@ -1,4 +1,5 @@
 ﻿using NotesRepository.Areas.Identity.Data;
+using NotesRepository.Data.Constants;
 using NotesRepository.Repositories;
 using System.ComponentModel.DataAnnotations;
 
@@ -57,7 +58,7 @@ namespace NotesRepository.Data.Models
         /// <summary>
         /// Icon name (from for ex. Bootstrap)
         /// </summary>
-        public string IconName { get; set; } = "default"; //todo: select a default
+        public string IconName { get; set; } = Emoji.getRandomEmoji();
 
         /// <summary>
         /// Date and time when the note was created

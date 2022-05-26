@@ -33,14 +33,14 @@ else
     <div class="my-container">
         <div class="my-sub-container p-2 ">
             <center>
-                    @if(@validId && @noteFromDb is not null)
-                    {
-                        <h3>@noteFromDb.Title @noteFromDb.IconName</h3>
-                    }
-                    else
-                    {
-                        <h3>@localizer["content"]</h3> 
-                    }
+                @if(@validId && @noteFromDb is not null)
+                {
+                    <h3>@noteFromDb.Title @noteFromDb.IconName</h3>
+                }
+                else
+                {
+                    <h3>@localizer["content"]</h3> 
+                }
             </center>
             <textarea class="my-text-area" @bind-value="content" @bind-value:event="oninput"></textarea>
             <center>
@@ -67,34 +67,34 @@ else
                 @((MarkupString)Markdown.ToHtml(content, pipeline))
             </div>
         </div>
-            <center>
-            @if(imagesFromUser.Count > 0)
-            {
-                <div>
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Image</th>
-                                <th>URL</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        @foreach(var image in imagesFromUser)
-                        { 
-                            <tr>
-                                <th>@image.Name</th>
-                                <th>@image.FileUrl</th>
-                                <th><button type="button" class="btn btn-primary" @onclick="() => deleteImageFromNote(image)">@localizer["delete"]</button></th>
-                            </tr>        
-                        }
-                        </tbody>
-                    </table>
-                </div>
-            }
-            </center>
+        <center>
+        @if(imagesFromUser.Count > 0)
+        {
+            <div>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>URL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach(var image in imagesFromUser)
+                    { 
+                        <tr>
+                            <th>@image.Name</th>
+                            <th>@image.FileUrl</th>
+                            <th><button type="button" class="btn btn-primary" @onclick="() => deleteImageFromNote(image)">@localizer["delete"]</button></th>
+                        </tr>        
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
+        </center>
 
-            <center>  
-                <div>
+        <center>  
+            <div>
                 @if (collaborators.Count > 0)
                 {
                     <table class="table table-striped">
@@ -113,16 +113,19 @@ else
                                     <th><button type="button" class="btn btn-primary" @onclick="() => deleteCollaboratorFromNote(collaborator)">@localizer["delete"]</button></th>
                                 </tr>
                             }
-                              </tbody>
+                        </tbody>
                     </table>
                 }
-            <label>collaborator's email</label>
-            <input class="d-block mb-1 ml-1" @bind-value="collaboratorEmail"></input>
-            <button type="button" class="btn btn-primary" @onclick="() => addCollaboratorToNote()">@localizer["add"]</button>
-             
+                @if (@validId && @noteFromDb is not null)
+                {
+                    <div>
+                        <label>collaborator's email</label>
+                        <input class="d-block mb-1 ml-1" @bind-value="collaboratorEmail"></input>
+                        <button type="button" class="btn btn-primary" @onclick="() => addCollaboratorToNote()">@localizer["add"]</button>
+                    </div>
+                }
             </div>
-            
-            </center>
+        </center>
     </div>
 }
 
@@ -140,8 +143,6 @@ else
     private Note? noteFromDb;
     private List<ApplicationUser> collaborators;
     private string collaboratorEmail;
-
-
 
     protected override async Task OnParametersSetAsync()
     {
@@ -169,7 +170,7 @@ else
         }
         else if(content.Length > 13500)
         {
-            toastService.ShowError("Your note is too big.", "OOPS!");
+            toastService.ShowError("Your note is too long.", "OOPS!");
         }
         else
         {
@@ -211,7 +212,7 @@ else
         }
     }
 
-    private async Task<string> init() // TODO narazie init obsługuje tylko wczytywanie templateów, trzeba dodać obsługę wczytywania z bazy
+    private async Task<string> init()
     {
         if (templateIndex is not null)
         {
@@ -262,15 +263,17 @@ else
         }
     }
 
-    private async void LoadFile(InputFileChangeEventArgs e) // TODO wprowadzanie więcej niż jednego pliku
+    private async void LoadFile(InputFileChangeEventArgs e)
     {
-        var image = await e.File.RequestImageFileAsync("image/jpg", 1920, 1080);
+        var image = await e.File.RequestImageFileAsync("image/jpg", 2560, 2048);
         if (image != null)
         {
             try
             {
                 if (image.Name.Contains(' '))
                     throw new Exception("Image name contains white characters!");
+                else if(image.Size > 512000) // max Size 500 KB TODO mozna spróbować to obejść
+                    throw new Exception("Image Size is to large! Max size is 500 KB");
 
                 string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if (currentUserId != null)
@@ -302,7 +305,6 @@ else
         }
     }
 
-    // TODO usuwanie zdjęcia z danej notatki -> przycisk w tabeli -> usuwanie zdjęcia z Azure
     private async void deleteImageFromNote(Image image)
     {
         string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

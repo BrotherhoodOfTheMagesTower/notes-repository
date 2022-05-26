@@ -1,6 +1,7 @@
 ﻿@using NotesRepository.Services;
 @using NotesRepository.Data;
 @using NotesRepository.Data.Models;
+@using NotesRepository.Data.Constants
 @using NotesRepository.Repositories;
 @using System.Security.Claims;
 @using System.ComponentModel.DataAnnotations;
@@ -78,7 +79,7 @@
             {
                 <row>
                     <InputSelect id="emoji" @bind-Value="@inputFromUser.Emoji" class="my-input">
-                        @foreach (var e in emoji)
+                        @foreach (var e in Emoji.emoji)
                         {
                         <option value="@e">@e</option>
                         }
@@ -106,19 +107,6 @@
     private NoteValidation? inputFromUser;
     string? currentUserId;
     private List<Directory>? directoriesList;
-    // TODO trzeba to przemyśleć
-    private string[] emoji = {  "⌚️", "📱", "📲", "💻", "📞", "☎️",
-                                "📟", "📠", "📺","📻","🎙","🎚",
-                                "🎛", "🧭", "⏱","⏲","⏰","🕰",
-                                "📜", "📃", "📄","📑","🧾", "📊",
-                                "📈", "📉", "🗒","🗑","📇", "🗃",
-                                "🗳", "🗄", "📋","📁", "📂","🗂",
-                                "🗞", "📰", "📓","📔","📒", "📕",
-                                "📗", "📘", "📙","📚", "📖","🔖",
-                                "🧷", "🔗", "📎","🖇", "📐","📏",
-                                "🧮", "📌", "📍","✂️", "🖊","🖋",
-                                "✒️", "🖌 ","🖍","📝","✏️", "🔍",
-                                "🔎", "🔏", "🔐","🔒","🔓"};
 
     protected override async Task OnInitializedAsync()
     {
@@ -186,27 +174,6 @@
                     throw new Exception("There is no such folder!");
             }
         }
-    }
-
-    public class NoteValidation
-    {
-        public NoteValidation(string title, string emoji, string directory)
-        {
-            Title = title;
-            Directory = directory;
-            Emoji = emoji;
-        }
-
-        [Required(ErrorMessage = "Required field!")]
-        [StringLength(32, ErrorMessage = "Too long!")]
-        [MinLength(2, ErrorMessage = "Too short!")]
-        public string Title { get; set; }
-
-        [Required(ErrorMessage = "Required field!")]
-        public string Directory { get; set; }
-
-        [Required(ErrorMessage = "Required field!")]
-        public string Emoji { get; set; }
     }
 
     private void PinNote(Note? note)

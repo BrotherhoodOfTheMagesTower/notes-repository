@@ -253,7 +253,7 @@
                 {
                     <div class="d-flex align-items-baseline justify-content-between nav-item my-nav-item dropdown-toggle nav-link my-custom-nav-item">
                         <div class="folder-child" @onclick="() => GoToNote(note.NoteId.ToString())">
-                            <i class="oi oi-file" aria-hidden="true"></i>
+                            <i>@note.IconName</i>
                             @PrintName(note.Title)
                         </div>
                         <div class="my-options">
@@ -370,12 +370,12 @@
 
     private void NavigateToShared()
     {
-        NavigationManager.NavigateTo($"/sharedNotes");
+        NavigationManager.NavigateTo("/sharedNotes");
     }
 
     private void NavigateToFeatures()
     {
-        NavigationManager.NavigateTo($"/features");
+        NavigationManager.NavigateTo("/features");
     }
 
     private void HandleNotesPopup(Note note)
@@ -407,4 +407,4 @@
             return 0;
         return 1 + CountParentDir(note.Directory.ParentDir);
     }
-        }
+}

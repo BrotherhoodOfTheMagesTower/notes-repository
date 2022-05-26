@@ -1,6 +1,7 @@
 ﻿@using NotesRepository.Services;
 @using NotesRepository.Data;
 @using NotesRepository.Data.Models;
+@using NotesRepository.Data.Constants
 @using NotesRepository.Repositories;
 @using System.Security.Claims;
 @using System.ComponentModel.DataAnnotations;
@@ -14,40 +15,50 @@
 @inject IToastService toastService;
 
 <!--TODO Wprowadź tytuł notatki, wybór ikony (emoji), wybór folderu-->
-<EditForm Model="@inputFromUser" OnValidSubmit="saveNote">
-    <DataAnnotationsValidator/>
-    <div>
+@if(directoriesList is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <EditForm Model="@inputFromUser" OnValidSubmit="saveNote">
+        <DataAnnotationsValidator/>
         <div>
-            <row>@localizer["name"]</row>
-            <row>
-                <InputText id="noteTitle" @bind-Value="@inputFromUser.Title"></InputText>
-                <ValidationMessage For="() => inputFromUser.Title"/>
-            </row>
+            <div>
+                <row>@localizer["name"]</row>
+                <row>
+                    <InputText id="noteTitle" @bind-Value="@inputFromUser.Title"></InputText>
+                    <ValidationMessage For="() => inputFromUser.Title"/>
+                </row>
+            </div>
+            <div>
+                <row>@localizer["directory"]</row>
+                <row>
+                    <InputSelect id="noteDirecotry" @bind-Value="@inputFromUser.Directory" class="my-input">
+                        @foreach (var direcotry in directoriesList)
+                        {
+                            <option value="@direcotry.Name">@direcotry.Name</option>
+                        }
+                    </InputSelect>
+                </row>
+            </div>
+            <div>
+                <row>Emoji</row>
+                <row>
+                <InputSelect id="emoji"  @bind-Value="inputFromUser.Emoji">
+                    @foreach(var e in Emoji.emoji)
+                    {
+                        <option value="@e">@e</option>
+                    }
+                </InputSelect>
+                </row>
+            </div>
         </div>
-        <div>
-            <row>@localizer["directory"]</row>
-            <row>
-            <InputText id="noteTitle" @bind-Value="@inputFromUser.Directory"></InputText>
-            <ValidationMessage For="() => inputFromUser.Directory"/>
-            </row>
-        </div>
-        <div>
-            <row>Emoji</row>
-            <row>
-            <InputSelect id="emoji"  @bind-Value="inputFromUser.Emoji">
-                @foreach(var e in emoji)
-                {
-                    <option value="@e">@e</option>
-                }
-            </InputSelect>
-            </row>
-        </div>
-    </div>
-    <center>
-        <button type="submit" class="btn btn-primary">@localizer["save"]</button>
-    </center>
-</EditForm>
-
+        <center>
+            <button type="submit" class="btn btn-primary">@localizer["save"]</button>
+        </center>
+    </EditForm>
+}
 
 @code 
 {
@@ -58,23 +69,15 @@
     [Parameter] public Note? noteFromDb { get; set; } = null;
     private Directory? selectedDirectory;
     private NoteValidation inputFromUser;
-    // TODO trzeba to przemyśleć
-    private string[] emoji = {  "⌚️", "📱", "📲", "💻", "📞", "☎️",
-                                "📟", "📠", "📺","📻","🎙","🎚",
-                                "🎛", "🧭", "⏱","⏲","⏰","🕰",
-                                "📜", "📃", "📄","📑","🧾", "📊",
-                                "📈", "📉", "🗒","🗑","📇", "🗃",
-                                "🗳", "🗄", "📋","📁", "📂","🗂",
-                                "🗞", "📰", "📓","📔","📒", "📕",
-                                "📗", "📘", "📙","📚", "📖","🔖",
-                                "🧷", "🔗", "📎","🖇", "📐","📏",
-                                "🧮", "📌", "📍","✂️", "🖊","🖋",
-                                "✒️", "🖌 ","🖍","📝","✏️", "🔍",
-                                "🔎", "🔏", "🔐","🔒","🔓"};
+    private List<Directory>? directoriesList;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         inputFromUser = noteFromDb == null ? new NoteValidation(Title, IconName, "Default") : new NoteValidation(noteFromDb.Title, noteFromDb.IconName, noteFromDb.Directory.Name);
+        var currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        directoriesList = (await _ds.GetAllDirectoriesForParticularUserAsync(currentUserId)).ToList();
+        directoriesList.Remove(directoriesList.Find(d => d.Name == "Bin"));
+        directoriesList.Sort((x, y) => string.Compare(x.Name, y.Name));
     }
 
     private string? GetCurrentUserId()
@@ -156,28 +159,5 @@
             if (selectedDirectory == null)
                 throw new Exception("There is no such folder!");
         }
-    }
-
-    public class NoteValidation
-    {
-        public NoteValidation(string title, string emoji, string directory)
-        {
-            Title = title;
-            Directory = directory;
-            Emoji = emoji;
-        }
-
-        [Required(ErrorMessage = "Required field!")]
-        [StringLength(32, ErrorMessage = "Too long!")]
-        [MinLength(2, ErrorMessage = "Too short!")]
-        public string Title { get; set; }
-
-        [Required(ErrorMessage = "Required field!")]
-        [StringLength(32, ErrorMessage = "Too long!")]
-        [MinLength(2, ErrorMessage = "Too short!")]
-        public string Directory { get; set; }
-
-        [Required(ErrorMessage = "Required field!")]
-        public string Emoji { get; set; }
     }
 }
