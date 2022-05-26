@@ -272,8 +272,8 @@ else
             {
                 if (image.Name.Contains(' '))
                     throw new Exception("Image name contains white characters!");
-                else if(image.Size > 512000) // max Size 500 KB TODO mozna spróbować to obejść
-                    throw new Exception("Image Size is to large! Max size is 500 KB");
+                else if(image.Size > 4194304) // max Size 4MB TODO mozna spróbować to obejść
+                    throw new Exception("Image Size is to large! Max size is 4 MB");
 
                 string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if (currentUserId != null)
