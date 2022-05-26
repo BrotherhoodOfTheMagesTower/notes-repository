@@ -1,20 +1,141 @@
-﻿@inject Microsoft.Extensions.Localization.IStringLocalizer<Resource> localizer
+﻿@using NotesRepository.Services;
+@using NotesRepository.Data;
+@using NotesRepository.Data.Models;
+@using NotesRepository.Repositories;
+@using System.Security.Claims;
+@using System.ComponentModel.DataAnnotations;
 
-<div class="option-menu">
-    <div class="nav-item px-3">
-        <NavLink class="nav-link">
-            <span class="oi oi-plus" aria-hidden="true"></span> @localizer["addFolder"]
-        </NavLink>
-    </div>
-    <div class="nav-item px-3">
-        <NavLink class="nav-link">
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor;
+@inject Microsoft.Extensions.Localization.IStringLocalizer<Resource> localizer;
+@inject NavigationManager navigationManager;
+@inject UserRepository _ur;
+@inject DirectoryService _ds;
+@inject IToastService toastService;
+
+<EditForm Model="@inputFromUser" OnValidSubmit="SaveFolder">
+    <DataAnnotationsValidator />
+    <div class="options-menu">
+
+        <div class="my-nav-item px-3 py-1 d-flex justify-content-between ">
+            <div>
+                <span class="oi oi-brush" aria-hidden="true"></span> @localizer["editName"]
+            </div>
+            @if (inputFromUser is not null)
+            {
+                <row>
+                    <InputText id="directoryTitle" @bind-Value="@inputFromUser.Title" class="my-input"></InputText>
+                    <ValidationMessage For="() => inputFromUser.Title" />
+                </row>
+            }
+
+        </div>
+        <div class="my-nav-item px-3 py-1 my-nav-item-hover" @onclick="() => DeleteFolder(DirectoryFromDB)">
             <span class="oi oi-trash" aria-hidden="true"></span> @localizer["deleteFolder"]
-        </NavLink>
+        </div>
     </div>
-    <div class="nav-item px-3">
-        <NavLink class="nav-link">
-            <span class="oi oi-brush" aria-hidden="true"></span> @localizer["renameFolder"]
-        </NavLink>
-    </div>
-</div>
+    <center>
+        <button type="submit" class="btn btn-primary">@localizer["save"]</button>
+    </center>
+</EditForm>
 
+@code
+{
+    [CascadingParameter] BlazoredModalInstance? ModalInstance { get; set; }
+    [Parameter] public string Title { get; set; } = "New Folder";
+    [Parameter] public Directory? DirectoryFromDB { get; set; } = null;
+    public Directory? SelectedDirectory { get; set; } = null;
+    private FolderValidation? inputFromUser;
+    string? currentUserId;
+
+    protected override void OnInitialized()
+    {
+        currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (DirectoryFromDB is not null)
+        {
+            inputFromUser = new FolderValidation(DirectoryFromDB.Name);
+        }
+    }
+
+    private async Task ValidateDirectory(string name, string currentUserId)
+    {
+        if (currentUserId is not null)
+        {
+            var userId = currentUserId;
+            if (userId != null)
+            {
+                SelectedDirectory = await _ds.GetDirectoryByNameAsync(name, userId);
+                if (SelectedDirectory != null)
+                    throw new Exception("Directory already exists!");
+            }
+        }
+    }
+
+    private async Task SaveFolder()
+    {
+        try
+        {
+            if (inputFromUser is not null && currentUserId is not null)
+            {
+                await ValidateDirectory(inputFromUser.Title, currentUserId);
+                if (currentUserId != null)
+                {
+                    var usr = await _ur.GetUserByIdAsync(currentUserId);
+                    if (usr is not null && DirectoryFromDB is not null)
+                    {
+                        DirectoryFromDB.Name = inputFromUser.Title;
+
+                        var result = await _ds.UpdateAsync(DirectoryFromDB);
+
+                        if (result)
+                            toastService.ShowSuccess("The directory has been updated.", "Congrats!");
+                        else
+                        {
+                            toastService.ShowError("An error occurred while saving directory.", "OOPS!");
+                        }
+                        submitForm(DirectoryFromDB);
+                    }
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            toastService.ShowError(e.Message, "OOPS!");
+        }
+    }
+
+    private void submitForm(Directory directory)
+    {
+        ModalInstance?.CloseAsync(ModalResult.Ok(directory.DirectoryId.ToString()));
+    }
+
+    public class FolderValidation
+    {
+        public FolderValidation(string title)
+        {
+            Title = title;
+        }
+
+        [Required(ErrorMessage = "Required field!")]
+        [StringLength(32, ErrorMessage = "Too long!")]
+        [MinLength(2, ErrorMessage = "Too short!")]
+        public string Title { get; set; }
+    }
+
+    private async Task DeleteFolder(Directory? directory)
+    {
+        if (directory is not null)
+        {
+            var result = await _ds.DeleteDirectoryByIdAsync(directory.DirectoryId);
+
+            if (result)
+            {
+                toastService.ShowSuccess("Directory has been deleted!", "Success!");
+            }
+            else
+            {
+                toastService.ShowSuccess("Error while deleting directory", "Error!");
+            }
+            ModalInstance?.CloseAsync(ModalResult.Ok(directory.DirectoryId.ToString()));
+        }
+    }
+}
