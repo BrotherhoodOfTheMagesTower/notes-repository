@@ -116,6 +116,7 @@
             Animation = ModalAnimation.FadeInOut(0.1),
         };
     private ModalParameters noteParameters = new ModalParameters();
+    private ModalParameters folderParameters = new ModalParameters();
 
     protected override async Task OnInitializedAsync()
     {
@@ -228,7 +229,7 @@
                         </div>
                         <div class="my-options">
 
-                            <i class="fa-solid fa-ellipsis " @onclick="@(() => modal.Show<FolderMenu>(@dir.Name,options))"></i>
+                            <i class="fa-solid fa-ellipsis " @onclick="()=> HandleFolderPopup(dir)"></i>
                         </div>
 
                     </div>
@@ -293,7 +294,7 @@
                                 }
                             }
                         </div>
-                        <i class="fa-solid fa-ellipsis " @onclick="@(() => modal.Show<FolderMenu>(@dir.Name,options))"></i>
+                        <i class="fa-solid fa-ellipsis " @onclick="()=> HandleFolderPopup(dir)"></i>
                     </NavLink>
                 </div>
 
@@ -334,7 +335,7 @@
                                 }
                             }
                         </div>
-                        <i class="fa-solid fa-ellipsis " @onclick="@(() => modal.Show<FolderMenu>(@dir.Name,options))"></i>
+                        <i class="fa-solid fa-ellipsis " @onclick="()=> HandleFolderPopup(dir)"></i>
                     </NavLink>
                 </div>
 
@@ -380,9 +381,17 @@
     private void HandleNotesPopup(Note note)
     {
         noteParameters = new ModalParameters();
-        noteParameters.Add("noteFromDb", note);
+        noteParameters.Add("NoteFromDB", note);
         modal.Show<NoteMenu>
             (note.Title, noteParameters, options);
+    }
+
+    private void HandleFolderPopup(Directory directory)
+    {
+        folderParameters = new ModalParameters();
+        folderParameters.Add("DirectoryFromDB", directory);
+        modal.Show<FolderMenu>
+            (directory.Name, folderParameters, options);
     }
 
     private int CountParentDir(Directory directory)
