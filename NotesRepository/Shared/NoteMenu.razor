@@ -123,15 +123,18 @@
     protected override async Task OnInitializedAsync()
     {
         currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (NoteFromDB is not null)
-        {
-            inputFromUser = new NoteValidation(NoteFromDB.Title, NoteFromDB.IconName, NoteFromDB.Directory.Name);
-        }
-        if (currentUserId is not null)
-        {
-            directoriesList = (await _ds.GetAllDirectoriesForParticularUserAsync(currentUserId)).ToList();
-            directoriesList.Sort((x, y) => string.Compare(x.Name, y.Name));
-        }
+        if (NoteFromDB is null || currentUserId is null)
+            return;
+
+        inputFromUser = new NoteValidation(NoteFromDB.Title, NoteFromDB.IconName, NoteFromDB.Directory.Name);
+        var tempDirectories = (await _ds.GetAllDirectoriesForParticularUserAsync(currentUserId));
+
+        if (tempDirectories is null)
+            return;
+
+        directoriesList = tempDirectories.ToList();
+        directoriesList.Sort((x, y) => string.Compare(x.Name, y.Name));
+
     }
     private async Task saveNote()
     {
@@ -145,15 +148,22 @@
                     var usr = await _ur.GetUserByIdAsync(currentUserId);
                     if (usr is not null && selectedDirectory is not null && NoteFromDB is not null)
                     {
-                        // Update existing note
                         NoteFromDB.Title = inputFromUser.Title;
                         NoteFromDB.IconName = inputFromUser.Emoji;
-                        NoteFromDB.Directory = await _ds.GetDirectoryByNameAsync(inputFromUser.Directory, currentUserId);
+                        Directory? tempDirectory = await _ds.GetDirectoryByNameAsync(inputFromUser.Directory, currentUserId);
+                        if (tempDirectory is not null)
+                        {
+                            NoteFromDB.Directory = tempDirectory;
 
-                        var result = await _ns.UpdateNoteAsync(NoteFromDB);
+                            var result = await _ns.UpdateNoteAsync(NoteFromDB);
 
-                        if (result)
-                            toastService.ShowSuccess("The note has been updated.", "Congrats!");
+                            if (result)
+                                toastService.ShowSuccess("The note has been updated.", "Congrats!");
+                            else
+                            {
+                                toastService.ShowError("An error occurred while saving note.", "OOPS!");
+                            }
+                        }
                         else
                         {
                             toastService.ShowError("An error occurred while saving note.", "OOPS!");
@@ -221,7 +231,7 @@
     {
         if (note is not null)
         {
-            var result = await _ns.DeleteNoteByIdAsync(note.NoteId);
+            var result = await _ns.MoveSingleNoteToBinAsync(note.NoteId);
 
             if (result)
             {

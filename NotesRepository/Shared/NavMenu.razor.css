@@ -16,6 +16,10 @@
     color: white;
 }
 
+.my-nav{
+    overflow:auto;
+}
+
 .navbar-brand {
     font-size: 0.9rem;
     font-weight: bold;
@@ -47,14 +51,18 @@
 .my-nav-item-parent:first-child{
     color:red;
 }
-.my-options:hover {
+
+.my-options-child:hover {
     color: black;
     cursor: pointer;
+}
+.my-options-child{
+    margin-left:8px;
 }
 .nav-item {
     font-size: 0.8rem;
     padding-bottom: 0.4rem;
-    overflow: hidden;
+    overflow: auto;
 }
     .nav-item:first-of-type {
         padding-top: 1rem;

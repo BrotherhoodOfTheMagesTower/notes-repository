@@ -83,8 +83,8 @@
                 </NavLink>
                 @if (areTrashToggled)
                 {
-                        @ToggleFoldersInTrash(bin)
-                        ;
+                    @ToggleFoldersInTrash(bin)
+                    ;
                 }
             </div>
         </Authorized>
@@ -117,6 +117,7 @@
         };
     private ModalParameters noteParameters = new ModalParameters();
     private ModalParameters folderParameters = new ModalParameters();
+    private ModalParameters addingFolderParameters = new ModalParameters();
 
     protected override async Task OnInitializedAsync()
     {
@@ -134,7 +135,7 @@
             mainDirs = await _ds.GetAllDirectoriesWithoutParentDirectoryForParticularUserAsync(currentUserId);
             bin = await _ds.GetBinForParticularUserAsync(currentUserId);
             //binDirs = await _ds.GetAllSubDirectoriesOfParticularDirectoryAsync(bin.DirectoryId);
-                
+
         }
         flags.setNavMenuLoadingStatus(false);
     }
@@ -153,7 +154,7 @@
     {
         areAllFoldersToggled = !areAllFoldersToggled;
     }
-    
+
     private void ToggleTrash()
     {
         areTrashToggled = !areTrashToggled;
@@ -205,7 +206,7 @@
         @if (allCurrentSubdirectiories is not null && allCurrentSubdirectiories.Count() > 0)
         {
             string margin = (parentDirsCount * 20).ToString() + "px";
-            <div style="margin-left:@margin;">
+            <div style="margin-left:20px">
                 @foreach (var dir in allCurrentSubdirectiories)
                 {
                     var notesFromCurrentSubirectory = _ns.GetAllNotesForParticularDirectory(dir.DirectoryId);
@@ -227,10 +228,15 @@
 
                             }
                         </div>
-                        <div class="my-options">
-
-                            <i class="fa-solid fa-ellipsis " @onclick="()=> HandleFolderPopup(dir)"></i>
+                        <div class="my-options d-flex">
+                            <div class="my-options-child">
+                                <i class="fa-solid fa-plus " @onclick="()=> HandleAddingFolderPopup(dir)"></i>
+                            </div>
+                            <div class="my-options-child">
+                                <i class="fa-solid fa-ellipsis " @onclick="()=> HandleFolderPopup(dir)"></i>
+                            </div>
                         </div>
+
 
                     </div>
 
@@ -248,7 +254,7 @@
         {
             parentDirsCountForNotes = CountParentDirForNote(notes.First());
             string margin = (parentDirsCountForNotes * 20).ToString() + "px";
-            <div style="margin-left:@margin;">
+            <div style="margin-left:20px">
                 @foreach (var note in notes)
                 {
                     <div class="d-flex align-items-baseline justify-content-between nav-item my-nav-item dropdown-toggle nav-link my-custom-nav-item">
@@ -257,7 +263,9 @@
                             @PrintName(note.Title)
                         </div>
                         <div class="my-options">
-                            <i class="fa-solid fa-ellipsis " @onclick="()=> HandleNotesPopup(note)"></i>
+                            <div class="my-options-child">
+                                <i class="fa-solid fa-ellipsis " @onclick="()=> HandleNotesPopup(note)"></i>
+                            </div>
                         </div>
                     </div>
                 }
@@ -294,48 +302,14 @@
                                 }
                             }
                         </div>
-                        <i class="fa-solid fa-ellipsis " @onclick="()=> HandleFolderPopup(dir)"></i>
-                    </NavLink>
-                </div>
-
-                @if (dir.IsToggled)
-                {
-                    @ToggleFolders(dir)
-                    ;
-                }
-            }
-        }
-
-    };
-     private RenderFragment ToggleFoldersInTrash(Directory? directory) => __builder =>
-    {
-        ICollection<Directory>? allCurrentSubdirectiories;
-        allCurrentSubdirectiories = _ds.GetAllSubDirectoriesOfParticularDirectorySync(directory.DirectoryId);;
-        parentDirsCountForBin = CountParentDir(directory);
-
-        @if (allCurrentSubdirectiories is not null)
-        {
-            foreach (var dir in allCurrentSubdirectiories)
-            {
-                <div class="nav-item my-nav-item">
-                    <NavLink class="dropdown-toggle nav-link justify-content-between" @onclick="@(() => ToggleSubDirectory(dir))">
-                        <div class="my-inside-nav-link">
-                            <i class="oi oi-folder" aria-hidden="true"></i>
-                            @PrintName(dir.Name)
-                            @if (dir.SubDirectories != null && dir.SubDirectories.Count() > 0)
-                            {
-                                if (!dir.IsToggled)
-                                {
-                                    <i class="fa-solid fa-chevron-down"></i>
-
-                                }
-                                else
-                                {
-                                    <i class="fa-solid fa-chevron-up"></i>
-                                }
-                            }
+                        <div class="my-options d-flex">
+                            <div class="my-options-child">
+                                <i class="fa-solid fa-plus " @onclick="()=> HandleAddingFolderPopup(dir)"></i>
+                            </div>
+                            <div class="my-options-child">
+                                <i class="fa-solid fa-ellipsis " @onclick="()=> HandleFolderPopup(dir)"></i>
+                            </div>
                         </div>
-                        <i class="fa-solid fa-ellipsis " @onclick="()=> HandleFolderPopup(dir)"></i>
                     </NavLink>
                 </div>
 
@@ -348,6 +322,47 @@
         }
 
     };
+    private RenderFragment ToggleFoldersInTrash(Directory? directory) => __builder =>
+       {
+           ICollection<Directory>? allCurrentSubdirectiories;
+           allCurrentSubdirectiories = _ds.GetAllSubDirectoriesOfParticularDirectorySync(directory.DirectoryId); ;
+           parentDirsCountForBin = CountParentDir(directory);
+
+           @if (allCurrentSubdirectiories is not null)
+           {
+               foreach (var dir in allCurrentSubdirectiories)
+               {
+                   <div class="nav-item my-nav-item">
+                       <NavLink class="dropdown-toggle nav-link justify-content-between" @onclick="@(() => ToggleSubDirectory(dir))">
+                           <div class="my-inside-nav-link">
+                               <i class="oi oi-folder" aria-hidden="true"></i>
+                               @PrintName(dir.Name)
+                               @if (dir.SubDirectories != null && dir.SubDirectories.Count() > 0)
+                               {
+                                   if (!dir.IsToggled)
+                                   {
+                                       <i class="fa-solid fa-chevron-down"></i>
+
+                                   }
+                                   else
+                                   {
+                                       <i class="fa-solid fa-chevron-up"></i>
+                                   }
+                               }
+                           </div>
+                           <i class="fa-solid fa-ellipsis " @onclick="()=> HandleFolderPopup(dir)"></i>
+                       </NavLink>
+                   </div>
+
+                   @if (dir.IsToggled)
+                   {
+                       @ToggleFolders(dir)
+                       ;
+                   }
+               }
+           }
+
+       };
 
     private RenderFragment PrintName(string name) => __builder =>
     {
@@ -392,6 +407,14 @@
         folderParameters.Add("DirectoryFromDB", directory);
         modal.Show<FolderMenu>
             (directory.Name, folderParameters, options);
+    }
+
+    private void HandleAddingFolderPopup(Directory directory)
+    {
+        addingFolderParameters = new ModalParameters();
+        addingFolderParameters.Add("DirectoryFromDB", directory);
+        modal.Show<AddFolderMenu>
+            (directory.Name, addingFolderParameters, options);
     }
 
     private int CountParentDir(Directory directory)
