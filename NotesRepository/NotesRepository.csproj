@@ -15,6 +15,7 @@
     <None Remove="Pages\LoggedUser\TemplatePreview.razor.css" />
     <None Remove="Pages\LoggedUser\TrashPage.razor.css" />
     <None Remove="Pages\NotLoggedUser\Features.razor.css" />
+    <None Remove="Shared\Resources\AddFolderMenu.razor.css" />
   </ItemGroup>
 
   <ItemGroup>
