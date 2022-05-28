@@ -278,7 +278,7 @@ namespace NotesRepository.Data
             var noteForEvent = await ns.GetNoteByIdAsync(Guid.Parse("426c6d6c-8c0a-4b34-933c-7df94a205127"));
             if (adminUser is not null && noteForEvent is not null)
             {
-                //seed 4 events with(out) remainder & with(out) attached note
+                //seed 4 events with(out) reminder & with(out) attached note
                 var events = new List<Event>
                 {
                     new Event(Guid.Parse("64fb58cd-a344-4dfb-88e0-594e3cabecec"), "Mommy's 50th birthday", new DateTime(2022, 5, 28), new DateTime(2022, 5, 28), adminUser, new DateTime(2022, 5, 27, 8, 0, 0)),

@@ -45,11 +45,17 @@
         <div class="col-md-3"></div>
         <div class="col">
             <div class="form-check my-2">
-                <input class="form-check-input" type="checkbox" @bind-value ="IsAgreeToGetRemainder" @oninput="CheckboxChanged"
-                 id="checkingRemainder"> @*TO DO  sprawdzenie eventu i podpinanie remaindera*@
+                <input class="form-check-input" type="checkbox" @bind-value="IsAgreeToGetReminder" @oninput="CheckboxChanged"
+                       id="checkingReminder"> @*TO DO  sprawdzenie eventu i podpinanie remindera*@
                 <label class="form-check-label" for="flexCheckDefault">
-                    @localizer["Set remainder"] @IsAgreeToGetRemainder
+                    @localizer["Set reminder"] @IsAgreeToGetReminder
                 </label>
+                @if (@IsAgreeToGetReminder)
+                {
+                    <div class="col">
+                        <RadzenDatePicker @bind-Value="@model.ReminderAt" Name="ReminderAt" ShowTime="true" />
+                    </div>
+                }
             </div>
         </div>
         <div class="col">
@@ -79,7 +85,7 @@
     public DateTime EndAt { get; set; }
 
     [Parameter]
-    public bool IsAgreeToGetRemainder { get; set; }
+    public bool IsAgreeToGetReminder { get; set; }
 
     Event model = new Event();
     private List<Note>? allNotes = new();
@@ -115,12 +121,12 @@
         if (added && attached && returned != null)
             toastService.ShowSuccess("You have successfully added an event");
         else
-            toastService.ShowError("Something went wrong","OOPS!");
+            toastService.ShowError("Something went wrong", "OOPS!");
 
     }
     async Task CheckboxChanged()
     {
-        //TO DO ustawianie remaindera i wysyłanie
+        //TO DO ustawianie remindera i wysyłanie
     }
 
 }

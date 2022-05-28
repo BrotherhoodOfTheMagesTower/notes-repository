@@ -121,7 +121,7 @@
     <value>O Notes Repository</value>
   </data>
   <data name="aboutNotesRepositoryDescryption" xml:space="preserve">
-    <value>Aplikacja webowa, która umożliwia tworzenie notatek i otwieranie ich na wszytskich rodzajach urządzeń. Celem aplikacji jest zapewnienie użytkownikowi kompleksowego sposobu tworzenia notatek. Notes Repository wykorzystuje moc Markdowna, który pozwala na szybkie i efektywne tworzenie notatek, a także na zagnieżdżanie html.</value>
+    <value>Aplikacja webowa, która umożliwia tworzenie notatek i otwieranie ich na wszystkich rodzajach urządzeń. Celem aplikacji jest zapewnienie użytkownikowi kompleksowego sposobu tworzenia notatek. Notes Repository wykorzystuje moc Markdowna, który pozwala na szybkie i efektywne tworzenie notatek, a także na zagnieżdżanie html.</value>
   </data>
   <data name="addFolder" xml:space="preserve">
     <value>Dodaj nowy folder</value>

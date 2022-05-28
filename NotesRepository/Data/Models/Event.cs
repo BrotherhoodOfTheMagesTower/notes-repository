@@ -7,11 +7,11 @@ namespace NotesRepository.Data.Models
     {
         public Event() { }
 
-        public Event(Guid? eventId, string content, DateTime startAt, DateTime endAt, ApplicationUser user, DateTime? remainderAt = null, Note? note = null)
+        public Event(Guid? eventId, string content, DateTime startAt, DateTime endAt, ApplicationUser user, DateTime? reminderAt = null, Note? note = null)
         {
             EventId = eventId ?? Guid.NewGuid();
             Content = content;
-            RemainderAt = remainderAt;
+            ReminderAt = reminderAt;
             StartAt = startAt;
             EndAt = endAt;
             User = user;
@@ -31,9 +31,9 @@ namespace NotesRepository.Data.Models
         public string Content { get; set; }
 
         /// <summary>
-        /// Date and time of the remainder
+        /// Date and time of the reminder
         /// </summary>
-        public DateTime? RemainderAt { get; set; }
+        public DateTime? ReminderAt { get; set; }
 
         /// <summary>
         /// Date and time when the event will start
