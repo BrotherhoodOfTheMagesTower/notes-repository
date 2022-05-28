@@ -1,105 +1,190 @@
 ﻿@using Data.Models
 @using Plk.Blazor.DragDrop;
+@using NotesRepository.Repositories
+@using NotesRepository.Services
+@using System.Security.Claims;
 
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor;
 @inject Microsoft.Extensions.Localization.IStringLocalizer<Resource> localizer
+@inject NavigationManager navigationManager
+@inject NoteService _ns;
+@inject UserRepository _ur;
+@inject IToastService toastService;
+@inject DirectoryService _ds;
+@inject Data.Flags flags;
 
-   
+
 
 <div class="home-page">
     <div class="my-image">
     </div>
-    <h2 class="my-header my-text">@localizer["homePage"]</h2> 
+    <h2 class="my-header my-text">@localizer["homePage"]</h2>
     <div class="user-view">
-    <div class="user-notes">
-        <br />
-        <h5 class="my-text">@localizer["pinned"]</h5>
-        <div class="notes">
-            <Dropzone Class="my-dragdrop" Items="noteList" InstantReplace =" true ">
-                <div class="note" @onclick="()=>NavigateToNote(context.NoteId.ToString())">
-                    <center>
-                    <h5>@context.Content</h5>
-                    <br>
-                    <h6>@date</h6>
-                    </center>
-                </div>
-            </Dropzone>
+        <div class="user-notes">
+            <br />
+            <h5 class="my-text">@localizer["pinned"]</h5>
+            <div class="notes">
+                @if (pinnedList != null)
+                {
+                    <Dropzone Class="my-dragdrop" Items="pinnedList" InstantReplace=" true ">
+                        <div class="note" @onclick="()=>NavigateToNote(context.NoteId.ToString())">
+                            <center>
+                                <h5>@context.Title</h5>
+                                <br>
+                                <h6>@context.CreatedAt</h6>
+                            </center>
+                        </div>
+                    </Dropzone>
+                }
+                else
+                {
+                    <h4>@localizer["dontPinned"]</h4>
+                }
+            </div>
+            <br />
+            <div class="my-title">
+                <h5 class="my-text">@localizer["theLatest"]</h5>
+                <select @onchange="DisplayLatest" class="my-select">
+                    @for (int i = 5; i < 50; i = i + 5)
+                    {
+                        @if (i == 10)
+                        {
+                            <option value="@i" selected>@i</option>
+                        }
+                        else
+                        {
+                            <option value="@i">@i</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="notes">
+                @if (latestList != null)
+                {
+                    <Dropzone Class="my-dragdrop" Items="latestList" InstantReplace=" true ">
+                        <div class="note" @onclick="()=>NavigateToNote(context.NoteId.ToString())">
+                            <center>
+                                <h5>@context.Title</h5>
+                                <br>
+                                <h6>@context.CreatedAt</h6>
+                            </center>
+                        </div>
+                    </Dropzone>
+                }
+                else
+                {
+                    <h4>@localizer["dontNotes"]</h4>
+                }
+            </div>
+            <br />
+            <h5 class="my-text">@localizer["upcomingEvents"]</h5>
+            <div class="notes">
+                @if (upcomingEventsList != null)
+                {
+                    @foreach (var note in upcomingEventsList)
+                    {
+                        <div class="note">
+                            <center>
+                                <h5>@note.Title</h5>
+                                <br>
+                                <h6>@date</h6>
+                            </center>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <h4>@localizer["dontUpcomingEvents"]</h4>
+                }
+            </div>
         </div>
-        <br />
-        <h5 class="my-text">@localizer["theLatest"]</h5>
-        <div class="notes">
-                <Dropzone Class="my-dragdrop" Items="noteList" InstantReplace =" true ">
-                <div class="note" @onclick="()=>NavigateToNote(context.NoteId.ToString())">
-                    <center>
-                    <h5>@context.Content</h5>
-                    <br>
-                    <h6>@date</h6>
-                    </center>
-                </div>
-                </Dropzone>
-        </div>
-        <br />
-        <h5 class="my-text">@localizer["upcomingEvents"]</h5>
-        <div class="notes">
-            @foreach(var note in noteList)
-            {
-                <div class="note">
-                    <center>
-                    <h5>@note.Content</h5>
-                    <br>
-                    <h6>@date</h6>
-                    </center>
-                </div>
-            }          
-        </div>
-    </div>
 
-    
-    
-    <div class="draft">
-        <br />
-        <h5 class="my-text">@localizer["draft"]</h5>
-        <div class="button-bar">
-            <a  class="my-button" @onclick="ClearDraft">@localizer["clear"]</a>
-            <a class="my-button" @onclick="SaveDraft">@localizer["save"]</a>
+
+
+        <div class="draft">
+            <br />
+            <h5 class="my-text">@localizer["draft"]</h5>
+            <div class="button-bar">
+                <a class="my-button" @onclick="ClearDraft">@localizer["clear"]</a>
+                <a class="my-button" @onclick="SaveDraft">@localizer["save"]</a>
+            </div>
+            <textarea class="my-text-area" @bind-value="content" @bind-value:event="oninput"></textarea>
         </div>
-        <textarea class="my-text-area" @bind-value="content" @bind-value:event="oninput"></textarea>
     </div>
-</div>
 </div>
 
 @code
 {
-    private List<Note> noteList;
+    private List<Note>? latestList = new();
+    private List<Note>? pinnedList = new();
+    private List<Note>? upcomingEventsList = new();
     private DateTime date = new DateTime();
-    private string content="";
+    private string content = "";
+    private string? userId;
+    public int j = 5;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        noteList = new List<Note>
+        while (flags.getNavMenuLoadingStatus()) { }
+
+        userId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userId != null)
+        {
+            pinnedList = (await _ns.GetAllPinnedNotesFromUserAsync(userId)).ToList();
+
+            latestList = (await (_ns.GetRecentlyEditedOrCreatedNotesAsync(userId, 10))).ToList();
+            upcomingEventsList = new List<Note>
             {
                 new Note("Ala ma kota"),
                 new Note("Ala Jakaś"),
                 new Note("Taaa"),
             };
+        }
+
     }
 
-    private void SaveDraft()
+    private async void SaveDraft()
     {
+        if (content.Length <= 0)
+        {
+            toastService.ShowError("Your note is empty.", "OOPS!");
+        }
+        else
+        {
+            var usr = await _ur.GetUserByIdAsync(userId);
+            var directory = await _ds.GetDirectoryByNameAsync("default", userId);
+            if (usr is not null && directory is not null)
+            {
+                // Save new note
+                var note = new Note(null, "Brudnopis", content, usr, directory);
+                var result = await _ns.AddNoteAsync(note);
+                if (result)
+                {
+                    toastService.ShowSuccess("The note was saved.", "Congrats!");
+                    content = "";
+                }
+                else
+                    toastService.ShowSuccess("The note wasn't saved.", "OOPS!");
+
+
+            }
+        }
 
     }
 
     private void ClearDraft()
     {
-        content="";
+        content = "";
     }
 
     private void NavigateToNote(string noteId)
     {
-        //przejście do podglądu notatki
+        navigationManager.NavigateTo("/editNote/" + noteId);
     }
 
-    private void DisplayLatest()
+    private async Task DisplayLatest(ChangeEventArgs e)
     {
-        
+        j = Int32.Parse(e.Value.ToString());
+        latestList = (await (_ns.GetRecentlyEditedOrCreatedNotesAsync(userId, j))).ToList();
     }
 }

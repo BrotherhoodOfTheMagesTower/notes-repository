@@ -1,5 +1,6 @@
 ﻿@page "/"
 @using NotesRepository.Pages.LoggedUser
+@using NotesRepository.Pages.NotLoggedUser
 @inject IToastService tstService;
 
 <PageTitle>@title</PageTitle>
@@ -11,8 +12,7 @@
         <Home />
     </Authorized>
     <NotAuthorized>
-        @*Todo add not logged home page component here. Component- razor file WITHOUT "@page "/""*@
-        <p>Log in to gain full functionality</p>
+    <MainPage/>
     </NotAuthorized>
 </AuthorizeView>
 

@@ -1,5 +1,5 @@
-﻿using NotesRepository.Repositories;
-using NotesRepository.Data.Models;
+﻿using NotesRepository.Data.Models;
+using NotesRepository.Repositories;
 using Directory = NotesRepository.Data.Models.Directory;
 
 namespace NotesRepository.Services
@@ -44,8 +44,8 @@ namespace NotesRepository.Services
 
 
         public async Task<Directory?> GetDefaultDirectoryForParticularUserAsync(string userId)
-        
-          =>  await _dr.GetDirectoryByNameAsync("Default", userId);
+
+          => await _dr.GetDirectoryByNameAsync("Default", userId);
 
         public async Task<Directory?> GetBinForParticularUserAsync(string userId)
 
@@ -73,7 +73,7 @@ namespace NotesRepository.Services
         public async Task<bool> MoveDirectorySubdirectoriesAndNotesToBin(Guid directoryId)
         {
             var directory = await _dr.GetByIdAsync(directoryId);
-          //  var bin = await GetBinForParticularUserAsync(directory.User.Id);
+            //  var bin = await GetBinForParticularUserAsync(directory.User.Id);
             var bin = await _dr.GetDirectoryByNameAsync("Bin", directory.User.Id);
 
             var result = await MarkDirectorySubdirectoriesAndNotesAsDeleted(directoryId);
@@ -84,7 +84,7 @@ namespace NotesRepository.Services
                 return true;
             }
             else return false;
-            
+
         }
 
         public async Task<bool> MarkDirectorySubdirectoriesAndNotesAsDeleted(Guid directoryId) //dodac bin jak nadrzedny
@@ -104,8 +104,8 @@ namespace NotesRepository.Services
                 {
                     foreach (var subdirectory in subDirectories)
                     {
-                       
-                       await MarkDirectorySubdirectoriesAndNotesAsDeleted(subdirectory.DirectoryId);
+
+                        await MarkDirectorySubdirectoriesAndNotesAsDeleted(subdirectory.DirectoryId);
                     }
                 }
             }
@@ -126,5 +126,7 @@ namespace NotesRepository.Services
 
             return true;
         }
+        public async Task<bool> UpdateAsync(Directory _directory)
+            => await _dr.UpdateAsync(_directory);
     }
 }

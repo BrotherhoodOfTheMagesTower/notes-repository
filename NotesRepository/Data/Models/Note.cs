@@ -1,4 +1,5 @@
 ﻿using NotesRepository.Areas.Identity.Data;
+using NotesRepository.Data.Constants;
 using NotesRepository.Repositories;
 using System.ComponentModel.DataAnnotations;
 
@@ -14,6 +15,16 @@ namespace NotesRepository.Data.Models
             Title = title;
             Content = content;
             IconName = iconName;
+            CreatedAt = DateTime.Now;
+            Owner = owner;
+            Directory = directory;
+        }
+
+        public Note(Guid? noteId, string title, string content, ApplicationUser owner, Directory directory)
+        {
+            NoteId = noteId ?? Guid.NewGuid();
+            Title = title;
+            Content = content;
             CreatedAt = DateTime.Now;
             Owner = owner;
             Directory = directory;
@@ -47,7 +58,7 @@ namespace NotesRepository.Data.Models
         /// <summary>
         /// Icon name (from for ex. Bootstrap)
         /// </summary>
-        public string IconName { get; set; } = "default"; //todo: select a default
+        public string IconName { get; set; } = Emoji.getRandomEmoji();
 
         /// <summary>
         /// Date and time when the note was created

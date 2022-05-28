@@ -63,7 +63,7 @@ else
         string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (currentUserId is not null)
             sharedNotes = (await _cns.GetAllSharedNotesForUserAsync(currentUserId)).ToList();
-        initNotes();   //do usunięcia potem
+        //initNotes();   //do usunięcia potem
         pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build(); // Uruchomienie rozszerzeń markdown
     }
 

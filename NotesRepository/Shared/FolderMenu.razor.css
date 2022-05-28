@@ -1,8 +1,12 @@
-.nav-item ::deep a {
+.options-menu {
     color: black;
 }
 
-    .nav-item ::deep a:hover {
-        color: var(--secondary-color);
-        cursor: pointer;
-    }
+.my-nav-item-hover:hover {
+    color: var(--secondary-color);
+    cursor: pointer;
+}
+
+.my-input {
+    width: 180px !important;
+}

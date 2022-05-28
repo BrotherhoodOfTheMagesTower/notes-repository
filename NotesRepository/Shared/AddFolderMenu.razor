@@ -18,7 +18,7 @@
 
         <div class="my-nav-item px-3 py-1 d-flex justify-content-between ">
             <div>
-                <span class="oi oi-brush" aria-hidden="true"></span> @localizer["editName"]
+                <span class="oi oi-brush" aria-hidden="true"></span> @localizer["name"]
             </div>
             @if (inputFromUser is not null)
             {
@@ -29,21 +29,19 @@
             }
 
         </div>
-        <div class="my-nav-item px-3 py-1 my-nav-item-hover" @onclick="() => DeleteFolder(DirectoryFromDB)">
-            <span class="oi oi-trash" aria-hidden="true"></span> @localizer["deleteFolder"]
-        </div>
     </div>
     <center>
         <button type="submit" class="btn btn-primary">@localizer["save"]</button>
     </center>
 </EditForm>
 
+
 @code
 {
     [CascadingParameter] BlazoredModalInstance? ModalInstance { get; set; }
-    [Parameter] public string Title { get; set; } = "New Folder";
+    [Parameter] public string Title { get; set; } = "New folder";
     [Parameter] public Directory? DirectoryFromDB { get; set; } = null;
-    public Directory? SelectedDirectory { get; set; } = null;
+    private Directory? selectedDirectory;
     private FolderValidation? inputFromUser;
     string? currentUserId;
 
@@ -52,24 +50,9 @@
         currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (DirectoryFromDB is not null)
         {
-            inputFromUser = new FolderValidation(DirectoryFromDB.Name);
+            inputFromUser = new FolderValidation("");
         }
     }
-
-    private async Task ValidateDirectory(string name, string currentUserId)
-    {
-        if (currentUserId is not null)
-        {
-            var userId = currentUserId;
-            if (userId != null)
-            {
-                SelectedDirectory = await _ds.GetDirectoryByNameAsync(name, userId);
-                if (SelectedDirectory != null)
-                    throw new Exception("Directory already exists!");
-            }
-        }
-    }
-
     private async Task SaveFolder()
     {
         try
@@ -82,17 +65,18 @@
                     var usr = await _ur.GetUserByIdAsync(currentUserId);
                     if (usr is not null && DirectoryFromDB is not null)
                     {
-                        DirectoryFromDB.Name = inputFromUser.Title;
-
-                        var result = await _ds.UpdateAsync(DirectoryFromDB);
+                        selectedDirectory = new Directory(inputFromUser.Title, usr);
+                        selectedDirectory.ParentDir = DirectoryFromDB;
+                        var result = await _ds.AddDirectoryAsync(selectedDirectory);
+                        result = await _ds.UpdateAsync(selectedDirectory);
 
                         if (result)
-                            toastService.ShowSuccess("The directory has been updated.", "Congrats!");
+                            toastService.ShowSuccess("Folder has been created.", "Congrats!");
                         else
                         {
-                            toastService.ShowError("An error occurred while saving directory.", "OOPS!");
+                            toastService.ShowError("An error occurred while creating the folder.", "OOPS!");
                         }
-                        submitForm(DirectoryFromDB);
+                        SubmitForm(DirectoryFromDB);
                     }
                 }
             }
@@ -103,9 +87,23 @@
         }
     }
 
-    private void submitForm(Directory directory)
+    private void SubmitForm(Directory directory)
     {
         ModalInstance?.CloseAsync(ModalResult.Ok(directory.DirectoryId.ToString()));
+    }
+
+    private async Task ValidateDirectory(string name, string currentUserId)
+    {
+        if (currentUserId is not null)
+        {
+            var userId = currentUserId;
+            if (userId != null)
+            {
+                var tempSelectedDirectory = await _ds.GetDirectoryByNameAsync(name, userId);
+                if (tempSelectedDirectory != null)
+                    throw new Exception("Folder already exists!");
+            }
+        }
     }
 
     public class FolderValidation
@@ -119,23 +117,6 @@
         [StringLength(32, ErrorMessage = "Too long!")]
         [MinLength(2, ErrorMessage = "Too short!")]
         public string Title { get; set; }
-    }
 
-    private async Task DeleteFolder(Directory? directory)
-    {
-        if (directory is not null)
-        {
-            var result = await _ds.MoveDirectorySubdirectoriesAndNotesToBin(directory.DirectoryId);
-
-            if (result)
-            {
-                toastService.ShowSuccess("Directory has been deleted!", "Success!");
-            }
-            else
-            {
-                toastService.ShowSuccess("Error while deleting directory", "Error!");
-            }
-            ModalInstance?.CloseAsync(ModalResult.Ok(directory.DirectoryId.ToString()));
-        }
     }
 }

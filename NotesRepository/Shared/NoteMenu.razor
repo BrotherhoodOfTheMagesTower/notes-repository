@@ -1,6 +1,7 @@
 ﻿@using NotesRepository.Services;
 @using NotesRepository.Data;
 @using NotesRepository.Data.Models;
+@using NotesRepository.Data.Constants
 @using NotesRepository.Repositories;
 @using System.Security.Claims;
 @using System.ComponentModel.DataAnnotations;
@@ -16,15 +17,15 @@
 <EditForm Model="@inputFromUser" OnValidSubmit="saveNote">
     <DataAnnotationsValidator />
     <div class="options-menu">
-        @if (noteFromDb is not null && noteFromDb.IsPinned)
+        @if (NoteFromDB is not null && NoteFromDB.IsPinned)
         {
-            <div class="my-nav-item px-3 py-2 my-nav-item-hover" @onclick="() => PinNote(noteFromDb)">
+            <div class="my-nav-item px-3 py-2 my-nav-item-hover" @onclick="() => PinNote(NoteFromDB)">
                 <span class="oi oi-pin" aria-hidden="true"></span> @localizer["unPinNote"]
             </div>
         }
         else
         {
-            <div class="my-nav-item px-3  py-1 my-nav-item-hover" @onclick="() => PinNote(noteFromDb)">
+            <div class="my-nav-item px-3  py-1 my-nav-item-hover" @onclick="() => PinNote(NoteFromDB)">
                 <span class="oi oi-pin" aria-hidden="true"></span> @localizer["pinNote"]
             </div>
         }
@@ -49,14 +50,14 @@
             </div>
             @if (inputFromUser is not null)
             {
-                @if (directoriesList is not null && noteFromDb is not null)
+                @if (directoriesList is not null && NoteFromDB is not null)
                 {
                     <row>
                         <InputSelect id="noteTitle" @bind-Value="@inputFromUser.Directory" class="my-input">
-                            <option value="@noteFromDb.Directory.Name">@noteFromDb.Directory.Name</option>
+                            <option value="@NoteFromDB.Directory.Name">@NoteFromDB.Directory.Name</option>
                             @foreach (var d in directoriesList)
                             {
-                        @if (d != noteFromDb.Directory)
+                        @if (d != NoteFromDB.Directory)
                                 {
                             <option value="@d.Name">@d.Name</option>
                                 }
@@ -78,7 +79,7 @@
             {
                 <row>
                     <InputSelect id="emoji" @bind-Value="@inputFromUser.Emoji" class="my-input">
-                        @foreach (var e in emoji)
+                        @foreach (var e in Emoji.emoji)
                         {
                         <option value="@e">@e</option>
                         }
@@ -86,10 +87,7 @@
             </row>
             }
         </div>
-        <div class="my-nav-item px-3 py-1 my-nav-item-hover">
-            <span class="oi oi-share" aria-hidden="true"></span> @localizer["shareNote"]
-        </div>
-        <div class="my-nav-item px-3 py-1 my-nav-item-hover" @onclick="() => DeleteNote(noteFromDb)">
+        <div class="my-nav-item px-3 py-1 my-nav-item-hover" @onclick="() => DeleteNote(NoteFromDB)">
             <span class="oi oi-trash" aria-hidden="true"></span> @localizer["deleteNote"]
         </div>
     </div>
@@ -104,37 +102,27 @@
     [CascadingParameter] BlazoredModalInstance? ModalInstance { get; set; }
     [Parameter] public string Title { get; set; } = "New note";
     [Parameter] public string IconName { get; set; } = "📜";
-    [Parameter] public Note? noteFromDb { get; set; } = null;
+    [Parameter] public Note? NoteFromDB { get; set; } = null;
     private Directory? selectedDirectory;
     private NoteValidation? inputFromUser;
     string? currentUserId;
     private List<Directory>? directoriesList;
-    // TODO trzeba to przemyśleć
-    private string[] emoji = {  "⌚️", "📱", "📲", "💻", "📞", "☎️",
-                                "📟", "📠", "📺","📻","🎙","🎚",
-                                "🎛", "🧭", "⏱","⏲","⏰","🕰",
-                                "📜", "📃", "📄","📑","🧾", "📊",
-                                "📈", "📉", "🗒","🗑","📇", "🗃",
-                                "🗳", "🗄", "📋","📁", "📂","🗂",
-                                "🗞", "📰", "📓","📔","📒", "📕",
-                                "📗", "📘", "📙","📚", "📖","🔖",
-                                "🧷", "🔗", "📎","🖇", "📐","📏",
-                                "🧮", "📌", "📍","✂️", "🖊","🖋",
-                                "✒️", "🖌 ","🖍","📝","✏️", "🔍",
-                                "🔎", "🔏", "🔐","🔒","🔓"};
 
     protected override async Task OnInitializedAsync()
     {
         currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (noteFromDb is not null)
-        {
-            inputFromUser = new NoteValidation(noteFromDb.Title, noteFromDb.IconName, noteFromDb.Directory.Name);
-        }
-        if (currentUserId is not null)
-        {
-            directoriesList = (await _ds.GetAllDirectoriesForParticularUserAsync(currentUserId)).ToList();
-            directoriesList.Sort((x, y) => string.Compare(x.Name, y.Name));
-        }
+        if (NoteFromDB is null || currentUserId is null)
+            return;
+
+        inputFromUser = new NoteValidation(NoteFromDB.Title, NoteFromDB.IconName, NoteFromDB.Directory.Name);
+        var tempDirectories = (await _ds.GetAllDirectoriesForParticularUserAsync(currentUserId));
+
+        if (tempDirectories is null)
+            return;
+
+        directoriesList = tempDirectories.ToList();
+        directoriesList.Sort((x, y) => string.Compare(x.Name, y.Name));
+
     }
     private async Task saveNote()
     {
@@ -142,26 +130,33 @@
         {
             if (inputFromUser is not null && currentUserId is not null)
             {
-                await validateDirectory(inputFromUser.Directory, currentUserId);
+                await ValidateDirectory(inputFromUser.Directory, currentUserId);
                 if (currentUserId != null)
                 {
                     var usr = await _ur.GetUserByIdAsync(currentUserId);
-                    if (usr is not null && selectedDirectory is not null && noteFromDb is not null)
+                    if (usr is not null && selectedDirectory is not null && NoteFromDB is not null)
                     {
-                        // Update existing note
-                        noteFromDb.Title = inputFromUser.Title;
-                        noteFromDb.IconName = inputFromUser.Emoji;
-                        noteFromDb.Directory = await _ds.GetDirectoryByNameAsync(inputFromUser.Directory, currentUserId);
+                        NoteFromDB.Title = inputFromUser.Title;
+                        NoteFromDB.IconName = inputFromUser.Emoji;
+                        Directory? tempDirectory = await _ds.GetDirectoryByNameAsync(inputFromUser.Directory, currentUserId);
+                        if (tempDirectory is not null)
+                        {
+                            NoteFromDB.Directory = tempDirectory;
 
-                        var result = await _ns.UpdateNoteAsync(noteFromDb);
+                            var result = await _ns.UpdateNoteAsync(NoteFromDB);
 
-                        if (result)
-                            toastService.ShowSuccess("The note has been updated.", "Congrats!");
+                            if (result)
+                                toastService.ShowSuccess("The note has been updated.", "Congrats!");
+                            else
+                            {
+                                toastService.ShowError("An error occurred while saving note.", "OOPS!");
+                            }
+                        }
                         else
                         {
                             toastService.ShowError("An error occurred while saving note.", "OOPS!");
                         }
-                        submitForm(noteFromDb);
+                        submitForm(NoteFromDB);
                     }
                 }
             }
@@ -177,7 +172,7 @@
         ModalInstance?.CloseAsync(ModalResult.Ok(note.NoteId.ToString()));
     }
 
-    private async Task validateDirectory(string name, string currentUserId)
+    private async Task ValidateDirectory(string name, string currentUserId)
     {
         if (currentUserId is not null)
         {
@@ -189,27 +184,6 @@
                     throw new Exception("There is no such folder!");
             }
         }
-    }
-
-    public class NoteValidation
-    {
-        public NoteValidation(string title, string emoji, string directory)
-        {
-            Title = title;
-            Directory = directory;
-            Emoji = emoji;
-        }
-
-        [Required(ErrorMessage = "Required field!")]
-        [StringLength(32, ErrorMessage = "Too long!")]
-        [MinLength(2, ErrorMessage = "Too short!")]
-        public string Title { get; set; }
-
-        [Required(ErrorMessage = "Required field!")]
-        public string Directory { get; set; }
-
-        [Required(ErrorMessage = "Required field!")]
-        public string Emoji { get; set; }
     }
 
     private void PinNote(Note? note)
@@ -224,7 +198,7 @@
     {
         if (note is not null)
         {
-            var result = await _ns.DeleteNoteByIdAsync(note.NoteId);
+            var result = await _ns.MoveSingleNoteToBinAsync(note.NoteId);
 
             if (result)
             {

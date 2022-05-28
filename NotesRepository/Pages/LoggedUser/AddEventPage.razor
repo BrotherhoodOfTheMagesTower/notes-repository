@@ -9,49 +9,57 @@
 @inject UserRepository userRepository;
 @inject EventService eventService;
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor
+@inject Microsoft.Extensions.Localization.IStringLocalizer<Resource> localizer
 
 
 
 <RadzenTemplateForm TItem="Event" Data="@model" Submit="async () => await OnSubmit()">
     <div class="row" style="margin-bottom: 16px">
         <div class="col-md-3">
-            <RadzenLabel Text="Text" />
+            <RadzenLabel Text=@localizer["Text"] />
         </div>
         <div class="col">
             <RadzenTextBox @bind-Value="@model.Content" Name="Content" />
-            <RadzenRequiredValidator Text="Title is required" Component="Content" />
+            <RadzenRequiredValidator Text=@localizer["Title is required"] Component="Content" />
         </div>
     </div>
     <div class="row" style="margin-bottom: 16px">
         <div class="col-md-3">
-            <RadzenLabel Text="Start" />
+            <RadzenLabel Text=@localizer["Start"] />
         </div>
         <div class="col">
             <RadzenDatePicker @bind-Value="@model.StartAt" Name="StartAt" ShowTime="true" />
-            <RadzenRequiredValidator Text="Start is required" Component="StartAt" />
+            <RadzenRequiredValidator Text=@localizer["Start is required"] Component="StartAt" />
         </div>
     </div>
     <div class="row" style="margin-bottom: 16px">
         <div class="col-md-3">
-            <RadzenLabel Text="End" />
+            <RadzenLabel Text=@localizer["End"] />
         </div>
         <div class="col">
             <RadzenDatePicker Name="EndAt" @bind-Value="@model.EndAt" ShowTime="true" />
-            <RadzenRequiredValidator Component="EndAt" Text="End is required" />
+            <RadzenRequiredValidator Component="EndAt" Text=@localizer["End is required"] />
         </div>
     </div>
     <div class="row">
         <div class="col-md-3"></div>
         <div class="col">
             <div class="form-check my-2">
-                <input class="form-check-input" type="checkbox" value="" id="checkingRemainder"> @*TO DO  sprawdzenie eventu i podpinanie remaindera*@
+                <input class="form-check-input" type="checkbox" @bind-value="IsAgreeToGetReminder" @oninput="CheckboxChanged"
+                       id="checkingReminder"> @*TO DO  sprawdzenie eventu i podpinanie remindera*@
                 <label class="form-check-label" for="flexCheckDefault">
-                    Set remainder
+                    @localizer["Set reminder"] @IsAgreeToGetReminder
                 </label>
+                @if (@IsAgreeToGetReminder)
+                {
+                    <div class="col">
+                        <RadzenDatePicker @bind-Value="@model.ReminderAt" Name="ReminderAt" ShowTime="true" />
+                    </div>
+                }
             </div>
         </div>
         <div class="col">
-            <RadzenLabel Text="Note Title" />
+            <RadzenLabel Text=@localizer["Note Title"] />
             <InputSelect @bind-Value="@noteId">
                 <option selected value=>---</option>
                 @foreach (var note in allNotes)
@@ -65,7 +73,7 @@
     <div class="row">
         <div class="col-md-3"></div>
         <div class="col">
-            <RadzenButton ButtonType="ButtonType.Submit" Text="Save" />
+            <RadzenButton ButtonType="ButtonType.Submit" Text=@localizer["Save Event"] />
         </div>
     </div>
 </RadzenTemplateForm>
@@ -75,6 +83,9 @@
 
     [Parameter]
     public DateTime EndAt { get; set; }
+
+    [Parameter]
+    public bool IsAgreeToGetReminder { get; set; }
 
     Event model = new Event();
     private List<Note>? allNotes = new();
@@ -104,14 +115,18 @@
         var attached = true;
         if (noteId != null && noteId != "")
             attached = await eventService.AttachNoteToEventAsync(model.EventId, Guid.Parse(noteId));
-        
+
 
         DialogService.Close(model);
         if (added && attached && returned != null)
-            toastService.ShowSuccess("Success");
+            toastService.ShowSuccess("You have successfully added an event");
         else
-            toastService.ShowError("Error");
+            toastService.ShowError("Something went wrong", "OOPS!");
 
+    }
+    async Task CheckboxChanged()
+    {
+        //TO DO ustawianie remindera i wysyłanie
     }
 
 }

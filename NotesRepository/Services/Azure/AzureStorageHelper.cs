@@ -69,7 +69,8 @@ namespace NotesRepository.Services.Azure
                 var cloudBlobContainer = cloudBlobClient.GetContainerReference(containerName);
                 var cloudBlockBlob = cloudBlobContainer.GetBlockBlobReference(file.Name);
                 cloudBlockBlob.Properties.ContentType = file.ContentType;
-                await cloudBlockBlob.UploadFromStreamAsync(file.OpenReadStream());
+                long maxAllowedSizeInBytes = 4194304;
+                await cloudBlockBlob.UploadFromStreamAsync(file.OpenReadStream(maxAllowedSizeInBytes));
 
                 // return the url to the blob
                 return $"{baseUrl}{containerName}\\{ destFileName}";

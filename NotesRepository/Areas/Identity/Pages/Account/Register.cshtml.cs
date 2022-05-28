@@ -72,11 +72,13 @@ namespace NotesRepository.Areas.Identity.Pages.Account
         /// </summary>
         public class InputModel
         {
-            [StringLength(255, ErrorMessage = "The first name field should have maximum 255 characters")]
+            [StringLength(30, ErrorMessage = "The first name field should have maximum 30 characters")]
+            [RegularExpression(@"^[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻßäöüÄÖÜ]{1,30}$", ErrorMessage = "Wrong characters!")]
             [Display(Name = "First Name")]
             public string FirstName { get; set; }
 
-            [StringLength(255, ErrorMessage = "The last name field should have maximum 255 characters")]
+            [StringLength(30, ErrorMessage = "The last name field should have maximum 30 characters")]
+            [RegularExpression(@"^[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻßäöüÄÖÜ]{1,30}$", ErrorMessage = "Wrong characters!")]
             [Display(Name = "Last Name")]
             public string LastName { get; set; }
             /// <summary>
@@ -84,6 +86,7 @@ namespace NotesRepository.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [Required]
+            [StringLength(64, ErrorMessage = "The first name field should have maximum 64 characters")]
             [EmailAddress]
             [Display(Name = "Email")]
             public string Email { get; set; }

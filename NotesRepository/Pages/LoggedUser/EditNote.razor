@@ -15,6 +15,7 @@
 @inject UserRepository _ur;
 @inject ImageService _is;
 @inject DirectoryService _ds;
+@inject CollaboratorsNotesService _cns;
 @inject Data.Flags flags;
 @inject IToastService toastService;
 
@@ -32,14 +33,14 @@ else
     <div class="my-container">
         <div class="my-sub-container p-2 ">
             <center>
-                    @if(@validId && @noteFromDb is not null)
-                    {
-                        <h3>@noteFromDb.Title @noteFromDb.IconName</h3>
-                    }
-                    else
-                    {
-                        <h3>@localizer["content"]</h3> 
-                    }
+                @if(@validId && @noteFromDb is not null)
+                {
+                    <h3>@noteFromDb.Title @noteFromDb.IconName</h3>
+                }
+                else
+                {
+                    <h3>@localizer["content"]</h3> 
+                }
             </center>
             <textarea class="my-text-area" @bind-value="content" @bind-value:event="oninput"></textarea>
             <center>
@@ -66,31 +67,65 @@ else
                 @((MarkupString)Markdown.ToHtml(content, pipeline))
             </div>
         </div>
-            <center>
-            @if(imagesFromUser.Count > 0)
-            {
-                <div>
+        <center>
+        @if(imagesFromUser.Count > 0)
+        {
+            <div>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>URL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach(var image in imagesFromUser)
+                    { 
+                        <tr>
+                            <th>@image.Name</th>
+                            <th>@image.FileUrl</th>
+                            <th><button type="button" class="btn btn-primary" @onclick="() => deleteImageFromNote(image)">@localizer["delete"]</button></th>
+                        </tr>        
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
+        </center>
+
+        <center>  
+            <div>
+                @if (collaborators.Count > 0)
+                {
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th>Image</th>
-                                <th>URL</th>
+                                <th>Collaborator's e-mail</th>
+                                <th>Collaborator's name and surname</th>
                             </tr>
                         </thead>
                         <tbody>
-                        @foreach(var image in imagesFromUser)
-                        { 
-                            <tr>
-                                <th>@image.Name</th>
-                                <th>@image.FileUrl</th>
-                                <th><button type="button" class="btn btn-primary" @onclick="() => deleteImageFromNote(image)">@localizer["delete"]</button></th>
-                            </tr>        
-                        }
+                            @foreach (var collaborator in collaborators)
+                            {
+                                <tr>
+                                    <th>@collaborator.Email</th>
+                                    <th>@collaborator.FirstName @collaborator.LastName</th>
+                                    <th><button type="button" class="btn btn-primary" @onclick="() => deleteCollaboratorFromNote(collaborator)">@localizer["delete"]</button></th>
+                                </tr>
+                            }
                         </tbody>
                     </table>
-                </div>
-            }
-            </center>
+                }
+                @if (@validId && @noteFromDb is not null)
+                {
+                    <div>
+                        <label>collaborator's email</label>
+                        <input class="d-block mb-1 ml-1" @bind-value="collaboratorEmail"></input>
+                        <button type="button" class="btn btn-primary" @onclick="() => addCollaboratorToNote()">@localizer["add"]</button>
+                    </div>
+                }
+            </div>
+        </center>
     </div>
 }
 
@@ -106,9 +141,13 @@ else
     private string description = "edit note";
     private string title = "edit note";
     private Note? noteFromDb;
+    private List<ApplicationUser> collaborators;
+    private string collaboratorEmail;
 
     protected override async Task OnParametersSetAsync()
     {
+        noteFromDb = null;
+
         int numberOfWaits = 1;
         while(flags.getNavMenuLoadingStatus())
         {
@@ -117,6 +156,8 @@ else
         }
 
         imagesFromUser = new List<Image>();
+        collaborators = new List<ApplicationUser>();
+
         content = templateIndex == "newNote" ? "" : await init();
         pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build(); // Uruchomienie rozszerzeń markdown
     }
@@ -126,6 +167,10 @@ else
         if (content.Length <= 0)
         {
             toastService.ShowError("Your note is empty.", "OOPS!");
+        }
+        else if(content.Length > 13500)
+        {
+            toastService.ShowError("Your note is too long.", "OOPS!");
         }
         else
         {
@@ -167,7 +212,7 @@ else
         }
     }
 
-    private async Task<string> init() // TODO narazie init obsługuje tylko wczytywanie templateów, trzeba dodać obsługę wczytywania z bazy
+    private async Task<string> init()
     {
         if (templateIndex is not null)
         {
@@ -182,9 +227,16 @@ else
                 if (currentUserId != null)
                 {
                     noteFromDb = await _ns.GetNoteByIdAsync(Guid.Parse(templateIndex));
+
+                    if (noteFromDb is not null)
+                    {
+                        collaborators =(await _cns.GetAllCollaboratorsForNoteAsync(noteFromDb.NoteId)).ToList();
+                    }
+
                     if (noteFromDb is not null)
                     {
                         var noteImages = await _is.GetAllNoteImagesAsync(noteFromDb.NoteId);
+
                         if (noteImages.Count > 0)
                         {
                             foreach (var image in noteImages)
@@ -211,13 +263,18 @@ else
         }
     }
 
-    private async void LoadFile(InputFileChangeEventArgs e) // TODO wprowadzanie więcej niż jednego pliku
+    private async void LoadFile(InputFileChangeEventArgs e)
     {
-        var image = await e.File.RequestImageFileAsync("image/jpg", 1920, 1080);
+        var image = await e.File.RequestImageFileAsync("image/jpg", 2560, 2048);
         if (image != null)
         {
             try
             {
+                if (image.Name.Contains(' '))
+                    throw new Exception("Image name contains white characters!");
+                else if(image.Size > 4194304) // max Size 4MB TODO mozna spróbować to obejść
+                    throw new Exception("Image Size is to large! Max size is 4 MB");
+
                 string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if (currentUserId != null)
                 {
@@ -226,7 +283,7 @@ else
                     if (noteFromDb != null)
                     {
                         var uniqueImageName = /* generateUniqueCharacters() + */ image.Name;    // TODO unikalna ścieżka
-                        newImage = new Image(null, uniqueImageName, "", noteFromDb);            // TODO W aktualnie wersji każda zdjęcie jest przypisaywana tej samej notatki
+                        newImage = new Image(null, uniqueImageName, "", noteFromDb);
                         var resultAndUrl = await _is.AddImageAsync(newImage, image);            // First element is bool value, second is a url to image
                         if (resultAndUrl.Item1)
                         {
@@ -248,7 +305,6 @@ else
         }
     }
 
-    // TODO usuwanie zdjęcia z danej notatki -> przycisk w tabeli -> usuwanie zdjęcia z Azure
     private async void deleteImageFromNote(Image image)
     {
         string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -276,6 +332,32 @@ else
                 toastService.ShowError(e.Message);
             }
         }
+    }
+
+    private async void deleteCollaboratorFromNote(ApplicationUser collaborator)
+    {
+        await _cns.DeleteCollaboratorFromNoteAsync(collaborator.Id, noteFromDb.NoteId);
+    }
+
+    private async void addCollaboratorToNote()
+    {
+        var collaboratorToAdd = await _ur.GetUserByEmailAsync(collaboratorEmail);
+        string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if(collaboratorToAdd == null)
+            toastService.ShowError("User doesn't exists!"); 
+
+        else if(collaboratorToAdd.Id == currentUserId)
+            toastService.ShowError("You can't add yourself as a collaborator!"); 
+
+        else if(collaborators.Contains(collaboratorToAdd))
+            toastService.ShowError("Collaborator is already added!"); 
+        else 
+        {
+            await _cns.AddCollaboratorToNoteAsync(collaboratorToAdd.Id, noteFromDb.NoteId);
+            toastService.ShowSuccess("Collaborator was sucessfully added!"); 
+        }
+        
     }
 
     private string generateUniqueCharacters()
