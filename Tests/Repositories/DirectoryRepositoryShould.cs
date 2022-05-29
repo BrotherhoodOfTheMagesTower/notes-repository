@@ -165,7 +165,7 @@ namespace Tests.Repositories
 
         
             // Act
-            var result = await nr.GetAllSubDirectoriesOfParticularDirectory(directory.DirectoryId);
+            var result = await nr.GetAllSubDirectoriesOfParticularDirectoryAsync(directory.DirectoryId);
 
 
             // Assert
@@ -281,7 +281,7 @@ namespace Tests.Repositories
 
             // Assert
             var directories = await _context.Directories.ToListAsync();
-            var subDirectories = await nr.GetAllSubDirectoriesOfParticularDirectory(directory.DirectoryId);
+            var subDirectories = await nr.GetAllSubDirectoriesOfParticularDirectoryAsync(directory.DirectoryId);
 
             Assert.True(result);
             directories.Should().HaveCount(1);

@@ -13,7 +13,7 @@ public class DeleteDirectories : IJob
     {
         _container = container;
     }
-    
+
     public DeleteDirectories()
     {
     }
@@ -24,23 +24,16 @@ public class DeleteDirectories : IJob
         {
             if (ctx is not null)
             {
-                var dirRepo = new DirectoryRepository(ctx);
-                var toBeDeleted = dirRepo.GetMainDirectoriesWhichShouldBeRemovedFromDb();
-                if (toBeDeleted.Count > 0)
-                {
-                    Console.WriteLine($"Attempting to delete {toBeDeleted.Count} directories from db");
-                    var result = dirRepo.DeleteMany(toBeDeleted);
-                    if (result)
-                    {
-                        Console.WriteLine($"Successfully removed {toBeDeleted.Count} directories from db");
-                        return Task.CompletedTask;
-                    }
-                    else
-                    {
-                        Console.WriteLine($"Couldn't remove {toBeDeleted.Count} directories from db");
-                        return Task.CompletedTask;
-                    }
-                }
+                var _dr = new DirectoryRepository(ctx);
+                var _nr = new NoteRepository(ctx);
+                var _ur = new UserRepository(ctx);
+                var _ds = new DirectoryService(_nr, _dr, _ur);
+
+
+                var result = _ds.RemoveDirectoriesSubdirectoriesAndNotesFromBinAndDb();
+                if (result == true)
+                    Console.WriteLine($"Attempting to delete directories from db");
+                else
                 Console.WriteLine("There were no directories to be deleted");
                 return Task.CompletedTask;
             }

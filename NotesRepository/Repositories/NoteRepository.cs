@@ -131,6 +131,7 @@ namespace NotesRepository.Repositories
         {
             return await ctx.Notes
                 .Where(n => n.Owner.Id == userId)
+                .Where(i => i.IsMarkedAsDeleted != true)
                 .Where(e => e.Event == null)
                 .Include(d => d.Directory)
                 .Include(o => o.Owner)

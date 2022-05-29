@@ -7,10 +7,11 @@ namespace NotesRepository.Repositories.Interfaces
     {
         Task<Directory?> GetDirectoryByNameAsync(string name, string userId);
         Task<ICollection<Directory>> GetAllDirectoriesForParticularUserAsync(string userId);
+        Task<ICollection<Directory>> GetAllNotDeletedDirectoriesForParticularUserAsync(string userId);
         ICollection<Directory> GetAllSubDirectoriesOfParticularDirectorySync(Guid directoryId);
-        Task<ICollection<Directory>?> GetAllSubDirectoriesOfParticularDirectory(Guid directoryId);
+        Task<ICollection<Directory>?> GetAllSubDirectoriesOfParticularDirectoryAsync(Guid directoryId);
         Task<ICollection<Directory>?> GetAllDirectoriesWithoutParentDirectoryForParticularUserAsync(string userId);
-        ICollection<Directory> GetMainDirectoriesWhichShouldBeRemovedFromDb();
+        ICollection<Directory> GetMainDirectoriesWhichShouldBeRemovedFromDb(int daysOld);
         Task<bool> ChangeParentDirectoryForSubDirectory(Guid subDirectoryId, Guid directoryId);
         Task<bool> DeleteManyAsync(ICollection<Directory> directories);
         Task<bool> DeleteAllSubDirectoriesForParticularDirectoryAsync(Guid directoryId);
