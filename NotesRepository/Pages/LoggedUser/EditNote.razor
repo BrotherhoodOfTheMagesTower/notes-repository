@@ -94,9 +94,10 @@ else
         </center>
 
         <center>  
-            <div>
+            
                 @if (collaborators.Count > 0)
                 {
+                    <div>
                     <table class="table table-striped">
                         <thead>
                             <tr>
@@ -115,7 +116,10 @@ else
                             }
                         </tbody>
                     </table>
+                    </div>
                 }
+                </center>
+                <center>
                 @if (@validId && @noteFromDb is not null)
                 {
                     <div>
@@ -124,7 +128,6 @@ else
                         <button type="button" class="btn btn-primary" @onclick="() => addCollaboratorToNote()">@localizer["add"]</button>
                     </div>
                 }
-            </div>
         </center>
     </div>
 }
@@ -230,7 +233,14 @@ else
 
                     if (noteFromDb is not null)
                     {
-                        collaborators =(await _cns.GetAllCollaboratorsForNoteAsync(noteFromDb.NoteId)).ToList();
+                       var collaborators =(await _cns.GetAllCollaboratorsForNoteAsync(noteFromDb.NoteId)).ToList();
+                       if (collaborators.Count > 0)
+                       {
+                            foreach (var collaborator in collaborators)
+                            {
+                                this.collaborators.Add(collaborator);
+                            }
+                        }
                     }
 
                     if (noteFromDb is not null)
@@ -336,7 +346,18 @@ else
 
     private async void deleteCollaboratorFromNote(ApplicationUser collaborator)
     {
-        await _cns.DeleteCollaboratorFromNoteAsync(collaborator.Id, noteFromDb.NoteId);
+        string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (currentUserId != null)
+        {
+            var result = await _cns.DeleteCollaboratorFromNoteAsync(collaborator.Id, noteFromDb.NoteId);
+            if (result)
+            {
+                collaborators.Remove(collaborator);
+                toastService.ShowSuccess("Collaborator has been deleted");
+            }
+                        this.StateHasChanged();
+        }
+
     }
 
     private async void addCollaboratorToNote()
@@ -355,7 +376,9 @@ else
         else 
         {
             await _cns.AddCollaboratorToNoteAsync(collaboratorToAdd.Id, noteFromDb.NoteId);
+            collaborators.Add(collaboratorToAdd);
             toastService.ShowSuccess("Collaborator was sucessfully added!"); 
+            this.StateHasChanged();
         }
         
     }

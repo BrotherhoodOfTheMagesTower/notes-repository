@@ -24,6 +24,9 @@ namespace NotesRepository.Services
         public async Task<ICollection<Event>> GetEventsByStartDateAsync(DateTime date)
             => await _er.GetEventsByStartDateAsync(date);
 
+        public async Task<ICollection<Event>> GetIncomingEventsAsync(int eventCount, string userId)
+            => await _er.GetIncomingEventsAsync(eventCount, userId);
+
         public async Task<Event?> GetByIdAsync(Guid eventId)
             => await _er.GetByIdAsync(eventId);
 

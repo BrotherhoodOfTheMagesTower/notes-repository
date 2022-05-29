@@ -127,6 +127,23 @@ namespace NotesRepository.Repositories
         }
 
         /// <summary>
+        /// Gets the events from the database by date
+        /// </summary>
+        /// <param name="date">Date</param>
+        /// <returns>A collection of events which start at given day stored in the database</returns>
+        public async Task<ICollection<Event>> GetIncomingEventsAsync(int eventCount, string userId)
+        {
+            return await ctx.Events
+                .Where(u => u.User.Id == userId)
+                .Where(d => d.StartAt > DateTime.Now)
+                .OrderByDescending(d => d.StartAt)
+                .Take(eventCount)
+                .Include(n => n.Note)
+                .Include(u => u.User)
+                .ToListAsync();
+        }
+
+        /// <summary>
         /// Updates calendar event in the database
         /// </summary>
         /// <param name="calendarEvent">Event object</param>
