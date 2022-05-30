@@ -100,6 +100,23 @@ public async Task<bool> ChangeParentDirectoryForSubDirectory(Guid subDirectoryId
             }
             return false;
         }
+        
+        /// <summary>
+        /// Removes a directory entity from the database by directoryId
+        /// </summary>
+        /// <param name="directoryId">The unique id of a directory</param>
+        /// <returns>true if directory was successfully removed; otherwise false</returns>
+        public bool DeleteById(Guid directoryId)
+        {
+            var directory = ctx.Directories.FirstOrDefault(x => x.DirectoryId == directoryId);
+            if (directory is not null)
+            {
+                ctx.Directories.Remove(directory);
+                var result = ctx.SaveChanges();
+                return result > 0;
+            }
+            return false;
+        }
 
         /// <summary>
         /// Removes all subdirectory entities for particular directory
@@ -186,6 +203,20 @@ public async Task<bool> ChangeParentDirectoryForSubDirectory(Guid subDirectoryId
                 .Include(s => s.Notes)
                 .Where(d => d.ParentDir.DirectoryId == directoryId)
                 .ToListAsync();
+        }
+        
+        /// <summary>
+        /// Gets all subdirectories for specific directory
+        /// </summary>
+        /// <param name="directoryId">The unique ID of the directory</param>
+        /// <returns>A collection of subdirectories for specific directory</returns>
+        public ICollection<Directory> GetAllSubDirectoriesOfParticularDirectory(Guid directoryId)
+        {
+            return ctx.Directories
+                .Include(s => s.SubDirectories)
+                .Include(s => s.Notes)
+                .Where(d => d.ParentDir.DirectoryId == directoryId)
+                .ToList();
         }
 
         public ICollection<Directory>? GetAllSubDirectoriesOfParticularDirectorySync(Guid directoryId)

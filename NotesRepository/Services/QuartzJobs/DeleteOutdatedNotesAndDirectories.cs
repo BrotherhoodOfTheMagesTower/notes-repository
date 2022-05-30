@@ -4,17 +4,21 @@ using Quartz;
 
 namespace NotesRepository.Services.QuartzJobs;
 
+/// <summary>
+/// This class is resposible for deleteing obsolete/outdated entities from the database. By default all notes/directories/subdirectories
+/// that are older than 30 days will be removed from the database. 
+/// </summary>
 [DisallowConcurrentExecution]
-public class DeleteDirectories : IJob
+public class DeleteOutdatedNotesAndDirectories : IJob
 {
     private readonly IServiceProvider _container;
 
-    public DeleteDirectories(IServiceProvider container)
+    public DeleteOutdatedNotesAndDirectories(IServiceProvider container)
     {
         _container = container;
     }
 
-    public DeleteDirectories()
+    public DeleteOutdatedNotesAndDirectories()
     {
     }
 
@@ -29,12 +33,11 @@ public class DeleteDirectories : IJob
                 var _ur = new UserRepository(ctx);
                 var _ds = new DirectoryService(_nr, _dr, _ur);
 
-
                 var result = _ds.RemoveDirectoriesSubdirectoriesAndNotesFromBinAndDb();
                 if (result == true)
-                    Console.WriteLine($"Attempting to delete directories from db");
+                    Console.WriteLine($"Successfully removed some directories/notes from bin");
                 else
-                Console.WriteLine("There were no directories to be deleted");
+                Console.WriteLine($"There were no directories/notes to be deleted");
                 return Task.CompletedTask;
             }
             Console.WriteLine("Couldn't get an ApplicationDbContext...");
