@@ -19,4 +19,4 @@ RUN dotnet publish "NotesRepository.csproj" -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "NotesRepository.dll"]
+ENTRYPOINT ["dotnet", "NotesRepository.dll", "--environment=Development"]
