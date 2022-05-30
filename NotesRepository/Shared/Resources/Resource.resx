@@ -140,6 +140,9 @@
   <data name="clear" xml:space="preserve">
     <value>Clear</value>
   </data>
+  <data name="congrats" xml:space="preserve">
+    <value>Congrats!</value>
+  </data>
   <data name="content" xml:space="preserve">
     <value>Content</value>
   </data>
@@ -176,6 +179,27 @@
   </data>
   <data name="editName" xml:space="preserve">
     <value>Edit name</value>
+  </data>
+  <data name="EditNoteMessageEmptyNote" xml:space="preserve">
+    <value>Your note is empty.</value>
+  </data>
+  <data name="EditNoteMessageError" xml:space="preserve">
+    <value>Something went wrong!</value>
+  </data>
+  <data name="EditNoteMessageImageDeleted" xml:space="preserve">
+    <value>Image has been deleted.</value>
+  </data>
+  <data name="EditNoteMessageTooLargeSize" xml:space="preserve">
+    <value>Image Size is to large! Max size is 4 MB.</value>
+  </data>
+  <data name="EditNoteMessageTooLongNote" xml:space="preserve">
+    <value>Your note is too long.</value>
+  </data>
+  <data name="EditNoteMessageWhiteChars" xml:space="preserve">
+    <value>Image name contains white characters!</value>
+  </data>
+  <data name="EditNoteMessageWrongFormat" xml:space="preserve">
+    <value>A wrong file has been entered!</value>
   </data>
   <data name="eventPlanning" xml:space="preserve">
     <value>Event Planning</value>
@@ -240,6 +264,15 @@
   </data>
   <data name="saveNote" xml:space="preserve">
     <value>Save note</value>
+  </data>
+  <data name="SaveNoteMessageNoSuchFolder" xml:space="preserve">
+    <value>There is no such folder!</value>
+  </data>
+  <data name="SaveNoteMessageOverwritten" xml:space="preserve">
+    <value>The note has been overwritten.</value>
+  </data>
+  <data name="SaveNoteMessageSaved" xml:space="preserve">
+    <value>The note was saved.</value>
   </data>
   <data name="search" xml:space="preserve">
     <value>Search</value>

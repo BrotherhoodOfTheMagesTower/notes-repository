@@ -138,6 +138,9 @@
   <data name="clear" xml:space="preserve">
     <value>Wyczyść</value>
   </data>
+  <data name="congrats" xml:space="preserve">
+    <value>Gratulacje!</value>
+  </data>
   <data name="content" xml:space="preserve">
     <value>Treść</value>
   </data>
@@ -173,6 +176,27 @@
   </data>
   <data name="editName" xml:space="preserve">
     <value>Zmień nazwę</value>
+  </data>
+  <data name="EditNoteMessageEmptyNote" xml:space="preserve">
+    <value>Twoja notatka jest pusta!</value>
+  </data>
+  <data name="EditNoteMessageError" xml:space="preserve">
+    <value>Coś poszło nie tak!</value>
+  </data>
+  <data name="EditNoteMessageImageDeleted" xml:space="preserve">
+    <value>Zdjęcie zostało usunięte.</value>
+  </data>
+  <data name="EditNoteMessageTooLargeSize" xml:space="preserve">
+    <value>Zdjęcie jest za duże! Maksymalny rozmiar to 4 MB.</value>
+  </data>
+  <data name="EditNoteMessageTooLongNote" xml:space="preserve">
+    <value>Twoja notatka jest za duża!</value>
+  </data>
+  <data name="EditNoteMessageWhiteChars" xml:space="preserve">
+    <value>Nazwa zdjęcia zawiera białe znaki!</value>
+  </data>
+  <data name="EditNoteMessageWrongFormat" xml:space="preserve">
+    <value>Zły format pliku!</value>
   </data>
   <data name="eventPlanning" xml:space="preserve">
     <value>Planowanie wydarzeń</value>
@@ -242,6 +266,15 @@
   </data>
   <data name="saveNote" xml:space="preserve">
     <value>Zapisz notatkę</value>
+  </data>
+  <data name="SaveNoteMessageNoSuchFolder" xml:space="preserve">
+    <value>Nie ma takiego folderu!</value>
+  </data>
+  <data name="SaveNoteMessageOverwritten" xml:space="preserve">
+    <value>Notatka nadpisana.</value>
+  </data>
+  <data name="SaveNoteMessageSaved" xml:space="preserve">
+    <value>Notatka zapisana.</value>
   </data>
   <data name="search" xml:space="preserve">
     <value>Szukaj</value>

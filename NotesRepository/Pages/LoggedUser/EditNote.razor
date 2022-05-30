@@ -94,40 +94,39 @@ else
         </center>
 
         <center>  
-            
-                @if (collaborators.Count > 0)
-                {
-                    <div>
-                    <table class="table table-striped">
-                        <thead>
+            @if (collaborators.Count > 0)
+            {
+                <div>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Collaborator's e-mail</th>
+                            <th>Collaborator's name and surname</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var collaborator in collaborators)
+                        {
                             <tr>
-                                <th>Collaborator's e-mail</th>
-                                <th>Collaborator's name and surname</th>
+                                <th>@collaborator.Email</th>
+                                <th>@collaborator.FirstName @collaborator.LastName</th>
+                                <th><button type="button" class="btn btn-primary" @onclick="() => deleteCollaboratorFromNote(collaborator)">@localizer["delete"]</button></th>
                             </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var collaborator in collaborators)
-                            {
-                                <tr>
-                                    <th>@collaborator.Email</th>
-                                    <th>@collaborator.FirstName @collaborator.LastName</th>
-                                    <th><button type="button" class="btn btn-primary" @onclick="() => deleteCollaboratorFromNote(collaborator)">@localizer["delete"]</button></th>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                    </div>
-                }
-                </center>
-                <center>
-                @if (@validId && @noteFromDb is not null)
-                {
-                    <div>
-                        <label>collaborator's email</label>
-                        <input class="d-block mb-1 ml-1" @bind-value="collaboratorEmail"></input>
-                        <button type="button" class="btn btn-primary" @onclick="() => addCollaboratorToNote()">@localizer["add"]</button>
-                    </div>
-                }
+                        }
+                    </tbody>
+                </table>
+                </div>
+            }
+            </center>
+            <center>
+            @if (@validId && @noteFromDb is not null)
+            {
+                <div>
+                    <label>collaborator's email</label>
+                    <input class="d-block mb-1 ml-1" @bind-value="collaboratorEmail"></input>
+                    <button type="button" class="btn btn-primary" @onclick="() => addCollaboratorToNote()">@localizer["add"]</button>
+                </div>
+            }
         </center>
     </div>
 }
@@ -141,8 +140,8 @@ else
     private bool validId = false;
     private Guid parsedId;
     private List<Image> imagesFromUser;
-    private string description = "edit note";
-    private string title = "edit note";
+    private string description = "Loading...";
+    private string title = "Loading...";
     private Note? noteFromDb;
     private List<ApplicationUser> collaborators;
     private string collaboratorEmail;
@@ -150,6 +149,7 @@ else
     protected override async Task OnParametersSetAsync()
     {
         noteFromDb = null;
+        description = title = localizer["edit"];
 
         int numberOfWaits = 1;
         while(flags.getNavMenuLoadingStatus())
@@ -169,11 +169,11 @@ else
     {
         if (content.Length <= 0)
         {
-            toastService.ShowError("Your note is empty.", "OOPS!");
+            toastService.ShowError(localizer["EditNoteMessageEmptyNote"], "OOPS!");
         }
         else if(content.Length > 13500)
         {
-            toastService.ShowError("Your note is too long.", "OOPS!");
+            toastService.ShowError(localizer["EditNoteMessageTooLongNote"], "OOPS!");
         }
         else
         {
@@ -281,9 +281,9 @@ else
             try
             {
                 if (image.Name.Contains(' '))
-                    throw new Exception("Image name contains white characters!");
+                    throw new Exception(localizer["EditNoteMessageWhiteChars"]);
                 else if(image.Size > 4194304) // max Size 4MB TODO mozna spróbować to obejść
-                    throw new Exception("Image Size is to large! Max size is 4 MB");
+                    throw new Exception(localizer["EditNoteMessageTooLargeSize"]);
 
                 string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if (currentUserId != null)
@@ -292,9 +292,9 @@ else
                     Image newImage;
                     if (noteFromDb != null)
                     {
-                        var uniqueImageName = /* generateUniqueCharacters() + */ image.Name;    // TODO unikalna ścieżka
+                        var uniqueImageName = generateUniqueCharacters() + '_' + image.Name;
                         newImage = new Image(null, uniqueImageName, "", noteFromDb);
-                        var resultAndUrl = await _is.AddImageAsync(newImage, image);            // First element is bool value, second is a url to image
+                        var resultAndUrl = await _is.AddImageAsync(newImage, image);    // First element is bool value, second is a url to image
                         if (resultAndUrl.Item1)
                         {
                             content += $"\n![{image.Name}]({resultAndUrl.Item2})\n";
@@ -311,7 +311,7 @@ else
         }
         else
         {
-            toastService.ShowError("A wrong file has been entered.", "OOPS!");
+            toastService.ShowError(localizer["EditNoteMessageWrongFormat"], "OOPS!");
         }
     }
 
@@ -325,14 +325,14 @@ else
                 var result = await _is.DeleteImageAsync(image);
                 if (result)
                 {
-                    toastService.ShowSuccess("Image has been deleted");
+                    toastService.ShowSuccess(localizer["EditNoteMessageImageDeleted"]);
                     string substringWithImage = $"![{image.Name}]({image.FileUrl})"; // TODO nie działa do końca 
                     content.Replace(substringWithImage, " ");
                     imagesFromUser.Remove(image);
                 }
                 else
                 {
-                    toastService.ShowError("Something went wrong!");
+                    toastService.ShowError(localizer["EditNoteMessageError"]);
                 }
                 this.StateHasChanged();
             }
@@ -355,7 +355,7 @@ else
                 collaborators.Remove(collaborator);
                 toastService.ShowSuccess("Collaborator has been deleted");
             }
-                        this.StateHasChanged();
+            this.StateHasChanged();
         }
 
     }

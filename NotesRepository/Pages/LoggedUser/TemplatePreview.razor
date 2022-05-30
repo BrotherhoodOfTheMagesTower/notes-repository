@@ -51,11 +51,13 @@ else
     private string? previewKey = null;
     private MarkdownPipeline? pipeline;
 
-    private string description = "select template";
-    private string title = "select template";
+    private string description = "Loading...";
+    private string title = "Loading...";
 
     protected override async Task OnParametersSetAsync()
     {
+        title = localizer["templates"];
+        description = localizer["templatesDescryption"];
         previewKey = init();
         pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build(); // Uruchomienie rozszerzeń markdown
     }
