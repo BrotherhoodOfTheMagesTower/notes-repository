@@ -20,7 +20,7 @@
         </div>
         <div class="col">
             <RadzenTextBox @bind-Value="@model.Content" Name="Content" />
-            <RadzenRequiredValidator Text=@localizer["Title is required"] Component="Content" />
+            <RadzenRequiredValidator Text=@localizer["titleIsRequired"] Component="Content" />
         </div>
     </div>
     <div class="row" style="margin-bottom: 16px">
@@ -29,7 +29,7 @@
         </div>
         <div class="col">
             <RadzenDatePicker @bind-Value="@model.StartAt" Name="StartAt" ShowTime="true" />
-            <RadzenRequiredValidator Text=@localizer["Start is required"] Component="StartAt" />
+            <RadzenRequiredValidator Text=@localizer["startIsRequired"] Component="StartAt" />
         </div>
     </div>
     <div class="row" style="margin-bottom: 16px">
@@ -38,28 +38,28 @@
         </div>
         <div class="col">
             <RadzenDatePicker Name="EndAt" @bind-Value="@model.EndAt" ShowTime="true" />
-            <RadzenRequiredValidator Component="EndAt" Text=@localizer["End is required"] />
+            <RadzenRequiredValidator Component="EndAt" Text=@localizer["endIsRequired"] />
         </div>
     </div>
     <div class="row">
         <div class="col-md-3"></div>
         <div class="col">
             <div class="form-check my-2">
-                <input class="form-check-input" type="checkbox" @bind-value="IsAgreeToGetReminder" @oninput="CheckboxChanged"
-                       id="checkingReminder"> @*TO DO  sprawdzenie eventu i podpinanie remindera*@
+                <input class="form-check-input" type="checkbox" @bind-value="IsAgreeToGetReminder" 
+                       id="checkingReminder"> 
                 <label class="form-check-label" for="flexCheckDefault">
-                    @localizer["Set reminder"] @IsAgreeToGetReminder
+                    @localizer["setReminder"]
                 </label>
                 @if (@IsAgreeToGetReminder)
                 {
                     <div class="col">
-                        <RadzenDatePicker @bind-Value="@model.ReminderAt" Name="ReminderAt" ShowTime="true" />
+                        <RadzenDatePicker @bind-Value="@model.ReminderAt" Name="ReminderAt" ShowTime="true" DateFormat="dd/MM/yyyy h:mm" />
                     </div>
                 }
             </div>
         </div>
         <div class="col">
-            <RadzenLabel Text=@localizer["Note Title"] />
+            <RadzenLabel Text=@localizer["noteTitle"] />
             <InputSelect @bind-Value="@noteId">
                 <option selected value=>---</option>
                 @foreach (var note in allNotes)
@@ -73,7 +73,7 @@
     <div class="row">
         <div class="col-md-3"></div>
         <div class="col">
-            <RadzenButton ButtonType="ButtonType.Submit" Text=@localizer["Save Event"] />
+            <RadzenButton ButtonType="ButtonType.Submit" Text=@localizer["saveEvent"] />
         </div>
     </div>
 </RadzenTemplateForm>
@@ -86,6 +86,9 @@
 
     [Parameter]
     public bool IsAgreeToGetReminder { get; set; }
+
+    [Parameter]
+    public DateTime ReminderAt { get; set; }
 
     Event model = new Event();
     private List<Note>? allNotes = new();
@@ -104,6 +107,10 @@
     {
         model.StartAt = StartAt;
         model.EndAt = EndAt;
+       if(IsAgreeToGetReminder)
+       {
+            model.ReminderAt = ReminderAt;
+       }
     }
 
     async Task OnSubmit()
@@ -123,10 +130,6 @@
         else
             toastService.ShowError("Something went wrong", "OOPS!");
 
-    }
-    async Task CheckboxChanged()
-    {
-        //TO DO ustawianie remindera i wysyłanie
     }
 
 }

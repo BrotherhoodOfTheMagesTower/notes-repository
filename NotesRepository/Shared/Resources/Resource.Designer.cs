@@ -702,5 +702,157 @@ namespace NotesRepository.Shared.Resources {
                 return ResourceManager.GetString("welcomeToNotes", resourceCulture);
             }
         }
+        /// <summary>
+        /// Looks up a localized string similar to Text.
+        /// </summary>
+        public static string Text
+        {
+            get
+            {
+                return ResourceManager.GetString("Text", resourceCulture);
+            }
+        }
+        /// <summary>
+        /// Looks up a localized string similar to Start.
+        /// </summary>
+        public static string Start
+        {
+            get
+            {
+                return ResourceManager.GetString("Start", resourceCulture);
+            }
+        }
+        /// <summary>
+        /// Looks up a localized string similar to End.
+        /// </summary>
+        public static string End
+        {
+            get
+            {
+                return ResourceManager.GetString("End", resourceCulture);
+            }
+        }
+        /// <summary>
+        /// Looks up a localized string similar to title is required.
+        /// </summary>
+        public static string titleIsRequired
+        {
+            get
+            {
+                return ResourceManager.GetString("titleIsRequired", resourceCulture);
+            }
+        }
+        /// <summary>
+        /// Looks up a localized string similar to start is required.
+        /// </summary>
+        public static string startIsRequired
+        {
+            get
+            {
+                return ResourceManager.GetString("startIsRequired", resourceCulture);
+            }
+        }
+        /// <summary>
+        /// Looks up a localized string similar to end is required.
+        /// </summary>
+        public static string endIsRequired
+        {
+            get
+            {
+                return ResourceManager.GetString("endIsRequired", resourceCulture);
+            }
+        }
+        /// <summary>
+        /// Looks up a localized string similar to set reminder.
+        /// </summary>
+        public static string setReminder
+        {
+            get
+            {
+                return ResourceManager.GetString("setReminder", resourceCulture);
+            }
+        }
+        /// <summary>
+        /// Looks up a localized string similar to note title.
+        /// </summary>
+        public static string noteTitle
+        {
+            get
+            {
+                return ResourceManager.GetString("noteTitle", resourceCulture);
+            }
+        }
+        /// <summary>
+        /// Looks up a localized string similar to save event.
+        /// </summary>
+        public static string saveEvent
+        {
+            get
+            {
+                return ResourceManager.GetString("saveEvent", resourceCulture);
+            }
+        }
+        /// <summary>
+        /// Looks up a localized string similar to delete event.
+        /// </summary>
+        public static string deleteEvent
+        {
+            get
+            {
+                return ResourceManager.GetString("deleteEvent", resourceCulture);
+            }
+        }
+        /// <summary>
+        /// Looks up a localized string similar to day.
+        /// </summary>
+        public static string Day
+        {
+            get
+            {
+                return ResourceManager.GetString("Day", resourceCulture);
+            }
+        }
+        /// <summary>
+        /// Looks up a localized string similar to month.
+        /// </summary>
+        public static string Month
+        {
+            get
+            {
+                return ResourceManager.GetString("Month", resourceCulture);
+            }
+        }
+        /// <summary>
+        /// Looks up a localized string similar to week.
+        /// </summary>
+        public static string Week
+        {
+            get
+            {
+                return ResourceManager.GetString("Week", resourceCulture);
+            }
+        }
+        /// <summary>
+        /// Looks up a localized string similar to edit event.
+        /// </summary>
+        public static string editEvent
+        {
+            get
+            {
+                return ResourceManager.GetString("editEvent", resourceCulture);
+            }
+        }
+        /// <summary>
+        /// Looks up a localized string similar to add event.
+        /// </summary>
+        public static string addEvent
+        {
+            get
+            {
+                return ResourceManager.GetString("addEvent", resourceCulture);
+            }
+        }
+
+
     }
 }
