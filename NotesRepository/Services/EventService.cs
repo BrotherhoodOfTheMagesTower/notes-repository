@@ -165,10 +165,9 @@ namespace NotesRepository.Services
                 .WithIdentity(_event.EventId.ToString(), _event.User.Email)
                 .Build();
 
-            var utcReminder = DateTime.SpecifyKind((DateTime)_event.ReminderAt!, DateTimeKind.Utc);
             ITrigger trigger = TriggerBuilder.Create()
                 .WithIdentity($"{_event.EventId}-trigger", _event.User.Email)
-                .StartAt(utcReminder)
+                .StartNow()
                 .ForJob(job)
                 .Build();
 
