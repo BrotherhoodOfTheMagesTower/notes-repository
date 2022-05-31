@@ -5,13 +5,14 @@
 @using System.Security.Claims;
 
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor;
-@inject Microsoft.Extensions.Localization.IStringLocalizer<Resource> localizer
-@inject NavigationManager navigationManager
+@inject Microsoft.Extensions.Localization.IStringLocalizer<Resource> localizer;
+@inject NavigationManager navigationManager;
 @inject NoteService _ns;
 @inject UserRepository _ur;
 @inject IToastService toastService;
 @inject DirectoryService _ds;
 @inject Data.Flags flags;
+@inject EventService _es;
 
 
 
@@ -81,13 +82,13 @@
             <div class="notes">
                 @if (upcomingEventsList != null)
                 {
-                    @foreach (var note in upcomingEventsList)
+                    @foreach (var e in upcomingEventsList)
                     {
                         <div class="note">
                             <center>
-                                <h5>@note.Title</h5>
+                                <h5>@e.Content</h5>
                                 <br>
-                                <h6>@date</h6>
+                                <h6>@e.StartAt</h6>
                             </center>
                         </div>
                     }
@@ -117,8 +118,7 @@
 {
     private List<Note>? latestList = new();
     private List<Note>? pinnedList = new();
-    private List<Note>? upcomingEventsList = new();
-    private DateTime date = new DateTime();
+    private List<Event>? upcomingEventsList = new();
     private string content = "";
     private string? userId;
     public int j = 5;
@@ -133,12 +133,8 @@
             pinnedList = (await _ns.GetAllPinnedNotesFromUserAsync(userId)).ToList();
 
             latestList = (await (_ns.GetRecentlyEditedOrCreatedNotesAsync(userId, 10))).ToList();
-            upcomingEventsList = new List<Note>
-            {
-                new Note("Ala ma kota"),
-                new Note("Ala Jakaś"),
-                new Note("Taaa"),
-            };
+
+            upcomingEventsList = (await (_es.GetIncomingEventsAsync(10, userId))).ToList();
         }
 
     }

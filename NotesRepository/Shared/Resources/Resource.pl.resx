@@ -123,6 +123,9 @@
   <data name="aboutNotesRepositoryDescryption" xml:space="preserve">
     <value>Aplikacja webowa, która umożliwia tworzenie notatek i otwieranie ich na wszystkich rodzajach urządzeń. Celem aplikacji jest zapewnienie użytkownikowi kompleksowego sposobu tworzenia notatek. Notes Repository wykorzystuje moc Markdowna, który pozwala na szybkie i efektywne tworzenie notatek, a także na zagnieżdżanie html.</value>
   </data>
+  <data name="add" xml:space="preserve">
+    <value>Dodaj</value>
+  </data>
   <data name="addFolder" xml:space="preserve">
     <value>Dodaj nowy folder</value>
   </data>
@@ -138,6 +141,12 @@
   <data name="clear" xml:space="preserve">
     <value>Wyczyść</value>
   </data>
+  <data name="collabEmail" xml:space="preserve">
+    <value>E-mail współpracownika</value>
+  </data>
+  <data name="collabNameSurname" xml:space="preserve">
+    <value>Imię i nazwisko współpracownika</value>
+  </data>
   <data name="congrats" xml:space="preserve">
     <value>Gratulacje!</value>
   </data>
@@ -149,6 +158,9 @@
   </data>
   <data name="crossPlatformDescryption" xml:space="preserve">
     <value>Aplikację można wykorzystywać na różnych urządzeniach, od małych telefonów po duże telewizory.</value>
+  </data>
+  <data name="delete" xml:space="preserve">
+    <value>Usuń</value>
   </data>
   <data name="deleteFolder" xml:space="preserve">
     <value>Usuń folder</value>
@@ -230,6 +242,9 @@
   </data>
   <data name="homePage" xml:space="preserve">
     <value>Strona główna</value>
+  </data>
+  <data name="image" xml:space="preserve">
+    <value>Zdjęcie</value>
   </data>
   <data name="logIn" xml:space="preserve">
     <value>Zaloguj się</value>

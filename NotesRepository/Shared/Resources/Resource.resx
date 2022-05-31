@@ -125,6 +125,9 @@
         The purpose of this application is to provide the user with a complex solution to take notes.
         App makes use of Markdown language which allows quick and effective text formatting as well as nesting html code inside of the note.</value>
   </data>
+  <data name="add" xml:space="preserve">
+    <value>Add</value>
+  </data>
   <data name="addFolder" xml:space="preserve">
     <value>Add new folder</value>
   </data>
@@ -140,6 +143,12 @@
   <data name="clear" xml:space="preserve">
     <value>Clear</value>
   </data>
+  <data name="collabEmail" xml:space="preserve">
+    <value>Collaborator's e-mail</value>
+  </data>
+  <data name="collabNameSurname" xml:space="preserve">
+    <value>Collaborator's name and surname</value>
+  </data>
   <data name="congrats" xml:space="preserve">
     <value>Congrats!</value>
   </data>
@@ -152,6 +161,9 @@
   <data name="crossPlatformDescryption" xml:space="preserve">
     <value>Application can be used on variety of devices ranging from
                 small mobile phones to big TV screens.</value>
+  </data>
+  <data name="delete" xml:space="preserve">
+    <value>Delete</value>
   </data>
   <data name="deleteFolder" xml:space="preserve">
     <value>Delete this folser</value>
@@ -231,6 +243,9 @@
   </data>
   <data name="homePage" xml:space="preserve">
     <value>Home</value>
+  </data>
+  <data name="image" xml:space="preserve">
+    <value>Image</value>
   </data>
   <data name="logIn" xml:space="preserve">
     <value>Log in</value>
