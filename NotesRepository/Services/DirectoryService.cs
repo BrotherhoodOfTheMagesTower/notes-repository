@@ -96,20 +96,20 @@ namespace NotesRepository.Services
 
         }
 
-        public bool  RemoveDirectoriesSubdirectoriesAndNotesFromBinAndDb(int daysOld=30)
+        public bool RemoveDirectoriesSubdirectoriesAndNotesFromBinAndDb(int daysOld = 30)
         {
             var directories = _dr.GetMainDirectoriesWhichShouldBeRemovedFromDb(daysOld).ToList();
 
-            //var singleNotes = _nr.GetAllSingleNotesWhichShouldBeRemovedFromDb();
-            //if(singleNotes != null)
-            //    _nr.DeleteMany(singleNotes);
+            var singleNotes = _nr.GetAllSingleNotesWhichShouldBeRemovedFromDb(daysOld);
+            if (singleNotes.Count > 0)
+                _nr.DeleteMany(singleNotes);
 
-            if (directories != null)
+            if (directories.Count > 0)
             {
                 foreach (var directory in directories)
                 {
-                   RemoveSubdirectoriesByDirectoryId(directory.DirectoryId);
-                   _dr.DeleteByIdAsync(directory.DirectoryId);
+                    RemoveSubdirectoriesByDirectoryId(directory.DirectoryId);
+                    _dr.DeleteById(directory.DirectoryId);
                 }
                 return true;
 
@@ -119,22 +119,19 @@ namespace NotesRepository.Services
 
         public bool RemoveSubdirectoriesByDirectoryId(Guid directoryId)
         {
-            var subDirectories = _dr.GetAllSubDirectoriesOfParticularDirectoryAsync(directoryId).Result;
+            var subDirectories = _dr.GetAllSubDirectoriesOfParticularDirectory(directoryId);
 
-            if (subDirectories != null)
+            if (subDirectories.Count > 0)
             {
-                if (subDirectories.Count > 0)
+                foreach (var subdirectory in subDirectories)
                 {
-                    foreach (var subdirectory in subDirectories)
-                    {
 
-                        RemoveSubdirectoriesByDirectoryId(subdirectory.DirectoryId);
-                        _dr.DeleteByIdAsync(subdirectory.DirectoryId);
-                    }
+                    RemoveSubdirectoriesByDirectoryId(subdirectory.DirectoryId);
+                    _dr.DeleteById(subdirectory.DirectoryId);
                 }
+                return true;
             }
-            return true;
-
+            return false;
         }
 
         public async Task<bool> MarkDirectorySubdirectoriesAndNotesAsDeleted(Guid directoryId) //dodac bin jak nadrzedny

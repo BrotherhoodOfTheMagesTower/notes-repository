@@ -101,6 +101,25 @@ namespace Tests.Repositories
             Assert.True(result);
             Assert.Empty(notes);
         }
+        
+        [Fact(DisplayName = "User is able to delete a note by id from the database, that is pinned to Event")]
+        public async Task DeleteNoteByIdAndUnPinFromEvent()
+        {
+            // Arrange
+            var nr = new NoteRepository(_context);
+            var er = new EventRepository(_context);
+            var usr = new ApplicationUser();
+            var note = new Note(null, "Test note", "for DeleteNoteById()", "def-ico", usr, new Directory("Default", usr));
+            await nr.AddAsync(note);
+            await er.AddAsync(new Event { NoteId = note.NoteId, User = usr, Content ="s", StartAt = DateTime.Now, EndAt = DateTime.Now.AddDays(1)});
+
+            // Act
+            await nr.DeleteByIdAsync(note.NoteId);
+
+            // Assert
+            (await nr.GetByIdAsync(note.NoteId)).Should().BeNull();
+            (await er.GetAllUserEventsAsync(usr.Id)).First().NoteId.Should().BeNull();
+        }
 
         [Fact(DisplayName = "User is able to delete multiple notes from the database")]
         public async Task DeleteMultipleNotesB()

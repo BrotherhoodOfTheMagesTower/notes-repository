@@ -36,30 +36,21 @@ builder.Services
             opts.SignInScheme = IdentityConstants.ExternalScheme;
         });
 
-builder.Services.AddScoped<DeleteSingleNotes>();
-builder.Services.AddScoped<DeleteDirectories>();
+builder.Services.AddScoped<DeleteOutdatedNotesAndDirectories>();
 builder.Services.AddQuartz(q =>
 {
     q.UseMicrosoftDependencyInjectionJobFactory();
 
-    // Create "keys" for jobs
-    var notes = new JobKey("DeleteSingleNotes");
-    var directories = new JobKey("DeleteDirectories");
+    // Create "key" for job
+    var outdatedEntitiesKey = new JobKey("DeleteOutdatedNotesAndDirectories");
 
-    // Register jobs with the DI container
-    q.AddJob<DeleteSingleNotes>(opts => opts.WithIdentity(notes).StoreDurably(true));
-    q.AddJob<DeleteDirectories>(opts => opts.WithIdentity(directories).StoreDurably(true));
+    // Register job with the DI container
+    q.AddJob<DeleteOutdatedNotesAndDirectories>(opts => opts.WithIdentity(outdatedEntitiesKey).StoreDurably(true));
 
-    // Create triggers for jobs
+    // Create trigger for job
     q.AddTrigger(opts => opts
-        .ForJob(notes)
-        .WithIdentity("DeleteSingleNotes")
-        .WithCronSchedule("0 0 12 ? * *") // run every day at noon
-        .StartNow());
-
-    q.AddTrigger(opts => opts
-        .ForJob(directories)
-        .WithIdentity("DeleteDirectories")
+        .ForJob(outdatedEntitiesKey)
+        .WithIdentity("DeleteOutdatedNotesAndDirectories")
         .WithCronSchedule("0 0 12 ? * *") // run every day at noon
         .StartNow());
 });
@@ -127,7 +118,7 @@ app.UseCookiePolicy(new CookiePolicyOptions()
 var serviceProvider = app.Services?.GetService<IServiceScopeFactory>()?.CreateScope().ServiceProvider;
 serviceProvider!.GetService<ApplicationDbContext>()!.Database.Migrate();
 
-//serviceProvider!.SeedDefaultEntities();
-//serviceProvider!.SeedCollaboratorsWithSharedNotes();
+serviceProvider!.SeedDefaultEntities();
+serviceProvider!.SeedCollaboratorsWithSharedNotes();
 
 app.Run();
