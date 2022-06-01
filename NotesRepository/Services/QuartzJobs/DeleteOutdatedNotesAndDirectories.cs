@@ -33,7 +33,7 @@ public class DeleteOutdatedNotesAndDirectories : IJob
                 var _ur = new UserRepository(ctx);
                 var _ds = new DirectoryService(_nr, _dr, _ur);
 
-                var result = _ds.RemoveDirectoriesSubdirectoriesAndNotesFromBinAndDb();
+                var result = _ds.RemoveDirectoriesSubdirectoriesAndNotesFromBinAndDbByDate();
                 if (result == true)
                     Console.WriteLine($"Successfully removed some directories/notes from bin");
                 else

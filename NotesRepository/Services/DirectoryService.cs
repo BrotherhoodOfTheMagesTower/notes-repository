@@ -80,23 +80,9 @@ namespace NotesRepository.Services
             return (directories, notes);
         }
 
-        public async Task<bool> MoveDirectorySubdirectoriesAndNotesToBin(Guid directoryId)
-        {
-            var directory = await _dr.GetByIdAsync(directoryId);
-            var bin = await _dr.GetDirectoryByNameAsync("Bin", directory.User.Id);
+        
 
-            var result = await MarkDirectorySubdirectoriesAndNotesAsDeleted(directoryId);
-
-            if (result == true && bin != null)
-            {
-                await _dr.ChangeParentDirectoryForSubDirectory(directoryId, bin.DirectoryId);
-                return true;
-            }
-            else return false;
-
-        }
-
-        public bool RemoveDirectoriesSubdirectoriesAndNotesFromBinAndDb(int daysOld = 30)
+        public bool RemoveDirectoriesSubdirectoriesAndNotesFromBinAndDbByDate(int daysOld = 30)
         {
             var directories = _dr.GetMainDirectoriesWhichShouldBeRemovedFromDb(daysOld).ToList();
 
@@ -117,6 +103,21 @@ namespace NotesRepository.Services
             else return false;
         }
 
+        public async Task<bool> RemoveDirectoriesSubdirectoriesAndNotesFromBin(Guid directoryId)
+        {
+            var directory = await _dr.GetByIdAsync(directoryId);
+            if (directory != null)
+            {
+                RemoveSubdirectoriesByDirectoryId(directory.DirectoryId);
+                _dr.DeleteById(directory.DirectoryId);
+                return true;
+            }
+            return false;
+
+        }
+
+
+
         public bool RemoveSubdirectoriesByDirectoryId(Guid directoryId)
         {
             var subDirectories = _dr.GetAllSubDirectoriesOfParticularDirectory(directoryId);
@@ -134,7 +135,26 @@ namespace NotesRepository.Services
             return false;
         }
 
-        public async Task<bool> MarkDirectorySubdirectoriesAndNotesAsDeleted(Guid directoryId) //dodac bin jak nadrzedny
+        public async Task<bool> MoveDirectorySubdirectoriesAndNotesToBin(Guid directoryId)
+        {
+            var directory = await _dr.GetByIdAsync(directoryId);
+            var bin = await _dr.GetDirectoryByNameAsync("Bin", directory.User.Id);
+
+            if (directory != null && bin != null)
+            {
+                var result = await MarkDirectorySubdirectoriesAndNotesAsDeleted(directoryId);
+                if (result == true)
+                {
+                    await _dr.ChangeParentDirectoryForSubDirectory(directoryId, bin.DirectoryId);
+                    return true;
+                }
+                else return false;
+            }      
+            else return false;
+
+        }
+
+        public async Task<bool> MarkDirectorySubdirectoriesAndNotesAsDeleted(Guid directoryId) 
         {
             var directory = await _dr.GetByIdAsync(directoryId);
 
@@ -160,7 +180,7 @@ namespace NotesRepository.Services
             var notes = await _nr.GetAllNotesForParticularDirectoryAsync(directoryId);
             if (notes != null)
             {
-                if (directory.Notes.Count > 0)
+                if (notes.Count > 0)
                 {
                     foreach (var note in notes)
                     {
@@ -173,6 +193,72 @@ namespace NotesRepository.Services
 
             return true;
         }
+
+        public async Task<bool> RestoreADirectorySubdirectoriesAndNotesFromBinToDirectory(Guid directoryId, Guid parentDirectoryId)
+        {
+            var directory = await _dr.GetByIdAsync(directoryId);
+            var parentDirectory = await _dr.GetByIdAsync(parentDirectoryId);
+
+            if (directory != null && parentDirectory != null)
+            {
+                var result = await MarkDirectorySubdirectoriesAndNotesAsNotDeleted(directoryId);
+                if (result == true)
+                {
+                    await _dr.ChangeParentDirectoryForSubDirectory(directoryId, parentDirectoryId);
+                    return true;
+                }
+                else return false;
+            }
+            else return false;
+
+        }
+
+        public async Task<bool> MarkDirectorySubdirectoriesAndNotesAsNotDeleted(Guid directoryId) 
+        {
+            var directory = await _dr.GetByIdAsync(directoryId);
+
+            if (directory == null)
+            {
+                return false;
+            }
+
+            var subDirectories = await _dr.GetAllSubDirectoriesOfParticularDirectoryAsync(directoryId);
+
+            if (subDirectories != null)
+            {
+                if (subDirectories.Count > 0)
+                {
+                    foreach (var subdirectory in subDirectories)
+                    {
+
+                        await MarkDirectorySubdirectoriesAndNotesAsNotDeleted(subdirectory.DirectoryId);
+                    }
+                }
+            }
+
+            var notes = await _nr.GetAllNotesForParticularDirectoryAsync(directoryId);
+            if (notes != null)
+            {
+                if (notes.Count > 0)
+                {
+                    foreach (var note in notes)
+                    {
+                        await _nr.MarkNoteAsNotDeletedAsync(note.NoteId);
+                    }
+                }
+            }
+            await _dr.MarkDirectoryAsNotDeletedAsync(directoryId);
+
+
+            return true;
+        }
+
+
+
+
+
+
+
         public async Task<bool> UpdateAsync(Directory _directory)
             => await _dr.UpdateAsync(_directory);
     }
