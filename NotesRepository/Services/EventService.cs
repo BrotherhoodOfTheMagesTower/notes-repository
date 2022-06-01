@@ -115,8 +115,7 @@ namespace NotesRepository.Services
             if (!scheduler.IsStarted)
                 await scheduler.Start();
 
-            await scheduler.DeleteJob(new JobKey(_event.EventId.ToString()));
-            await Task.Delay(3000);
+            await scheduler.UnscheduleJob(new TriggerKey($"{_event.EventId}-trigger", _event.User.Email));
             await ScheduleEventReminderAsync(_event);
         }
         
@@ -128,20 +127,17 @@ namespace NotesRepository.Services
             if (!scheduler.IsStarted)
                 await scheduler.Start();
 
-            await scheduler.DeleteJob(new JobKey(_event.EventId.ToString()));
-
-            var wasReminderCancelled = await scheduler.CheckExists(new JobKey($"Cancel_{_event.EventId}"));
+            var wasReminderCancelled = await scheduler
+                .CheckExists(new TriggerKey($"Cancel_{_event.EventId}-trigger", _event.User.Email));
             if(wasReminderCancelled)
-                await scheduler.DeleteJob(new JobKey($"Cancel_{_event.EventId}"));
-
-            await Task.Delay(3000);
+                await scheduler.UnscheduleJob(new TriggerKey($"Cancel_{_event.EventId}-trigger", _event.User.Email));
 
             IJobDetail job = JobBuilder.Create<CancelEventReminder>()
                 .WithIdentity($"Cancel_{_event.EventId}", _event.User.Email)
                 .Build();
 
             ITrigger trigger = TriggerBuilder.Create()
-                .WithIdentity($"{_event.EventId}-trigger", _event.User.Email)
+                .WithIdentity($"Cancel_{_event.EventId}-trigger", _event.User.Email)
                 .StartNow()
                 .ForJob(job)
                 .Build();

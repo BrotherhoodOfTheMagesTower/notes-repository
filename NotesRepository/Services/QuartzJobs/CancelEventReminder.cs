@@ -13,10 +13,6 @@ public class CancelEventReminder : IJob
         _container = container;
     }
 
-    public CancelEventReminder()
-    {
-    }
-
     public Task Execute(IJobExecutionContext context)
     {
         using (var ctx = _container.GetService<ApplicationDbContext>())
