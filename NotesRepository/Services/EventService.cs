@@ -127,7 +127,7 @@ namespace NotesRepository.Services
             await scheduler.ScheduleJob(job, trigger);
         }
 
-        private async Task EditEventReminderAsync(Event _event)
+        public async Task EditEventReminderAsync(Event _event)
         {
             StdSchedulerFactory factory = new StdSchedulerFactory();
             IScheduler scheduler = await factory.GetScheduler();
@@ -151,7 +151,7 @@ namespace NotesRepository.Services
             await scheduler.ScheduleJob(job, trigger);
         }
         
-        private async Task CancelEventReminderAsync(Event _event)
+        public async Task CancelEventReminderAsync(Event _event)
         {
             StdSchedulerFactory factory = new StdSchedulerFactory();
             IScheduler scheduler = await factory.GetScheduler();
