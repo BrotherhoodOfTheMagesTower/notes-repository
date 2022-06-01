@@ -34,6 +34,8 @@ namespace NotesRepository.Services
         {
             if (_event.EndAt < _event.StartAt || _event.StartAt < DateTime.Now)
                 return false;
+            if (_event.ReminderAt is not null && _event.ReminderAt > _event.StartAt)
+                return false;
             if (_event.ReminderAt is not null)
             {
                 if (_event.ReminderAt < DateTime.Now)
@@ -45,32 +47,10 @@ namespace NotesRepository.Services
 
         public async Task<bool> UpdateAsync(Event _event)
         {
-            if (_event.EndAt < _event.StartAt)
+            if (_event.EndAt < _event.StartAt || _event.StartAt < DateTime.Now)
                 return false;
-            var _evFromDb = await _er.GetByIdAsync(_event.EventId);
-            if (_evFromDb is not null)
-            {
-                if (_event.ReminderAt is not null)
-                {
-                    if (_evFromDb.ReminderAt is null) //if there was no reminder previously, but now the user added it
-                    {
-                        if (_event.ReminderAt < DateTime.Now)
-                            return false;
-                        await ScheduleEventReminderAsync(_event);
-                    } 
-                    else
-                    {
-                        if (_event.ReminderAt < DateTime.Now)
-                            return false;
-                        if (_evFromDb.ReminderAt != _event.ReminderAt) //if the user changed the reminder date/time
-                            await EditEventReminderAsync(_event);
-                    }
-                }
-                else
-                    if (_evFromDb.ReminderAt is not null) //if there was a reminder previously, but now the user removed it
-                        await CancelEventReminderAsync(_event);
-            }
-            else return false;
+            if (_event.ReminderAt is not null && _event.ReminderAt > _event.StartAt)
+                return false;
             return await _er.UpdateAsync(_event);
         }
 
@@ -136,19 +116,8 @@ namespace NotesRepository.Services
                 await scheduler.Start();
 
             await scheduler.DeleteJob(new JobKey(_event.EventId.ToString()));
-
-            IJobDetail job = JobBuilder.Create<EditEventReminder>()
-                .WithIdentity(_event.EventId.ToString(), _event.User.Email)
-                .Build();
-
-            var utcReminder = DateTime.SpecifyKind((DateTime)_event.ReminderAt!, DateTimeKind.Utc);
-            ITrigger trigger = TriggerBuilder.Create()
-                .WithIdentity($"{_event.EventId}-trigger", _event.User.Email)
-                .StartAt(utcReminder)
-                .ForJob(job)
-                .Build();
-
-            await scheduler.ScheduleJob(job, trigger);
+            await Task.Delay(3000);
+            await ScheduleEventReminderAsync(_event);
         }
         
         public async Task CancelEventReminderAsync(Event _event)
@@ -161,8 +130,14 @@ namespace NotesRepository.Services
 
             await scheduler.DeleteJob(new JobKey(_event.EventId.ToString()));
 
+            var wasReminderCancelled = await scheduler.CheckExists(new JobKey($"Cancel_{_event.EventId}"));
+            if(wasReminderCancelled)
+                await scheduler.DeleteJob(new JobKey($"Cancel_{_event.EventId}"));
+
+            await Task.Delay(3000);
+
             IJobDetail job = JobBuilder.Create<CancelEventReminder>()
-                .WithIdentity(_event.EventId.ToString(), _event.User.Email)
+                .WithIdentity($"Cancel_{_event.EventId}", _event.User.Email)
                 .Build();
 
             ITrigger trigger = TriggerBuilder.Create()
