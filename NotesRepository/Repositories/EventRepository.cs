@@ -97,6 +97,20 @@ namespace NotesRepository.Repositories
                 .Include(u => u.User)
                 .SingleOrDefaultAsync();
         }
+        
+        /// <summary>
+        /// Gets the event from the database by id
+        /// </summary>
+        /// <param name="eventId">Event id</param>
+        /// <returns>A event if it exists in the database-otherwise null</returns>
+        public Event? GetById(Guid eventId)
+        {
+            return ctx.Events
+                .Where(i => i.EventId == eventId)
+                .Include(n => n.Note)
+                .Include(u => u.User)
+                .SingleOrDefault();
+        }
 
         /// <summary>
         /// Gets the events from the database which has a pattern in their content

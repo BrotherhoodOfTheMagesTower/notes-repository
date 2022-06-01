@@ -204,7 +204,7 @@
             DialogService.Close(model);
             toastService.ShowError("You set reminder before now", "Reminder reset!");
         }
-        else if (model.ReminderAt != null)
+        else if (model.ReminderAt != null && model.ReminderAt < model.StartAt && model.ReminderAt > DateTime.Now)
         {
             await eventService.EditEventReminderAsync(model);
         }
