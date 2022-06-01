@@ -22,7 +22,7 @@
             </div>
             @if (inputFromUser is not null)
             {
-                <row>
+                <row class="px-2">
                     <InputText id="directoryTitle" @bind-Value="@inputFromUser.Title" class="my-input"></InputText>
                     <ValidationMessage For="() => inputFromUser.Title" />
                 </row>

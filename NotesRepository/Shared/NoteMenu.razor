@@ -52,7 +52,7 @@
             {
                 @if (directoriesList is not null && NoteFromDB is not null)
                 {
-                    <row>
+                    <row class="ps-2">
                         <InputSelect id="noteTitle" @bind-Value="@inputFromUser.Directory" class="my-input">
                             <option value="@NoteFromDB.Directory.Name">@NoteFromDB.Directory.Name</option>
                             @foreach (var d in directoriesList)
@@ -75,13 +75,19 @@
             <div>
                 <span class="oi fa-solid fa-face-grin-wide" aria-hidden="true"></span> @localizer["emoji"]
             </div>
-            @if (inputFromUser is not null)
+            @if (inputFromUser is not null && NoteFromDB is not null)
             {
                 <row>
                     <InputSelect id="emoji" @bind-Value="@inputFromUser.Emoji" class="my-input">
+                        <option value="@NoteFromDB.IconName">@NoteFromDB.IconName</option>
+
                         @foreach (var e in Emoji.emoji)
                         {
-                        <option value="@e">@e</option>
+                        @if (e != NoteFromDB.IconName)
+                            {
+                            <option value="@e">@e</option>
+
+                            }
                         }
                 </InputSelect>
             </row>
@@ -115,7 +121,7 @@
             return;
 
         inputFromUser = new NoteValidation(NoteFromDB.Title, NoteFromDB.IconName, NoteFromDB.Directory.Name);
-        var tempDirectories = (await _ds.GetAllDirectoriesForParticularUserAsync(currentUserId));
+        var tempDirectories = (await _ds.GetAllNotDeletedDirectoriesForParticularUserAsync(currentUserId));
 
         if (tempDirectories is null)
             return;
