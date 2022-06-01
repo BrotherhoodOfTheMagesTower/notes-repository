@@ -24,12 +24,17 @@ namespace NotesRepository.Services
         public async Task<ICollection<Event>> GetEventsByStartDateAsync(DateTime date)
             => await _er.GetEventsByStartDateAsync(date);
 
+        public async Task<ICollection<Event>> GetIncomingEventsAsync(int eventCount, string userId)
+            => await _er.GetIncomingEventsAsync(eventCount, userId);
+
         public async Task<Event?> GetByIdAsync(Guid eventId)
             => await _er.GetByIdAsync(eventId);
 
         public async Task<bool> AddAsync(Event _event)
         {
             if (_event.EndAt < _event.StartAt || _event.StartAt < DateTime.Now)
+                return false;
+            if (_event.ReminderAt is not null && _event.ReminderAt > _event.StartAt)
                 return false;
             if (_event.ReminderAt is not null)
             {
@@ -42,32 +47,10 @@ namespace NotesRepository.Services
 
         public async Task<bool> UpdateAsync(Event _event)
         {
-            if (_event.EndAt < _event.StartAt)
+            if (_event.EndAt < _event.StartAt || _event.StartAt < DateTime.Now)
                 return false;
-            var _evFromDb = await _er.GetByIdAsync(_event.EventId);
-            if (_evFromDb is not null)
-            {
-                if (_event.ReminderAt is not null)
-                {
-                    if (_evFromDb.ReminderAt is null) //if there was no reminder previously, but now the user added it
-                    {
-                        if (_event.ReminderAt < DateTime.Now)
-                            return false;
-                        await ScheduleEventReminderAsync(_event);
-                    } 
-                    else
-                    {
-                        if (_event.ReminderAt < DateTime.Now)
-                            return false;
-                        if (_evFromDb.ReminderAt != _event.ReminderAt) //if the user changed the reminder date/time
-                            await EditEventReminderAsync(_event);
-                    }
-                }
-                else
-                    if (_evFromDb.ReminderAt is not null) //if there was a reminder previously, but now the user removed it
-                        await CancelEventReminderAsync(_event);
-            }
-            else return false;
+            if (_event.ReminderAt is not null && _event.ReminderAt > _event.StartAt)
+                return false;
             return await _er.UpdateAsync(_event);
         }
 
@@ -124,7 +107,7 @@ namespace NotesRepository.Services
             await scheduler.ScheduleJob(job, trigger);
         }
 
-        private async Task EditEventReminderAsync(Event _event)
+        public async Task EditEventReminderAsync(Event _event)
         {
             StdSchedulerFactory factory = new StdSchedulerFactory();
             IScheduler scheduler = await factory.GetScheduler();
@@ -132,23 +115,11 @@ namespace NotesRepository.Services
             if (!scheduler.IsStarted)
                 await scheduler.Start();
 
-            await scheduler.DeleteJob(new JobKey(_event.EventId.ToString()));
-
-            IJobDetail job = JobBuilder.Create<EditEventReminder>()
-                .WithIdentity(_event.EventId.ToString(), _event.User.Email)
-                .Build();
-
-            var utcReminder = DateTime.SpecifyKind((DateTime)_event.ReminderAt!, DateTimeKind.Utc);
-            ITrigger trigger = TriggerBuilder.Create()
-                .WithIdentity($"{_event.EventId}-trigger", _event.User.Email)
-                .StartAt(utcReminder)
-                .ForJob(job)
-                .Build();
-
-            await scheduler.ScheduleJob(job, trigger);
+            await scheduler.UnscheduleJob(new TriggerKey($"{_event.EventId}-trigger", _event.User.Email));
+            await ScheduleEventReminderAsync(_event);
         }
         
-        private async Task CancelEventReminderAsync(Event _event)
+        public async Task CancelEventReminderAsync(Event _event)
         {
             StdSchedulerFactory factory = new StdSchedulerFactory();
             IScheduler scheduler = await factory.GetScheduler();
@@ -156,16 +127,18 @@ namespace NotesRepository.Services
             if (!scheduler.IsStarted)
                 await scheduler.Start();
 
-            await scheduler.DeleteJob(new JobKey(_event.EventId.ToString()));
+            var wasReminderCancelled = await scheduler
+                .CheckExists(new TriggerKey($"Cancel_{_event.EventId}-trigger", _event.User.Email));
+            if(wasReminderCancelled)
+                await scheduler.UnscheduleJob(new TriggerKey($"Cancel_{_event.EventId}-trigger", _event.User.Email));
 
             IJobDetail job = JobBuilder.Create<CancelEventReminder>()
-                .WithIdentity(_event.EventId.ToString(), _event.User.Email)
+                .WithIdentity($"Cancel_{_event.EventId}", _event.User.Email)
                 .Build();
 
-            var utcReminder = DateTime.SpecifyKind((DateTime)_event.ReminderAt!, DateTimeKind.Utc);
             ITrigger trigger = TriggerBuilder.Create()
-                .WithIdentity($"{_event.EventId}-trigger", _event.User.Email)
-                .StartAt(utcReminder)
+                .WithIdentity($"Cancel_{_event.EventId}-trigger", _event.User.Email)
+                .StartNow()
                 .ForJob(job)
                 .Build();
 

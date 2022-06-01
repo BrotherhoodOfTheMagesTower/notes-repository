@@ -100,6 +100,23 @@ public async Task<bool> ChangeParentDirectoryForSubDirectory(Guid subDirectoryId
             }
             return false;
         }
+        
+        /// <summary>
+        /// Removes a directory entity from the database by directoryId
+        /// </summary>
+        /// <param name="directoryId">The unique id of a directory</param>
+        /// <returns>true if directory was successfully removed; otherwise false</returns>
+        public bool DeleteById(Guid directoryId)
+        {
+            var directory = ctx.Directories.FirstOrDefault(x => x.DirectoryId == directoryId);
+            if (directory is not null)
+            {
+                ctx.Directories.Remove(directory);
+                var result = ctx.SaveChanges();
+                return result > 0;
+            }
+            return false;
+        }
 
         /// <summary>
         /// Removes all subdirectory entities for particular directory
@@ -163,18 +180,43 @@ public async Task<bool> ChangeParentDirectoryForSubDirectory(Guid subDirectoryId
                 .ToListAsync();
         }
 
+        public async Task<ICollection<Directory>> GetAllNotDeletedDirectoriesForParticularUserAsync(string userId)
+        {
+            return await ctx.Directories
+                .Where(u => u.User.Id == userId)
+                .Where(n => n.Name != "Bin")
+                .Where(i => i.IsMarkedAsDeleted != true)
+                .Include(n => n.Notes)
+                .Include(s => s.SubDirectories)
+                .ToListAsync();
+        }
+
         /// <summary>
         /// Gets all subdirectories for specific directory
         /// </summary>
         /// <param name="directoryId">The unique ID of the directory</param>
         /// <returns>A collection of subdirectories for specific directory</returns>
-        public async Task<ICollection<Directory>?> GetAllSubDirectoriesOfParticularDirectory(Guid directoryId)
+        public async Task<ICollection<Directory>?> GetAllSubDirectoriesOfParticularDirectoryAsync(Guid directoryId)
         {
             return await ctx.Directories
                 .Include(s => s.SubDirectories)
                 .Include(s => s.Notes)
                 .Where(d => d.ParentDir.DirectoryId == directoryId)
                 .ToListAsync();
+        }
+        
+        /// <summary>
+        /// Gets all subdirectories for specific directory
+        /// </summary>
+        /// <param name="directoryId">The unique ID of the directory</param>
+        /// <returns>A collection of subdirectories for specific directory</returns>
+        public ICollection<Directory> GetAllSubDirectoriesOfParticularDirectory(Guid directoryId)
+        {
+            return ctx.Directories
+                .Include(s => s.SubDirectories)
+                .Include(s => s.Notes)
+                .Where(d => d.ParentDir.DirectoryId == directoryId)
+                .ToList();
         }
 
         public ICollection<Directory>? GetAllSubDirectoriesOfParticularDirectorySync(Guid directoryId)
@@ -256,10 +298,10 @@ public async Task<bool> ChangeParentDirectoryForSubDirectory(Guid subDirectoryId
         /// Gets all directroies, which were transferred 'in bulk' to bin at least 30 days ago
         /// </summary>
         /// <returns>An ICollection of Directories entities, which were transferred 'in bulk' to bin at least 30 days ago</returns>
-        public ICollection<Directory> GetMainDirectoriesWhichShouldBeRemovedFromDb()
+        public ICollection<Directory> GetMainDirectoriesWhichShouldBeRemovedFromDb(int daysOld)
             => ctx.Directories
-            .Where(x => x.DeletedAt < DateTime.Now.AddDays(-30)
-                && x.ParentDir.Name == "Bin"
+              .Where(x => x.ParentDir.Name == "Bin"
+                && x.DeletedAt<DateTime.Now.AddDays(-daysOld)
                 && x.IsMarkedAsDeleted == true)
             .ToArray();
     }

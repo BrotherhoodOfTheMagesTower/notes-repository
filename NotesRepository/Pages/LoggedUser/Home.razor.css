@@ -84,9 +84,16 @@
     box-shadow: 5px 5px 5px #009BBF;
 }
 
+div.note h5 {
+    width: 100px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .note {
     height: 140px;
-    width: 100px;
+    width: 105px;
     border: 2px solid #009BBF;
     margin-left: 10px;
     display: flex;
@@ -138,7 +145,7 @@
     box-shadow: 5px 5px 5px #009BBF;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 750px) {
 
     .user-view {
         display: block;
@@ -150,7 +157,7 @@
     }
 
     .notes {
-        max-width: 90vw;
+        max-width: 90%;
     }
 
     .draft {

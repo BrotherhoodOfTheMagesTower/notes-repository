@@ -123,6 +123,12 @@
   <data name="aboutNotesRepositoryDescryption" xml:space="preserve">
     <value>Aplikacja webowa, która umożliwia tworzenie notatek i otwieranie ich na wszystkich rodzajach urządzeń. Celem aplikacji jest zapewnienie użytkownikowi kompleksowego sposobu tworzenia notatek. Notes Repository wykorzystuje moc Markdowna, który pozwala na szybkie i efektywne tworzenie notatek, a także na zagnieżdżanie html.</value>
   </data>
+  <data name="add" xml:space="preserve">
+    <value>Dodaj</value>
+  </data>
+  <data name="addEvent" xml:space="preserve">
+    <value>Dodaj wydarzenie</value>
+  </data>
   <data name="addFolder" xml:space="preserve">
     <value>Dodaj nowy folder</value>
   </data>
@@ -138,6 +144,15 @@
   <data name="clear" xml:space="preserve">
     <value>Wyczyść</value>
   </data>
+  <data name="collabEmail" xml:space="preserve">
+    <value>E-mail współpracownika</value>
+  </data>
+  <data name="collabNameSurname" xml:space="preserve">
+    <value>Imię i nazwisko współpracownika</value>
+  </data>
+  <data name="congrats" xml:space="preserve">
+    <value>Gratulacje!</value>
+  </data>
   <data name="content" xml:space="preserve">
     <value>Treść</value>
   </data>
@@ -147,11 +162,26 @@
   <data name="crossPlatformDescryption" xml:space="preserve">
     <value>Aplikację można wykorzystywać na różnych urządzeniach, od małych telefonów po duże telewizory.</value>
   </data>
+  <data name="Day" xml:space="preserve">
+    <value>Dzień</value>
+  </data>
+  <data name="delete" xml:space="preserve">
+    <value>Usuń</value>
+  </data>
+  <data name="deleteEvent" xml:space="preserve">
+    <value>Usuń</value>
+  </data>
   <data name="deleteFolder" xml:space="preserve">
     <value>Usuń folder</value>
   </data>
+  <data name="deleteFolderPermanently" xml:space="preserve">
+    <value>Usuń folder permanentnie</value>
+  </data>
   <data name="deleteNote" xml:space="preserve">
     <value>Usuń notatkę</value>
+  </data>
+  <data name="deleteNotePermanently" xml:space="preserve">
+    <value>Usuń notatkę permenentnie</value>
   </data>
   <data name="directory" xml:space="preserve">
     <value>Folder</value>
@@ -171,8 +201,38 @@
   <data name="edit" xml:space="preserve">
     <value>Edytuj notatkę</value>
   </data>
+  <data name="editEvent" xml:space="preserve">
+    <value>Edytuj wydarzenie</value>
+  </data>
   <data name="editName" xml:space="preserve">
     <value>Zmień nazwę</value>
+  </data>
+  <data name="EditNoteMessageEmptyNote" xml:space="preserve">
+    <value>Twoja notatka jest pusta!</value>
+  </data>
+  <data name="EditNoteMessageError" xml:space="preserve">
+    <value>Coś poszło nie tak!</value>
+  </data>
+  <data name="EditNoteMessageImageDeleted" xml:space="preserve">
+    <value>Zdjęcie zostało usunięte.</value>
+  </data>
+  <data name="EditNoteMessageTooLargeSize" xml:space="preserve">
+    <value>Zdjęcie jest za duże! Maksymalny rozmiar to 4 MB.</value>
+  </data>
+  <data name="EditNoteMessageTooLongNote" xml:space="preserve">
+    <value>Twoja notatka jest za duża!</value>
+  </data>
+  <data name="EditNoteMessageWhiteChars" xml:space="preserve">
+    <value>Nazwa zdjęcia zawiera białe znaki!</value>
+  </data>
+  <data name="EditNoteMessageWrongFormat" xml:space="preserve">
+    <value>Zły format pliku!</value>
+  </data>
+  <data name="End" xml:space="preserve">
+    <value>Koniec</value>
+  </data>
+  <data name="endIsRequired" xml:space="preserve">
+    <value>Koniec jest wymagany.</value>
   </data>
   <data name="eventPlanning" xml:space="preserve">
     <value>Planowanie wydarzeń</value>
@@ -207,11 +267,17 @@
   <data name="homePage" xml:space="preserve">
     <value>Strona główna</value>
   </data>
+  <data name="image" xml:space="preserve">
+    <value>Zdjęcie</value>
+  </data>
   <data name="logIn" xml:space="preserve">
     <value>Zaloguj się</value>
   </data>
   <data name="markdownDescryption" xml:space="preserve">
     <value>Doświadcz potęgę Markdowna! Pisz notatki szybko i wygodnie.</value>
+  </data>
+  <data name="Month" xml:space="preserve">
+    <value>Miesiąc</value>
   </data>
   <data name="name" xml:space="preserve">
     <value>Nazwa</value>
@@ -221,6 +287,9 @@
   </data>
   <data name="noSharedNotes" xml:space="preserve">
     <value>Brak udostępnionych notatek!</value>
+  </data>
+  <data name="noteTitle" xml:space="preserve">
+    <value>Tytuł notatki</value>
   </data>
   <data name="pinned" xml:space="preserve">
     <value>Przypiete</value>
@@ -237,14 +306,35 @@
   <data name="renameFolder" xml:space="preserve">
     <value>Zmień nazwę</value>
   </data>
+  <data name="restoreFolder" xml:space="preserve">
+    <value>Przywróć folder</value>
+  </data>
+  <data name="restoreNote" xml:space="preserve">
+    <value>Przywróć notatkę</value>
+  </data>
   <data name="save" xml:space="preserve">
+    <value>Zapisz</value>
+  </data>
+  <data name="saveEvent" xml:space="preserve">
     <value>Zapisz</value>
   </data>
   <data name="saveNote" xml:space="preserve">
     <value>Zapisz notatkę</value>
   </data>
+  <data name="SaveNoteMessageNoSuchFolder" xml:space="preserve">
+    <value>Nie ma takiego folderu!</value>
+  </data>
+  <data name="SaveNoteMessageOverwritten" xml:space="preserve">
+    <value>Notatka nadpisana.</value>
+  </data>
+  <data name="SaveNoteMessageSaved" xml:space="preserve">
+    <value>Notatka zapisana.</value>
+  </data>
   <data name="search" xml:space="preserve">
     <value>Szukaj</value>
+  </data>
+  <data name="setReminder" xml:space="preserve">
+    <value>Ustaw przypomnienie</value>
   </data>
   <data name="shared" xml:space="preserve">
     <value>Udostępnione</value>
@@ -252,11 +342,20 @@
   <data name="shareNote" xml:space="preserve">
     <value>Udostępnij notatkę</value>
   </data>
+  <data name="Start" xml:space="preserve">
+    <value>Początek</value>
+  </data>
+  <data name="startIsRequired" xml:space="preserve">
+    <value>Początek jest wymagany.</value>
+  </data>
   <data name="templates" xml:space="preserve">
     <value>Szablony</value>
   </data>
   <data name="templatesDescryption" xml:space="preserve">
     <value>Dla użytkownika dostępnych jest wiele gotowych do użycia szablonów, które skracają czas tworzenia notatki.</value>
+  </data>
+  <data name="Text" xml:space="preserve">
+    <value>Tekst</value>
   </data>
   <data name="theBestItSoftware" xml:space="preserve">
     <value>Najlepszym narzędziu do tworzenia notatek</value>
@@ -266,6 +365,9 @@
   </data>
   <data name="title" xml:space="preserve">
     <value>Tytuł</value>
+  </data>
+  <data name="titleIsRequired" xml:space="preserve">
+    <value>Tytuł jest wymagany.</value>
   </data>
   <data name="toUpload" xml:space="preserve">
     <value>Aby wysłać zdjęcie, musisz najpierw zapisać notatkę.</value>
@@ -287,6 +389,9 @@
   </data>
   <data name="view" xml:space="preserve">
     <value>Widok</value>
+  </data>
+  <data name="Week" xml:space="preserve">
+    <value>Tydzień</value>
   </data>
   <data name="welcomeToNotes" xml:space="preserve">
     <value>Witaj w Notes Repository!</value>

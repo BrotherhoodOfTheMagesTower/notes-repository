@@ -65,7 +65,7 @@ else
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     [Parameter] public string content { get; set; }
     [Parameter] public string Title { get; set; } = "New note";
-    [Parameter] public string IconName { get; set; } = "📜";
+    [Parameter] public string IconName { get; set; } = Emoji.getRandomEmoji();
     [Parameter] public Note? noteFromDb { get; set; } = null;
     private Directory? selectedDirectory;
     private NoteValidation inputFromUser;
@@ -90,7 +90,7 @@ else
     {
         if (content.Length <= 0)
         {
-            toastService.ShowError("Your note is empty.", "OOPS!");
+            toastService.ShowError(localizer["EditNoteMessageEmptyNote"], "OOPS!");
         }
         else
         {
@@ -109,7 +109,7 @@ else
                             var note = new Note(null, inputFromUser.Title, content, inputFromUser.Emoji, usr, selectedDirectory);
                             var result = await _ns.AddNoteAsync(note);
                             if (result)
-                                toastService.ShowSuccess("The note was saved.", "Congrats!");
+                                toastService.ShowSuccess(localizer["SaveNoteMessageSaved"], localizer["congrats"]);
                             submitForm(note);
                         }
                         else
@@ -122,7 +122,7 @@ else
                                 noteFromDb.Content = content;
                                 var result = await _ns.UpdateNoteAsync(noteFromDb);
                                 if (result)
-                                    toastService.ShowSuccess("The note has been overwritten.", "Congrats!");
+                                    toastService.ShowSuccess(localizer["SaveNoteMessageOverwritten"], localizer["congrats"]);
                                 submitForm(noteFromDb);
                             }
                             else // Save existing note in another place (nie wiem czy potrzebne, narazie zostawię)
@@ -130,7 +130,7 @@ else
                                 var note = new Note(null, inputFromUser.Title, content, inputFromUser.Emoji, usr, selectedDirectory);
                                 var result = await _ns.AddNoteAsync(note);
                                 if (result)
-                                    toastService.ShowSuccess("The note was saved.", "Congrats!");
+                                    toastService.ShowSuccess(localizer["SaveNoteMessageSaved"], localizer["congrats"]);
                                 submitForm(note);
                             }
                         }
@@ -157,7 +157,7 @@ else
         {
             selectedDirectory = await _ds.GetDirectoryByNameAsync(name, userId);
             if (selectedDirectory == null)
-                throw new Exception("There is no such folder!");
+                throw new Exception(localizer["SaveNoteMessageNoSuchFolder"]);
         }
     }
 }

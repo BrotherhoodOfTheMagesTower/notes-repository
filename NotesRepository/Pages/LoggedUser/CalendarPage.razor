@@ -70,7 +70,7 @@
         }
         else
         {
-            Event datas = await DialogService.OpenAsync<AddEventPage>(@localizer["Add Event"],
+            Event datas = await DialogService.OpenAsync<AddEventPage>(@localizer["addEvent"],
                 new Dictionary<string, object> { { "StartAt", args.Start }, { "EndAt", args.End } });
           
             if (datas != null)
@@ -85,7 +85,7 @@
     {
 
 
-        await DialogService.OpenAsync<EditEventPage>(@localizer["Edit Event"], new Dictionary<string, object> { { "Event", args.Data } });
+        await DialogService.OpenAsync<EditEventPage>(@localizer["editEvent"], new Dictionary<string, object> { { "Event", args.Data } });
         await scheduler.Reload();
         
     }

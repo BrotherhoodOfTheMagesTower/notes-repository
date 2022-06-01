@@ -125,6 +125,9 @@
         The purpose of this application is to provide the user with a complex solution to take notes.
         App makes use of Markdown language which allows quick and effective text formatting as well as nesting html code inside of the note.</value>
   </data>
+  <data name="add" xml:space="preserve">
+    <value>Add</value>
+  </data>
   <data name="addFolder" xml:space="preserve">
     <value>Add new folder</value>
   </data>
@@ -140,6 +143,15 @@
   <data name="clear" xml:space="preserve">
     <value>Clear</value>
   </data>
+  <data name="collabEmail" xml:space="preserve">
+    <value>Collaborator's e-mail</value>
+  </data>
+  <data name="collabNameSurname" xml:space="preserve">
+    <value>Collaborator's name and surname</value>
+  </data>
+  <data name="congrats" xml:space="preserve">
+    <value>Congrats!</value>
+  </data>
   <data name="content" xml:space="preserve">
     <value>Content</value>
   </data>
@@ -150,11 +162,20 @@
     <value>Application can be used on variety of devices ranging from
                 small mobile phones to big TV screens.</value>
   </data>
+  <data name="delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
   <data name="deleteFolder" xml:space="preserve">
     <value>Delete this folser</value>
   </data>
+  <data name="deleteFolderPermanently" xml:space="preserve">
+    <value>Delete Folder Permanently</value>
+  </data>
   <data name="deleteNote" xml:space="preserve">
     <value>Delete note</value>
+  </data>
+  <data name="deleteNotePermanently" xml:space="preserve">
+    <value>Delete Note Permanently</value>
   </data>
   <data name="directory" xml:space="preserve">
     <value>Directory</value>
@@ -176,6 +197,27 @@
   </data>
   <data name="editName" xml:space="preserve">
     <value>Edit name</value>
+  </data>
+  <data name="EditNoteMessageEmptyNote" xml:space="preserve">
+    <value>Your note is empty.</value>
+  </data>
+  <data name="EditNoteMessageError" xml:space="preserve">
+    <value>Something went wrong!</value>
+  </data>
+  <data name="EditNoteMessageImageDeleted" xml:space="preserve">
+    <value>Image has been deleted.</value>
+  </data>
+  <data name="EditNoteMessageTooLargeSize" xml:space="preserve">
+    <value>Image Size is to large! Max size is 4 MB.</value>
+  </data>
+  <data name="EditNoteMessageTooLongNote" xml:space="preserve">
+    <value>Your note is too long.</value>
+  </data>
+  <data name="EditNoteMessageWhiteChars" xml:space="preserve">
+    <value>Image name contains white characters!</value>
+  </data>
+  <data name="EditNoteMessageWrongFormat" xml:space="preserve">
+    <value>A wrong file has been entered!</value>
   </data>
   <data name="eventPlanning" xml:space="preserve">
     <value>Event Planning</value>
@@ -208,6 +250,9 @@
   <data name="homePage" xml:space="preserve">
     <value>Home</value>
   </data>
+  <data name="image" xml:space="preserve">
+    <value>Image</value>
+  </data>
   <data name="logIn" xml:space="preserve">
     <value>Log in</value>
   </data>
@@ -235,11 +280,26 @@
   <data name="renameFolder" xml:space="preserve">
     <value>Rename this folder</value>
   </data>
+  <data name="restoreFolder" xml:space="preserve">
+    <value>Restore folder</value>
+  </data>
+  <data name="restoreNote" xml:space="preserve">
+    <value>Restore note</value>
+  </data>
   <data name="save" xml:space="preserve">
     <value>Save</value>
   </data>
   <data name="saveNote" xml:space="preserve">
     <value>Save note</value>
+  </data>
+  <data name="SaveNoteMessageNoSuchFolder" xml:space="preserve">
+    <value>There is no such folder!</value>
+  </data>
+  <data name="SaveNoteMessageOverwritten" xml:space="preserve">
+    <value>The note has been overwritten.</value>
+  </data>
+  <data name="SaveNoteMessageSaved" xml:space="preserve">
+    <value>The note was saved.</value>
   </data>
   <data name="search" xml:space="preserve">
     <value>Search</value>

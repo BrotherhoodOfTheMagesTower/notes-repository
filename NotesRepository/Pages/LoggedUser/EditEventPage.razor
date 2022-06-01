@@ -17,7 +17,7 @@
     </div>
     <div class="col">
         <RadzenTextBox @bind-Value="@model.Content" Name="Content" />
-        <RadzenRequiredValidator Text=@localizer["Title is required"] Component="Content" />
+        <RadzenRequiredValidator Text=@localizer["titleIsRequired"] Component="Content" />
     </div>
 </div>
 <div class="row" style="margin-bottom: 16px">
@@ -26,7 +26,7 @@
     </div>
     <div class="col">
         <RadzenDatePicker @bind-Value="@model.StartAt" Name="StartAt" ShowTime="true" />
-        <RadzenRequiredValidator Text=@localizer["Start is required"] Component="StartAt" />
+        <RadzenRequiredValidator Text=@localizer["startIsRequired"] Component="StartAt" />
     </div>
 </div>
 <div class="row" style="margin-bottom: 16px">
@@ -35,21 +35,55 @@
     </div>
     <div class="col">
         <RadzenDatePicker Name="EndAt" @bind-Value="@model.EndAt" ShowTime="true" />
-        <RadzenRequiredValidator Component="EndAt" Text=@localizer["End is required"] />
+        <RadzenRequiredValidator Component="EndAt" Text=@localizer["endIsRequired"] />
     </div>
 </div>
 <div class="row">
     <div class="col-md-3"></div>
     <div class="col">
       <div class="form-check my-2">
-  <input class="form-check-input" type="checkbox" value="" id="checkingReminder"> @*TO DO  sprawdzenie eventu i podpinanie remindera*@
-  <label class="form-check-label" for="flexCheckDefault">
-    @localizer["Set reminder"]
-  </label>
+     @if (model.ReminderAt!=null)
+                {
+                    
+                    <input class="form-check-input" type="checkbox" @bind-value="IsAgreeToGetReminder"  id="checkingReminder" checked disabled> 
+                     <label class="form-check-label" for="flexCheckDefault">
+                     @localizer["setReminder"]
+                     </label>
+                     
+                    <div class="col">
+                        <RadzenDatePicker @bind-Value="@model.ReminderAt" Name="ReminderAt" ShowTime="true" DateFormat="dd/MM/yyyy HH:mm" HourFormat="24" />
+                        <RadzenButton Click=@(args => OnClickDeleteReminder(model)) RadzenIcon Icon="delete" style="margin-top:2px; margin-left:25%;" ButtonStyle="ButtonStyle.Danger" />
+                            <RadzenButton Click=@(args => OnClickEditReminder(model)) RadzenIcon Icon="open_in_browser" style="margin-top:2px;" ButtonStyle="ButtonStyle.Warning" />
+                        
+                        
+                    </div>
+                }
+                else if(IsAgreeToGetReminder)
+                {
+                    <input class="form-check-input" type="checkbox" @bind-value="IsAgreeToGetReminder"  id="checkingReminder" checked> 
+                     <label class="form-check-label" for="flexCheckDefault">
+                     @localizer["setReminder"]
+                     </label>
+                     
+                    <div class="col">
+                    
+                        <RadzenDatePicker @bind-Value="@model.ReminderAt" Name="ReminderAt" ShowTime="true" DateFormat="dd/MM/yyyy HH:mm" HourFormat="24" />
+                        <RadzenButton Click=@(args => OnClickDeleteReminder(model)) RadzenIcon Icon="delete" style="margin-top:2px; margin-left:25%;" ButtonStyle="ButtonStyle.Danger" />
+                        <RadzenButton Click=@(args => OnClickEditReminder(model)) RadzenIcon Icon="open_in_browser" style="margin-top:2px;" ButtonStyle="ButtonStyle.Warning" />
+                        
+                     </div>
+                }
+                
+                else{
+                <input class="form-check-input" type="checkbox" @bind-value="IsAgreeToGetReminder"  id="checkingReminder" > 
+                     <label class="form-check-label" for="flexCheckDefault">
+                     @localizer["setReminder"]
+                     </label>
+                }
 </div>
     </div>
       <div class="col">
-        <RadzenLabel Text=@localizer["Note Title"] />
+        <RadzenLabel Text=@localizer["noteTitle"] />
           <InputSelect @bind-Value="@noteId">
                 @if (noteId==null)
                     {
@@ -72,16 +106,20 @@
 <div class="row">
     <div class="col-md-3"></div>
     <div class="col">
-        <RadzenButton ButtonType="ButtonType.Submit" Text=@localizer["Save Event"] />
+        <RadzenButton ButtonType="ButtonType.Submit" Text=@localizer["saveEvent"] />
     </div>
     <div class="col">
-         <RadzenButton Click=@(args => OnClickDelete(model)) Text=@localizer["Delete Event"] ButtonStyle="ButtonStyle.Danger" />
+         <RadzenButton Click=@(args => OnClickDelete(model)) Text=@localizer["deleteEvent"] ButtonStyle="ButtonStyle.Danger" />
     </div>
 </div>
 </RadzenTemplateForm>
 @code {
     [Parameter]
     public Event Event { get; set; }
+    [Parameter]
+    public bool IsAgreeToGetReminder { get; set; }
+    [Parameter]
+    public DateTime ReminderAt { get; set; }
 
     Event model = new Event();
     private List<Note>? allNotes = new();
@@ -107,24 +145,33 @@
 
     async Task OnSubmit(Event model)
     {
-
-        var attached = true;
-
-        if(noteId != null && noteId!="")
-            attached = await eventService.AttachNoteToEventAsync(model.EventId, Guid.Parse(noteId));
-        else 
+        if (model.ReminderAt < DateTime.Now)
         {
-            //toastService.ShowError("it is not possible to detach the note from the event yet");
-            attached = await eventService.DeleteNoteFromEventAsync(model.EventId);
-
+            model.ReminderAt = null;
+            DialogService.Close(model);
+            toastService.ShowError("You set reminder before now", "Reminder reset!");
         }
-        var update = await eventService.UpdateAsync(model);
-
-        DialogService.Close(model);
-        if (update && attached)
-            toastService.ShowSuccess("You have successfully edited an event");
         else
-            toastService.ShowError("Something went wrong","OOPS!");
+        {
+            var attached = true;
+
+            if (noteId != null && noteId != "")
+                attached = await eventService.AttachNoteToEventAsync(model.EventId, Guid.Parse(noteId));
+            else
+            {
+                //toastService.ShowError("it is not possible to detach the note from the event yet");
+                attached = await eventService.DeleteNoteFromEventAsync(model.EventId);
+
+            }
+            var update = await eventService.UpdateAsync(model);
+
+            DialogService.Close(model);
+            if (update && attached)
+                toastService.ShowSuccess("You have successfully edited an event");
+            else
+                toastService.ShowError("Something went wrong", "OOPS!");
+        }
+
     }
     async Task OnClickDelete(Event model)
     {
@@ -141,5 +188,33 @@
             toastService.ShowSuccess("You have successfully deleted an event");
         else
             toastService.ShowError("Something went wrong","OOPS!");
+
+    }
+    async Task OnClickDeleteReminder(Event model)
+    {
+
+        await eventService.CancelEventReminderAsync(model);
+
+    }
+    async Task OnClickEditReminder(Event model)
+    {
+        if(model.ReminderAt<DateTime.Now)
+        {
+            model.ReminderAt = null;
+            DialogService.Close(model);
+            toastService.ShowError("You set reminder before now", "Reminder reset!");
+        }
+        else if (model.ReminderAt != null && model.ReminderAt < model.StartAt && model.ReminderAt > DateTime.Now)
+        {
+            await eventService.EditEventReminderAsync(model);
+        }
+        else
+        {
+            model.ReminderAt = null;
+            DialogService.Close(model);
+            toastService.ShowError("Something went wrong","OOPS!");
+        }
+
+
     }
 } 

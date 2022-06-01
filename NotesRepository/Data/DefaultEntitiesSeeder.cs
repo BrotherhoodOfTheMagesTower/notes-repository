@@ -3,6 +3,7 @@ using NotesRepository.Areas.Identity.Data;
 using NotesRepository.Data.Models;
 using NotesRepository.Repositories;
 using NotesRepository.Services;
+using NotesRepository.Services.Azure;
 using Directory = NotesRepository.Data.Models.Directory;
 
 namespace NotesRepository.Data
@@ -117,7 +118,6 @@ namespace NotesRepository.Data
                     NoteId = Guid.Parse("9c755080-ba6b-48f1-854d-1816ad5fa74a"),
                     Title = "Password list",
                     Content = "Note under default directory",
-                    IconName = "",
                     CreatedAt = new DateTime(2019, 12, 24, 4, 20, 0),
                     Owner = user,
                     Directory = defDir
@@ -133,7 +133,6 @@ namespace NotesRepository.Data
                     NoteId = Guid.Parse("0b2f78d3-d292-462e-a889-dd5c541f131b"),
                     Title = "Trips I want to take",
                     Content = "Note under custom directory",
-                    IconName = "",
                     CreatedAt = new DateTime(2021, 4, 12, 5, 12, 0),
                     Owner = user,
                     Directory = customDirWithSubDirs
@@ -149,7 +148,6 @@ namespace NotesRepository.Data
                     NoteId = Guid.Parse("9bb2e297-6a70-4517-82b5-7fca43550c3e"),
                     Title = "Sicilia monuments",
                     Content = "Note under subdirectory_1 of custom dir",
-                    IconName = "",
                     CreatedAt = new DateTime(2018, 6, 1, 2, 2, 0),
                     Owner = user,
                     Directory = customDirWithSubDirs.SubDirectories.ElementAt(0)
@@ -165,7 +163,6 @@ namespace NotesRepository.Data
                     NoteId = Guid.Parse("8e37c761-b4af-40bd-b2aa-f260a9b5d5b7"),
                     Title = "Madeira monuments",
                     Content = "Note under subdirectory_2 of custom dir",
-                    IconName = "",
                     CreatedAt = new DateTime(2019, 9, 5, 12, 44, 0),
                     Owner = user,
                     Directory = customDirWithSubDirs.SubDirectories.ElementAt(1)
@@ -181,7 +178,6 @@ namespace NotesRepository.Data
                     NoteId = Guid.Parse("8d44780e-592d-4003-a271-69c186653dda"),
                     Title = "Fast cars",
                     Content = "Note under subdirectory_2 of default dir",
-                    IconName = "",
                     CreatedAt = new DateTime(2019, 9, 5, 12, 44, 0),
                     Owner = user,
                     Directory = subDirsOfDefault.ElementAt(1)
@@ -197,7 +193,6 @@ namespace NotesRepository.Data
                     NoteId = Guid.Parse("1e3a6c05-18d5-4b16-a546-b28f243e0f72"),
                     Title = "BMW M4",
                     Content = "Note under subsubdirectory_1 of default dir",
-                    IconName = "",
                     CreatedAt = new DateTime(2022, 2, 1, 5, 23, 0),
                     Owner = user,
                     Directory = subDirsOfDefault.ElementAt(1).SubDirectories.ElementAt(0)
@@ -213,7 +208,6 @@ namespace NotesRepository.Data
                     NoteId = Guid.Parse("a6fd2e45-df97-4de1-8119-76a6191fb690"),
                     Title = "Audi RS6",
                     Content = "Note under subsubdirectory_2 of default dir",
-                    IconName = "",
                     CreatedAt = new DateTime(2017, 11, 12, 2, 11, 0),
                     Owner = user,
                     Directory = subDirsOfDefault.ElementAt(1).SubDirectories.ElementAt(1)
@@ -229,7 +223,6 @@ namespace NotesRepository.Data
                     NoteId = Guid.Parse("c32c63ec-308c-4051-82fb-1a62548b333a"),
                     Title = "Audi SQ7",
                     Content = "Note under subsubdirectory_2 of default dir",
-                    IconName = "",
                     CreatedAt = new DateTime(2019, 2, 12, 9, 43, 0),
                     Owner = user,
                     Directory = subDirsOfDefault.ElementAt(1).SubDirectories.ElementAt(1)
@@ -245,7 +238,6 @@ namespace NotesRepository.Data
                     NoteId = Guid.Parse("426c6d6c-8c0a-4b34-933c-7df94a205127"),
                     Title = "Gift ideas for aunt's birthday",
                     Content = "Samsung Galaxy S20 // Oppo Reno 5",
-                    IconName = "",
                     CreatedAt = new DateTime(2022, 2, 14, 9, 43, 0),
                     Owner = user,
                     Directory = defDir
@@ -260,7 +252,6 @@ namespace NotesRepository.Data
                     NoteId = Guid.Parse("c258aff3-5e0a-4a9f-8bba-15dce9b27a0a"),
                     Title = "From start in the bin.",
                     Content = "This note was seeded, being already in recycle bin.",
-                    IconName = "",
                     CreatedAt = new DateTime(2018, 2, 14, 9, 43, 0),
                     DeletedAt = DateTime.Now,
                     IsMarkedAsDeleted = true,

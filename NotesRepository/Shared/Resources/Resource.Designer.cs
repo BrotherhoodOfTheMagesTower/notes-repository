@@ -81,6 +81,15 @@ namespace NotesRepository.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add.
+        /// </summary>
+        public static string add {
+            get {
+                return ResourceManager.GetString("add", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add new folder.
         /// </summary>
         public static string addFolder {
@@ -126,6 +135,33 @@ namespace NotesRepository.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Collaborator&apos;s e-mail.
+        /// </summary>
+        public static string collabEmail {
+            get {
+                return ResourceManager.GetString("collabEmail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Collaborator&apos;s name and surname.
+        /// </summary>
+        public static string collabNameSurname {
+            get {
+                return ResourceManager.GetString("collabNameSurname", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Congrats!.
+        /// </summary>
+        public static string congrats {
+            get {
+                return ResourceManager.GetString("congrats", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Content.
         /// </summary>
         public static string content {
@@ -154,6 +190,15 @@ namespace NotesRepository.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete.
+        /// </summary>
+        public static string delete {
+            get {
+                return ResourceManager.GetString("delete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete this folser.
         /// </summary>
         public static string deleteFolder {
@@ -163,11 +208,29 @@ namespace NotesRepository.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete Folder Permanently.
+        /// </summary>
+        public static string deleteFolderPermanently {
+            get {
+                return ResourceManager.GetString("deleteFolderPermanently", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete note.
         /// </summary>
         public static string deleteNote {
             get {
                 return ResourceManager.GetString("deleteNote", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete Note Permanently.
+        /// </summary>
+        public static string deleteNotePermanently {
+            get {
+                return ResourceManager.GetString("deleteNotePermanently", resourceCulture);
             }
         }
         
@@ -231,6 +294,69 @@ namespace NotesRepository.Shared.Resources {
         public static string editName {
             get {
                 return ResourceManager.GetString("editName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your note is empty..
+        /// </summary>
+        public static string EditNoteMessageEmptyNote {
+            get {
+                return ResourceManager.GetString("EditNoteMessageEmptyNote", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Something went wrong!.
+        /// </summary>
+        public static string EditNoteMessageError {
+            get {
+                return ResourceManager.GetString("EditNoteMessageError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Image has been deleted..
+        /// </summary>
+        public static string EditNoteMessageImageDeleted {
+            get {
+                return ResourceManager.GetString("EditNoteMessageImageDeleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Image Size is to large! Max size is 4 MB..
+        /// </summary>
+        public static string EditNoteMessageTooLargeSize {
+            get {
+                return ResourceManager.GetString("EditNoteMessageTooLargeSize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your note is too long..
+        /// </summary>
+        public static string EditNoteMessageTooLongNote {
+            get {
+                return ResourceManager.GetString("EditNoteMessageTooLongNote", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Image name contains white characters!.
+        /// </summary>
+        public static string EditNoteMessageWhiteChars {
+            get {
+                return ResourceManager.GetString("EditNoteMessageWhiteChars", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A wrong file has been entered!.
+        /// </summary>
+        public static string EditNoteMessageWrongFormat {
+            get {
+                return ResourceManager.GetString("EditNoteMessageWrongFormat", resourceCulture);
             }
         }
         
@@ -326,6 +452,15 @@ namespace NotesRepository.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Image.
+        /// </summary>
+        public static string image {
+            get {
+                return ResourceManager.GetString("image", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Log in.
         /// </summary>
         public static string logIn {
@@ -407,6 +542,24 @@ namespace NotesRepository.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Restore folder.
+        /// </summary>
+        public static string restoreFolder {
+            get {
+                return ResourceManager.GetString("restoreFolder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restore note.
+        /// </summary>
+        public static string restoreNote {
+            get {
+                return ResourceManager.GetString("restoreNote", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Save.
         /// </summary>
         public static string save {
@@ -421,6 +574,33 @@ namespace NotesRepository.Shared.Resources {
         public static string saveNote {
             get {
                 return ResourceManager.GetString("saveNote", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There is no such folder!.
+        /// </summary>
+        public static string SaveNoteMessageNoSuchFolder {
+            get {
+                return ResourceManager.GetString("SaveNoteMessageNoSuchFolder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The note has been overwritten..
+        /// </summary>
+        public static string SaveNoteMessageOverwritten {
+            get {
+                return ResourceManager.GetString("SaveNoteMessageOverwritten", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The note was saved..
+        /// </summary>
+        public static string SaveNoteMessageSaved {
+            get {
+                return ResourceManager.GetString("SaveNoteMessageSaved", resourceCulture);
             }
         }
         

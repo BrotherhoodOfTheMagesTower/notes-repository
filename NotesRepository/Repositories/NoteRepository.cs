@@ -46,6 +46,8 @@ namespace NotesRepository.Repositories
         /// <returns>true if note was successfully removed; otherwise false</returns>
         public async Task<bool> DeleteAsync(Note note)
         {
+            if (note.Event is not null)
+                note.Event = null;
             ctx.Notes.Remove(note);
             var result = await ctx.SaveChangesAsync();
             return result > 0;
@@ -58,6 +60,9 @@ namespace NotesRepository.Repositories
         /// <returns>true if notes were successfully removed; otherwise false</returns>
         public async Task<bool> DeleteManyAsync(ICollection<Note> notes)
         {
+            foreach (var note in notes)
+                if (note.Event is not null) note.Event = null;
+
             ctx.Notes.RemoveRange(notes);
             var result = await ctx.SaveChangesAsync();
             return result > 0;
@@ -70,6 +75,9 @@ namespace NotesRepository.Repositories
         /// <returns>true if notes were successfully removed; otherwise false</returns>
         public bool DeleteMany(ICollection<Note> notes)
         {
+            foreach (var note in notes)
+                if (note.Event is not null) note.Event = null;
+
             ctx.Notes.RemoveRange(notes);
             var result = ctx.SaveChanges();
             return result > 0;
@@ -85,6 +93,8 @@ namespace NotesRepository.Repositories
             var note = await ctx.Notes.FirstOrDefaultAsync(x => x.NoteId == noteId);
             if (note is not null)
             {
+                if (note.Event is not null)
+                    note.Event = null;
                 ctx.Notes.Remove(note);
                 var result = await ctx.SaveChangesAsync();
                 return result > 0;
@@ -131,6 +141,7 @@ namespace NotesRepository.Repositories
         {
             return await ctx.Notes
                 .Where(n => n.Owner.Id == userId)
+                .Where(i => i.IsMarkedAsDeleted != true)
                 .Where(e => e.Event == null)
                 .Include(d => d.Directory)
                 .Include(o => o.Owner)
@@ -302,6 +313,7 @@ namespace NotesRepository.Repositories
             {
                 note.DeletedAt = DateTime.Now;
                 note.IsMarkedAsDeleted = true;
+                note.Event = null;
                 return await UpdateAsync(note);
             }
             return false;
@@ -339,9 +351,9 @@ namespace NotesRepository.Repositories
         /// Gets all notes, which were transferred 'in bulk' to bin at least 30 days ago
         /// </summary>
         /// <returns>An ICollection of Note entities, which were transferred 'in bulk' to bin at least 30 days ago</returns>
-        public ICollection<Note> GetAllSingleNotesWhichShouldBeRemovedFromDb()
+        public ICollection<Note> GetAllSingleNotesWhichShouldBeRemovedFromDb(int daysOld = 30)
             => ctx.Notes
-            .Where(x => x.DeletedAt < DateTime.Now.AddDays(-30) 
+            .Where(x => x.DeletedAt < DateTime.Now.AddDays(-daysOld) 
                 && x.Directory.Name == "Bin" 
                 && x.IsMarkedAsDeleted == true)
             .ToArray();

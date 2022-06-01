@@ -97,6 +97,20 @@ namespace NotesRepository.Repositories
                 .Include(u => u.User)
                 .SingleOrDefaultAsync();
         }
+        
+        /// <summary>
+        /// Gets the event from the database by id
+        /// </summary>
+        /// <param name="eventId">Event id</param>
+        /// <returns>A event if it exists in the database-otherwise null</returns>
+        public Event? GetById(Guid eventId)
+        {
+            return ctx.Events
+                .Where(i => i.EventId == eventId)
+                .Include(n => n.Note)
+                .Include(u => u.User)
+                .SingleOrDefault();
+        }
 
         /// <summary>
         /// Gets the events from the database which has a pattern in their content
@@ -121,6 +135,23 @@ namespace NotesRepository.Repositories
         {
             return await ctx.Events
                 .Where(e => e.StartAt == date)
+                .Include(n => n.Note)
+                .Include(u => u.User)
+                .ToListAsync();
+        }
+
+        /// <summary>
+        /// Gets the events from the database by date
+        /// </summary>
+        /// <param name="date">Date</param>
+        /// <returns>A collection of events which start at given day stored in the database</returns>
+        public async Task<ICollection<Event>> GetIncomingEventsAsync(int eventCount, string userId)
+        {
+            return await ctx.Events
+                .Where(u => u.User.Id == userId)
+                .Where(d => d.StartAt > DateTime.Now)
+                .OrderByDescending(d => d.StartAt)
+                .Take(eventCount)
                 .Include(n => n.Note)
                 .Include(u => u.User)
                 .ToListAsync();

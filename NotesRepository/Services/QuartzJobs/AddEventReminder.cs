@@ -13,10 +13,6 @@ public class AddEventReminder : IJob
         _container = container;
     }
 
-    public AddEventReminder()
-    {
-    }
-
     public Task Execute(IJobExecutionContext context)
     {
         using (var ctx = _container.GetService<ApplicationDbContext>())
@@ -24,10 +20,10 @@ public class AddEventReminder : IJob
             if (ctx is not null)
             {
                 var eventRepo = new EventRepository(ctx);
-                var _event = eventRepo.GetByIdAsync(Guid.Parse(context.JobDetail.Key.Name));
+                var _event = eventRepo.GetById(Guid.Parse(context.JobDetail.Key.Name));
                 if (_event is not null)
                 {
-                    Console.WriteLine($"Attempting to send e-mail for EventId: {Guid.Parse(context.JobDetail.Key.Name)}.");
+                    Console.WriteLine($"Attempting to send e-mail for EventId: {_event.NoteId} for time: {_event.ReminderAt}");
                     //TODO: Implement SendGrid
                 }
                 Console.WriteLine($"Couldn't get the event (ID: {Guid.Parse(context.JobDetail.Key.Name)} from the database.");
