@@ -3,6 +3,7 @@ using NotesRepository.Areas.Identity.Data;
 using NotesRepository.Data.Models;
 using NotesRepository.Repositories;
 using NotesRepository.Services;
+using NotesRepository.Services.Azure;
 using Directory = NotesRepository.Data.Models.Directory;
 
 namespace NotesRepository.Data

@@ -58,6 +58,7 @@ namespace NotesRepository.Services.Azure
                     }
                 };
 
+                destFileName = destFileName.Replace(' ', '_');
                 BlobClient blob = container.GetBlobClient(destFileName);
 
                 if (overWrite == true)

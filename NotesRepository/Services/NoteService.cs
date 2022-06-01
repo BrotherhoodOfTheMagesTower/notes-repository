@@ -1,5 +1,6 @@
 ﻿using NotesRepository.Data.Models;
 using NotesRepository.Repositories;
+using NotesRepository.Services.Azure;
 
 namespace NotesRepository.Services
 {
@@ -10,6 +11,8 @@ namespace NotesRepository.Services
         private readonly EventRepository _er;
         private readonly DirectoryRepository _dr;
         private readonly ImageRepository _ir;
+        private readonly string containerName = "imagecontainer";
+        private AzureStorageHelper _azureHelper;
 
         public NoteService(NoteRepository noteRepository)
         {
@@ -23,6 +26,16 @@ namespace NotesRepository.Services
             _er = eventRepository;
             _dr = directoryRepository;
             _ir = imageRepository;
+        }
+
+        public NoteService(NoteRepository noteRepository, UserRepository userRepository, EventRepository eventRepository, DirectoryRepository directoryRepository, ImageRepository imageRepository, AzureStorageHelper azureStorageHelper)
+        {
+            _nr = noteRepository;
+            _ur = userRepository;
+            _er = eventRepository;
+            _dr = directoryRepository;
+            _ir = imageRepository;
+            _azureHelper = azureStorageHelper;
         }
 
         public async Task<Note?> GetNoteByIdAsync(Guid noteId)
@@ -44,7 +57,7 @@ namespace NotesRepository.Services
         /// <returns>A collection of notes assigned to particular directory, that are currently stored in the database</returns>
         public async Task<ICollection<Note>> GetAllNotesForParticularDirectoryAsync(Guid directoryId)
             => await _nr.GetAllNotesForParticularDirectoryAsync(directoryId);
-        
+
         /// <summary>
         /// Gets all notes from the database, that are assigned to specific directory 
         /// </summary>
@@ -77,7 +90,7 @@ namespace NotesRepository.Services
 
         public async Task<bool> AddNoteAsync(Note note)
             => await _nr.AddAsync(note);
-        
+
         public async Task<bool> AddNotesAsync(ICollection<Note> notes)
             => await _nr.AddManyAsync(notes);
 
@@ -85,10 +98,32 @@ namespace NotesRepository.Services
             => await _nr.UpdateAsync(note);
 
         public async Task<bool> DeleteNoteAsync(Note note)
-            => await _nr.DeleteAsync(note);
+        {
+            var imagesAttachedToNote = await _ir.GetAllNoteImagesAsync(note.NoteId);    // podpięte zdjęcia pod daną notatkę
+            if (imagesAttachedToNote != null) // Jeżeli jakieś są to usuwamy
+            {
+                foreach (var image in imagesAttachedToNote)
+                {
+                    await _azureHelper.DeleteImageFromAzure(image.Name, containerName); // usuwamy z Azure
+                    await _ir.DeleteAsync(image);   // Usuwamy z naszej bazy
+                }
+            }
+            return await _nr.DeleteAsync(note); // Jeżeli nie to usuwamy odrazu notatkę
+        }
 
         public async Task<bool> DeleteNoteByIdAsync(Guid noteId)
-            => await _nr.DeleteByIdAsync(noteId);
+        {
+            var imagesAttachedToNote = await _ir.GetAllNoteImagesAsync(noteId);
+            if (imagesAttachedToNote != null)
+            {
+                foreach (var image in imagesAttachedToNote)
+                {
+                    await _azureHelper.DeleteImageFromAzure(image.Name, containerName);
+                    await _ir.DeleteAsync(image);
+                }
+            }
+            return await _nr.DeleteByIdAsync(noteId);
+        }
 
         public async Task<bool> DeleteNotesAsync(ICollection<Note> notes)
             => await _nr.DeleteManyAsync(notes);

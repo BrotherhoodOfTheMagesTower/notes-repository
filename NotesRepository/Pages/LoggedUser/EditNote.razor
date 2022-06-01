@@ -31,106 +31,107 @@
 else
 {
 	<div class="my-container">
-		<div class="my-sub-container p-2 ">
-			<center>
-				@if (@validId && @noteFromDb is not null)
-				{
-					<h3>@noteFromDb.Title @noteFromDb.IconName</h3>
-				}
-				else
-				{
-					<h3>@localizer["content"]</h3>
-				}
-			</center>
-			<textarea class="my-text-area" @bind-value="content" @bind-value:event="oninput"></textarea>
-		</div>
+		@if (!@noteIsInBin)
+		{
+			<div class="my-sub-container p-2 ">
+				<center>
+					@if (@validId && @noteFromDb is not null)
+					{
+						<h3>@noteFromDb.Title @noteFromDb.IconName</h3>
+					}
+					else
+					{
+						<h3>@localizer["content"]</h3>
+					}
+				</center>
+				<textarea class="my-text-area" @bind-value="content" @bind-value:event="oninput"></textarea>
+			</div>
+		}
 		<div class="my-sub-container p-2">
 			<center><h3>@localizer["preview"]</h3></center>
 			<div class="my-preview">
 				@((MarkupString)Markdown.ToHtml(content, pipeline))
 			</div>
-
 		</div>
-		<div class="my-input-container">
-			<div class="my-sub-input-container">
-			@if (@validId && @noteFromDb is not null)
-			{
 
-				<InputFile OnChange="@LoadFile" accept=".jpg, .png" />
+		@if(!@noteIsInBin)
+		{
+			<div class="my-input-container">
+				<div class="my-sub-input-container">
+					@if (@validId && @noteFromDb is not null)
+					{
 
-			}
-			else
-			{
-				<h4>@localizer["toUpload"]</h4>
-			}
+						<InputFile OnChange="@LoadFile" accept=".jpg, .png" />
 
-			<button type="button" class="btn btn-primary" @onclick="saveNote">@localizer["save"]</button>
+					}
+					else
+					{
+						<h4>@localizer["toUpload"]</h4>
+					}
+					<button type="button" class="btn btn-primary" @onclick="saveNote">@localizer["save"]</button>
+				</div>
+				<div class="my-sub-input-container">
+					@if (@validId && @noteFromDb is not null)
+					{
+						<input class="d-block mb-1 ml-1 input-margin" @bind-value="collaboratorEmail"></input>
+						<button type="button" class="btn btn-primary" @onclick="() => addCollaboratorToNote()">@localizer["add"]</button>
+					}
+				</div>
 			</div>
-			<div class="my-sub-input-container">
-			@if (@validId && @noteFromDb is not null)
-			{
-
-				<input class="d-block mb-1 ml-1 input-margin" @bind-value="collaboratorEmail"></input>
-				<button type="button" class="btn btn-primary" @onclick="() => addCollaboratorToNote()">@localizer["add"]</button>
-
-
-			}
-</div>
-		</div>
-		<div class="my-tables">
+			<div class="my-tables">
 				<div class="my-table">
-				@if (imagesFromUser.Count > 0)
-				{
-					<div>
-						<table class="table table-striped">
-							<thead>
-								<tr>
-									<th>@localizer["image"]</th>
-									<th>URL</th>
-								</tr>
-							</thead>
-							<tbody>
-								@foreach (var image in imagesFromUser)
-								{
+					@if (imagesFromUser.Count > 0)
+					{
+						<div>
+							<table class="table table-striped">
+								<thead>
 									<tr>
-										<th>@image.Name</th>
-										<th>@image.FileUrl</th>
-										<th><button type="button" class="btn btn-primary" @onclick="() => deleteImageFromNote(image)">@localizer["delete"]</button></th>
+										<th>@localizer["image"]</th>
+										<th>URL</th>
 									</tr>
-								}
-							</tbody>
-						</table>
-					</div>
-				}
+								</thead>
+								<tbody>
+									@foreach (var image in imagesFromUser)
+									{
+										<tr>
+											<th>@image.Name</th>
+											<th>@image.FileUrl</th>
+											<th><button type="button" class="btn btn-primary" @onclick="() => deleteImageFromNote(image)">@localizer["delete"]</button></th>
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+					}
 				</div>
 
 				<div class="my-table">
-				@if (collaborators.Count > 0)
-				{
-					<div>
-						<table class="table table-striped">
-							<thead>
-								<tr>
-									<th>@localizer["collabEmail"]</th>
-									<th>@localizer["collabNameSurname"]</th>
-								</tr>
-							</thead>
-							<tbody>
-								@foreach (var collaborator in collaborators)
-								{
+					@if (collaborators.Count > 0)
+					{
+						<div>
+							<table class="table table-striped">
+								<thead>
 									<tr>
-										<th>@collaborator.Email</th>
-										<th>@collaborator.FirstName @collaborator.LastName</th>
-										<th><button type="button" class="button-margin btn btn-primary" @onclick="() => deleteCollaboratorFromNote(collaborator)">@localizer["delete"]</button></th>
+										<th>@localizer["collabEmail"]</th>
+										<th>@localizer["collabNameSurname"]</th>
 									</tr>
-								}
-							</tbody>
-						</table>
-					</div>
-				}
+								</thead>
+								<tbody>
+									@foreach (var collaborator in collaborators)
+									{
+										<tr>
+											<th>@collaborator.Email</th>
+											<th>@collaborator.FirstName @collaborator.LastName</th>
+											<th><button type="button" class="button-margin btn btn-primary" @onclick="() => deleteCollaboratorFromNote(collaborator)">@localizer["delete"]</button></th>
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+					}
 				</div>
-		</div>
-
+			</div>
+		}
 	</div>
 }
 
@@ -139,19 +140,21 @@ else
 	[CascadingParameter] public IModalService Modal { get; set; }
 	[Parameter] public string templateIndex { get; set; }
 	private string content = "";
-	private MarkdownPipeline? pipeline;
-	private bool validId = false;
-	private Guid parsedId;
-	private List<Image> imagesFromUser;
 	private string description = "Loading...";
 	private string title = "Loading...";
-	private Note? noteFromDb;
-	private List<ApplicationUser> collaborators;
 	private string collaboratorEmail;
+	private bool validId = false;
+	private bool noteIsInBin = false;
+	private MarkdownPipeline? pipeline;
+	private Note? noteFromDb;
+	private Guid parsedId;
+	private List<Image> imagesFromUser;
+	private List<ApplicationUser> collaborators;
 
 	protected override async Task OnParametersSetAsync()
 	{
 		noteFromDb = null;
+		noteIsInBin = false;
 		description = title = localizer["edit"];
 
 		int numberOfWaits = 1;
@@ -236,6 +239,7 @@ else
 
 					if (noteFromDb is not null)
 					{
+						noteIsInBin = noteFromDb.IsMarkedAsDeleted;
 						var collaborators = (await _cns.GetAllCollaboratorsForNoteAsync(noteFromDb.NoteId)).ToList();
 						if (collaborators.Count > 0)
 						{
@@ -283,9 +287,8 @@ else
 		{
 			try
 			{
-				if (image.Name.Contains(' '))
-					throw new Exception(localizer["EditNoteMessageWhiteChars"]);
-				else if (image.Size > 4194304) // max Size 4MB TODO mozna spróbować to obejść
+
+				if (image.Size > 4194304) // max Size 4MB TODO mozna spróbować to obejść
 					throw new Exception(localizer["EditNoteMessageTooLargeSize"]);
 
 				string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -383,7 +386,6 @@ else
 			toastService.ShowSuccess("Collaborator was sucessfully added!");
 			this.StateHasChanged();
 		}
-
 	}
 
 	private string generateUniqueCharacters()
