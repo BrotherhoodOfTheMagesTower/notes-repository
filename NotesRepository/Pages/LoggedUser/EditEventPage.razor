@@ -52,8 +52,8 @@
                      
                     <div class="col">
                         <RadzenDatePicker @bind-Value="@model.ReminderAt" Name="ReminderAt" ShowTime="true" DateFormat="dd/MM/yyyy HH:mm" HourFormat="24" />
-                        <RadzenButton Click=@(args => OnClickDeleteReminder(model)) Text=@localizer["X"] style="margin-top:2px; margin-left:5%;" ButtonStyle="ButtonStyle.Danger" />
-                            <RadzenButton Click=@(args => OnClickEditReminder(model)) Text=@localizer["E"] style="margin-top:2px;" ButtonStyle="ButtonStyle.Warning" />
+                        <RadzenButton Click=@(args => OnClickDeleteReminder(model)) RadzenIcon Icon="delete" style="margin-top:2px; margin-left:25%;" ButtonStyle="ButtonStyle.Danger" />
+                            <RadzenButton Click=@(args => OnClickEditReminder(model)) RadzenIcon Icon="open_in_browser" style="margin-top:2px;" ButtonStyle="ButtonStyle.Warning" />
                         
                         
                     </div>
@@ -68,8 +68,8 @@
                     <div class="col">
                     
                         <RadzenDatePicker @bind-Value="@model.ReminderAt" Name="ReminderAt" ShowTime="true" DateFormat="dd/MM/yyyy HH:mm" HourFormat="24" />
-                        <RadzenButton Click=@(args => OnClickDeleteReminder(model)) Text=@localizer["X"] style="margin-top:2px; margin-left:5%;" ButtonStyle="ButtonStyle.Danger" />
-                        <RadzenButton Click=@(args => OnClickEditReminder(model)) Text=@localizer["E"] style="margin-top:2px;" ButtonStyle="ButtonStyle.Warning" />
+                        <RadzenButton Click=@(args => OnClickDeleteReminder(model)) RadzenIcon Icon="delete" style="margin-top:2px; margin-left:25%;" ButtonStyle="ButtonStyle.Danger" />
+                        <RadzenButton Click=@(args => OnClickEditReminder(model)) RadzenIcon Icon="open_in_browser" style="margin-top:2px;" ButtonStyle="ButtonStyle.Warning" />
                         
                      </div>
                 }
