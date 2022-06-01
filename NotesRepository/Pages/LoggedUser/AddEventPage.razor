@@ -53,7 +53,7 @@
                 @if (@IsAgreeToGetReminder)
                 {
                     <div class="col">
-                        <RadzenDatePicker @bind-Value="@model.ReminderAt" Name="ReminderAt" ShowTime="true" DateFormat="dd/MM/yyyy h:mm" />
+                        <RadzenDatePicker @bind-Value="@model.ReminderAt" Name="ReminderAt" ShowTime="true" DateFormat="dd/MM/yyyy HH:mm" HourFormat="24" />
                     </div>
                 }
             </div>

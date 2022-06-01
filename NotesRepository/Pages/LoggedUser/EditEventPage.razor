@@ -42,21 +42,36 @@
     <div class="col-md-3"></div>
     <div class="col">
       <div class="form-check my-2">
-     @if (model.ReminderAt!=null || IsAgreeToGetReminder)
+     @if (model.ReminderAt!=null)
                 {
                     
+                    <input class="form-check-input" type="checkbox" @bind-value="IsAgreeToGetReminder"  id="checkingReminder" checked disabled> 
+                     <label class="form-check-label" for="flexCheckDefault">
+                     @localizer["setReminder"]
+                     </label>
+                     
+                    <div class="col">
+                        <RadzenDatePicker @bind-Value="@model.ReminderAt" Name="ReminderAt" ShowTime="true" DateFormat="dd/MM/yyyy HH:mm" HourFormat="24" />
+                        <RadzenButton Click=@(args => OnClickDeleteReminder(model)) Text=@localizer["X"] style="margin-top:2px; margin-left:5%;" ButtonStyle="ButtonStyle.Danger" />
+                            <RadzenButton Click=@(args => OnClickEditReminder(model)) Text=@localizer["E"] style="margin-top:2px;" ButtonStyle="ButtonStyle.Warning" />
+                        
+                        
+                    </div>
+                }
+                else if(IsAgreeToGetReminder)
+                {
                     <input class="form-check-input" type="checkbox" @bind-value="IsAgreeToGetReminder"  id="checkingReminder" checked> 
                      <label class="form-check-label" for="flexCheckDefault">
                      @localizer["setReminder"]
                      </label>
                      
                     <div class="col">
-                        <RadzenDatePicker @bind-Value="@model.ReminderAt" Name="ReminderAt" ShowTime="true" DateFormat="dd/MM/yyyy h:mm" />
+                    
+                        <RadzenDatePicker @bind-Value="@model.ReminderAt" Name="ReminderAt" ShowTime="true" DateFormat="dd/MM/yyyy HH:mm" HourFormat="24" />
                         <RadzenButton Click=@(args => OnClickDeleteReminder(model)) Text=@localizer["X"] style="margin-top:2px; margin-left:5%;" ButtonStyle="ButtonStyle.Danger" />
                         <RadzenButton Click=@(args => OnClickEditReminder(model)) Text=@localizer["E"] style="margin-top:2px;" ButtonStyle="ButtonStyle.Warning" />
-                    </div>
-                                  
-
+                        
+                     </div>
                 }
                 
                 else{
@@ -167,14 +182,22 @@
     }
     async Task OnClickDeleteReminder(Event model)
     {
-        await eventService.CancelEventReminderAsync(model);
+
+            await eventService.CancelEventReminderAsync(model);
+
     }
     async Task OnClickEditReminder(Event model)
     {
-        if (model.ReminderAt != null)
+        if (model.ReminderAt != null && model.ReminderAt>DateTime.Now)
         {
             await eventService.EditEventReminderAsync(model);
         }
+        else
+        {
+            DialogService.Close(model);
+            toastService.ShowError("Something went wrong","OOPS!");
+        }
+
 
     }
 } 
