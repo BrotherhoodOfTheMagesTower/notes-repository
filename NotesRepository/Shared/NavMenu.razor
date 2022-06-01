@@ -134,7 +134,6 @@
         {
             mainDirs = await _ds.GetAllDirectoriesWithoutParentDirectoryForParticularUserAsync(currentUserId);
             bin = await _ds.GetBinForParticularUserAsync(currentUserId);
-            //binDirs = await _ds.GetAllSubDirectoriesOfParticularDirectoryAsync(bin.DirectoryId);
         }
         flags.setNavMenuLoadingStatus(false);
     }
@@ -252,11 +251,11 @@
 
     };
 
-    private RenderFragment ToggleFoldersInTrash(Directory? directory) => __builder =>
+    private RenderFragment ToggleFoldersInTrash(Directory? binDirectory) => __builder =>
        {
            ICollection<Directory>? allCurrentSubdirectiories;
-           allCurrentSubdirectiories = _ds.GetAllSubDirectoriesOfParticularDirectorySync(directory.DirectoryId); ;
-           parentDirsCountForBin = CountParentDir(directory);
+           allCurrentSubdirectiories = _ds.GetAllSubDirectoriesOfParticularDirectorySync(binDirectory.DirectoryId); ;
+           //parentDirsCountForBin = CountParentDir(binDirectory);
 
            @if (allCurrentSubdirectiories is not null)
            {
@@ -279,7 +278,7 @@
                                    }
                                }
                            </div>
-                           <i class="fa-solid fa-ellipsis " @onclick="()=> HandleFolderPopup(dir)"></i>
+                           <i class="fa-solid fa-ellipsis " @onclick="()=> HandleDeletedFolderPopup(dir)"></i>
                        </div>
 
                        @if (dir.IsToggled)
@@ -290,7 +289,7 @@
                    }
                </div>
            }
-           @GetNotesForCurrentDirectory(directory)
+           @GetNotesForCurrentDirectory(binDirectory)
            ;
 
        };
@@ -332,11 +331,27 @@
             (note.Title, noteParameters, options);
     }
 
+    private void HandleDeletedNotesPopup(Note note)
+    {
+        noteParameters = new ModalParameters();
+        noteParameters.Add("DeletedNoteFromDB", note);
+        modal.Show<DeletedNoteMenu>
+            (note.Title, noteParameters, options);
+    }
+
     private void HandleFolderPopup(Directory directory)
     {
         folderParameters = new ModalParameters();
         folderParameters.Add("DirectoryFromDB", directory);
         modal.Show<FolderMenu>
+            (directory.Name, folderParameters, options);
+    }
+
+    private void HandleDeletedFolderPopup(Directory directory)
+    {
+        folderParameters = new ModalParameters();
+        folderParameters.Add("DeletedDirectoryFromDB", directory);
+        modal.Show<DeletedFolderMenu>
             (directory.Name, folderParameters, options);
     }
 
@@ -379,7 +394,14 @@
                         </div>
                         <div class="my-options">
                             <div class="my-options-child">
-                                <i class="fa-solid fa-ellipsis " @onclick="()=> HandleNotesPopup(note)"></i>
+                            @if (note.IsMarkedAsDeleted)
+                                {
+                                    <i class="fa-solid fa-ellipsis " @onclick="()=> HandleDeletedNotesPopup(note)"></i>
+                                }
+                                else
+                                {
+                                    <i class="fa-solid fa-ellipsis " @onclick="()=> HandleNotesPopup(note)"></i>
+                                }
                             </div>
                         </div>
                     </div>

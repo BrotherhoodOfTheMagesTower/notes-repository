@@ -168,8 +168,14 @@
   <data name="deleteFolder" xml:space="preserve">
     <value>Delete this folser</value>
   </data>
+  <data name="deleteFolderPermanently" xml:space="preserve">
+    <value>Delete Folder Permanently</value>
+  </data>
   <data name="deleteNote" xml:space="preserve">
     <value>Delete note</value>
+  </data>
+  <data name="deleteNotePermanently" xml:space="preserve">
+    <value>Delete Note Permanently</value>
   </data>
   <data name="directory" xml:space="preserve">
     <value>Directory</value>
@@ -273,6 +279,12 @@
   </data>
   <data name="renameFolder" xml:space="preserve">
     <value>Rename this folder</value>
+  </data>
+  <data name="restoreFolder" xml:space="preserve">
+    <value>Restore folder</value>
+  </data>
+  <data name="restoreNote" xml:space="preserve">
+    <value>Restore note</value>
   </data>
   <data name="save" xml:space="preserve">
     <value>Save</value>
