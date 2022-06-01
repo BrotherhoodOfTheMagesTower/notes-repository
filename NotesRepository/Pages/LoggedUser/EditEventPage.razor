@@ -145,24 +145,33 @@
 
     async Task OnSubmit(Event model)
     {
-
-        var attached = true;
-
-        if(noteId != null && noteId!="")
-            attached = await eventService.AttachNoteToEventAsync(model.EventId, Guid.Parse(noteId));
-        else 
+        if (model.ReminderAt < DateTime.Now)
         {
-            //toastService.ShowError("it is not possible to detach the note from the event yet");
-            attached = await eventService.DeleteNoteFromEventAsync(model.EventId);
-
+            model.ReminderAt = null;
+            DialogService.Close(model);
+            toastService.ShowError("You set reminder before now", "Reminder reset!");
         }
-        var update = await eventService.UpdateAsync(model);
-
-        DialogService.Close(model);
-        if (update && attached)
-            toastService.ShowSuccess("You have successfully edited an event");
         else
-            toastService.ShowError("Something went wrong","OOPS!");
+        {
+            var attached = true;
+
+            if (noteId != null && noteId != "")
+                attached = await eventService.AttachNoteToEventAsync(model.EventId, Guid.Parse(noteId));
+            else
+            {
+                //toastService.ShowError("it is not possible to detach the note from the event yet");
+                attached = await eventService.DeleteNoteFromEventAsync(model.EventId);
+
+            }
+            var update = await eventService.UpdateAsync(model);
+
+            DialogService.Close(model);
+            if (update && attached)
+                toastService.ShowSuccess("You have successfully edited an event");
+            else
+                toastService.ShowError("Something went wrong", "OOPS!");
+        }
+
     }
     async Task OnClickDelete(Event model)
     {
@@ -179,21 +188,29 @@
             toastService.ShowSuccess("You have successfully deleted an event");
         else
             toastService.ShowError("Something went wrong","OOPS!");
+
     }
     async Task OnClickDeleteReminder(Event model)
     {
 
-            await eventService.CancelEventReminderAsync(model);
+        await eventService.CancelEventReminderAsync(model);
 
     }
     async Task OnClickEditReminder(Event model)
     {
-        if (model.ReminderAt != null && model.ReminderAt>DateTime.Now)
+        if(model.ReminderAt<DateTime.Now)
+        {
+            model.ReminderAt = null;
+            DialogService.Close(model);
+            toastService.ShowError("You set reminder before now", "Reminder reset!");
+        }
+        else if (model.ReminderAt != null)
         {
             await eventService.EditEventReminderAsync(model);
         }
         else
         {
+            model.ReminderAt = null;
             DialogService.Close(model);
             toastService.ShowError("Something went wrong","OOPS!");
         }
