@@ -174,8 +174,14 @@
   <data name="deleteFolder" xml:space="preserve">
     <value>Usuń folder</value>
   </data>
+  <data name="deleteFolderPermanently" xml:space="preserve">
+    <value>Usuń folder permanentnie</value>
+  </data>
   <data name="deleteNote" xml:space="preserve">
     <value>Usuń notatkę</value>
+  </data>
+  <data name="deleteNotePermanently" xml:space="preserve">
+    <value>Usuń notatkę permenentnie</value>
   </data>
   <data name="directory" xml:space="preserve">
     <value>Folder</value>
@@ -299,6 +305,12 @@
   </data>
   <data name="renameFolder" xml:space="preserve">
     <value>Zmień nazwę</value>
+  </data>
+  <data name="restoreFolder" xml:space="preserve">
+    <value>Przywróć folder</value>
+  </data>
+  <data name="restoreNote" xml:space="preserve">
+    <value>Przywróć notatkę</value>
   </data>
   <data name="save" xml:space="preserve">
     <value>Zapisz</value>
