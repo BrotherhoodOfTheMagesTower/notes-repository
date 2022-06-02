@@ -150,7 +150,7 @@ namespace NotesRepository.Repositories
             return await ctx.Events
                 .Where(u => u.User.Id == userId)
                 .Where(d => d.StartAt > DateTime.Now)
-                .OrderByDescending(d => d.StartAt)
+                .OrderBy(d => d.StartAt)
                 .Take(eventCount)
                 .Include(n => n.Note)
                 .Include(u => u.User)

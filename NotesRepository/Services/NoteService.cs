@@ -129,10 +129,10 @@ namespace NotesRepository.Services
             => await _nr.DeleteManyAsync(notes);
 
         public async Task<bool> SetNoteAsCurrentlyEditedAsync(Guid noteId)
-            => await _nr.SetNoteAsCurrentlyEditedAsync(noteId);
+            => await _nr.MarkNoteAsCurrentlyEditedAsync(noteId);
         
         public async Task<bool> SetNoteAsCurrentlyNotEditedAsync(Guid noteId)
-            => await _nr.SetNoteAsCurrentlyNotEditedAsync(noteId);
+            => await _nr.MarkNoteAsCurrentlyNotEditedAsync(noteId);
         
         public async Task<bool> SetLastEditedTimeAndUserAsync(DateTime editedAt, string userId, Guid noteId)
         {
