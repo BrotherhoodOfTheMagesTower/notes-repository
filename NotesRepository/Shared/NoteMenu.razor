@@ -14,7 +14,7 @@
 @inject NoteService _ns;
 @inject IToastService toastService;
 
-<EditForm Model="@inputFromUser" OnValidSubmit="saveNote">
+<EditForm Model="@inputFromUser" OnValidSubmit="SaveNote">
     <DataAnnotationsValidator />
     <div class="options-menu">
         @if (NoteFromDB is not null && NoteFromDB.IsPinned)
@@ -130,7 +130,7 @@
         directoriesList.Sort((x, y) => string.Compare(x.Name, y.Name));
 
     }
-    private async Task saveNote()
+    private async Task SaveNote()
     {
         try
         {
