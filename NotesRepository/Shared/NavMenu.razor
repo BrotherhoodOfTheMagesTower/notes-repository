@@ -83,7 +83,7 @@
                 </NavLink>
                 @if (areTrashToggled)
                 {
-                    @ToggleFoldersInTrash(bin)
+                    @ToggleFolders(bin)
                     ;
                 }
             </div>
@@ -226,13 +226,23 @@
                             }
                         </div>
                         <div class="my-options d-flex">
+                        @if (dir.IsMarkedAsDeleted is false)
+                            {
                             <div class="my-options-child">
                                 <i class="fa-solid fa-plus " @onclick="()=> HandleAddingFolderPopup(dir)"></i>
                             </div>
                             <div class="my-options-child">
                                 <i class="fa-solid fa-ellipsis " @onclick="()=> HandleFolderPopup(dir)"></i>
                             </div>
-                        </div>
+                            }
+                            else
+                            {
+                             <div class="my-options-child">
+                                <i class="fa-solid fa-ellipsis " @onclick="()=> HandleDeletedFolderPopup(dir)"></i>
+                            </div>
+                            }
+                    </div>
+                        
 
 
                     </div>
