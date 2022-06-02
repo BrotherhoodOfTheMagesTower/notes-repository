@@ -101,7 +101,7 @@
             {
                 var selectedDirectory = await _ds.GetDirectoryByNameAsync(name, userId);
                 if (selectedDirectory == null)
-                    throw new Exception("Directory doesn't exist!");
+                    throw new Exception(localizer["directoryDoesntExist"]);
             }
         }
     }
@@ -115,7 +115,7 @@
             {
                 var selectedDirectory = await _ds.GetDirectoryByNameAsync(name, userId);
                 if (selectedDirectory != null && selectedDirectory.Name != name)
-                    throw new Exception("Directory already exists!");
+                    throw new Exception(localizer["folderExists"]);
             }
         }
     }
@@ -138,13 +138,13 @@
                         {
                             var result = await _ds.ChangeParentDirectoryForSubDirectory(DirectoryFromDB.DirectoryId, tempDirectory.DirectoryId);
                             if (result)
-                                toastService.ShowSuccess("Folder directory has been updated.", "Congrats!");
+                                toastService.ShowSuccess(localizer["directoryUpdated"], localizer["congrats"]);
                             else
-                                toastService.ShowError("An error occurred while moving folder.", "OOPS!");
+                                toastService.ShowError(localizer["errorWhileMoving"], "OOPS!");
                         }
                         else
                         {
-                            toastService.ShowError("An error occurred while moving folder.", "OOPS!");
+                            toastService.ShowError(localizer["errorWhileMoving"], "OOPS!");
                         }
                     }
 
@@ -155,9 +155,9 @@
                         var result = await _ds.UpdateAsync(DirectoryFromDB);
 
                         if (result)
-                            toastService.ShowSuccess("The directory name has been updated.", "Congrats!");
+                            toastService.ShowSuccess(localizer["directoryNameUpdated"], localizer["congrats"]);
                         else
-                            toastService.ShowError("An error occurred while changing name of directory.", "OOPS!");
+                            toastService.ShowError(localizer["errorWhileRenaming"], "OOPS!");
                     }
 
 
@@ -187,16 +187,16 @@
 
                 if (result)
                 {
-                    toastService.ShowSuccess("Directory has been deleted!", "Success!");
+                    toastService.ShowSuccess(localizer["directoryHasBeenDeleted"], localizer["congrats"]);
                 }
                 else
                 {
-                    toastService.ShowSuccess("Error while deleting directory", "Error!");
+                    toastService.ShowSuccess(localizer["errorDeletingDir"], localizer["error"]);
                 }
                 ModalInstance?.CloseAsync(ModalResult.Ok(directory.DirectoryId.ToString()));
             }
             else
-                toastService.ShowError("This folder can not be deleted", "Error!");
+                toastService.ShowError(localizer["folderCantBeDeleted"], localizer["error"]);
         }
     }
 }

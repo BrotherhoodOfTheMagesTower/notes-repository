@@ -189,6 +189,18 @@
   <data name="directory" xml:space="preserve">
     <value>Directory</value>
   </data>
+  <data name="directoryDoesntExist" xml:space="preserve">
+    <value>Directory doesn't exist!</value>
+  </data>
+  <data name="directoryHasBeenDeleted" xml:space="preserve">
+    <value>Directory has been deleted</value>
+  </data>
+  <data name="directoryNameUpdated" xml:space="preserve">
+    <value>The directory name has been updated.</value>
+  </data>
+  <data name="directoryUpdated" xml:space="preserve">
+    <value>Folder directory has been updated.</value>
+  </data>
   <data name="dontNotes" xml:space="preserve">
     <value>You don't have any notes</value>
   </data>
@@ -237,12 +249,39 @@
   <data name="endIsRequired" xml:space="preserve">
     <value>End is required.</value>
   </data>
+  <data name="error" xml:space="preserve">
+    <value>Error!</value>
+  </data>
+  <data name="errorDeletingDir" xml:space="preserve">
+    <value>Error while deleting directory</value>
+  </data>
+  <data name="errorWhileCreatingFolder" xml:space="preserve">
+    <value>An error occurred while creating the folder.</value>
+  </data>
+  <data name="errorWhileMoving" xml:space="preserve">
+    <value>An error occurred while moving folder.</value>
+  </data>
+  <data name="errorWhileRenaming" xml:space="preserve">
+    <value>An error occurred while changing name of directory.</value>
+  </data>
+  <data name="errorWhileSavingNote" xml:space="preserve">
+    <value>An error occurred while saving note.</value>
+  </data>
   <data name="eventPlanning" xml:space="preserve">
     <value>Event Planning</value>
   </data>
   <data name="eventPlanningDescryption" xml:space="preserve">
     <value>Do you tend to forget about incoming events? If so, don't
                 worry. Notes Repository has got you covered and provides a complex calendar where you can add events and pin notes to them.</value>
+  </data>
+  <data name="folderCantBeDeleted" xml:space="preserve">
+    <value>This folder can't be deleted!</value>
+  </data>
+  <data name="folderCreated" xml:space="preserve">
+    <value>Folder has been created.</value>
+  </data>
+  <data name="folderExists" xml:space="preserve">
+    <value>Folder already exists!</value>
   </data>
   <data name="folders" xml:space="preserve">
     <value>Folders</value>
@@ -289,11 +328,26 @@
   <data name="newNote" xml:space="preserve">
     <value>New note</value>
   </data>
+  <data name="noSearchResults" xml:space="preserve">
+    <value>Sorry, there weren't any search results.</value>
+  </data>
   <data name="noSharedNotes" xml:space="preserve">
     <value>No shared notes!</value>
   </data>
+  <data name="noteDeleted" xml:space="preserve">
+    <value>Note has been deleted!</value>
+  </data>
   <data name="noteTitle" xml:space="preserve">
     <value>Note title</value>
+  </data>
+  <data name="noteUpdated" xml:space="preserve">
+    <value>The note has been updated.</value>
+  </data>
+  <data name="pageNotFound" xml:space="preserve">
+    <value>Page not found!</value>
+  </data>
+  <data name="pageNotFoundDesc" xml:space="preserve">
+    <value>We're sorry, the page you were looking for isn't found here. The link you followed may either be broken or no longer exists. Please try again.</value>
   </data>
   <data name="pinned" xml:space="preserve">
     <value>Pinned</value>
@@ -333,6 +387,9 @@
   </data>
   <data name="search" xml:space="preserve">
     <value>Search</value>
+  </data>
+  <data name="searchByContentOrTitle" xml:space="preserve">
+    <value>search by content or title</value>
   </data>
   <data name="setReminder" xml:space="preserve">
     <value>Set reminder</value>

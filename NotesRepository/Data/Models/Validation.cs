@@ -9,9 +9,9 @@ namespace NotesRepository.Data.Models
             Title = title;
             Directory = directory;
         }
-        public Validation(string directory)
+
+        public Validation()
         {
-            Directory = directory;
         }
 
         [Required(ErrorMessage = "Required field!")]

@@ -4,7 +4,7 @@ namespace NotesRepository.Data.Models
 {
     public class DeletedNoteValidation : Validation
     {
-        public DeletedNoteValidation(string directory) : base(directory)    
+        public DeletedNoteValidation(string directory)   
         {
             Directory = directory;
         }

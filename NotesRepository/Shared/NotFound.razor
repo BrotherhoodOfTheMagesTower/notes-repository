@@ -1,4 +1,6 @@
-﻿<section id="not-found">
+﻿@inject Microsoft.Extensions.Localization.IStringLocalizer<Resource> localizer;
+
+<section id="not-found">
     <a class="notFoundAnchor" href="/">
         <header class="top-header"></header>
 
@@ -23,11 +25,9 @@
         <div class="error">
             <div class="error__content">
                 <div class="error__message message">
-                    <h1 class="message__title">Page Not Found</h1>
+                    <h1 class="message__title">@localizer["pageNotFound"]</h1>
                     <p class="message__text">
-                        We're sorry, the page you were looking for isn't found here.
-                        The link you followed may either be broken or no longer
-                        exists. Please try again.
+                        @localizer["pageNotFoundDesc"]
                     </p>
                 </div>
             </div>
