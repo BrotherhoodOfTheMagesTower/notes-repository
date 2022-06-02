@@ -2,16 +2,11 @@
 
 namespace NotesRepository.Data.Models
 {
-    public class DeletedFolderValidation
+    public class DeletedFolderValidation : Validation
     {
-        public DeletedFolderValidation(string directory)
+        public DeletedFolderValidation(string directory) :base(directory)
         {
             Directory = directory;
         }
-
-        [Required(ErrorMessage = "Required field!")]
-        [StringLength(32, ErrorMessage = "Too long!")]
-        [MinLength(2, ErrorMessage = "Too short!")]
-        public string Directory { get; set; }
     }
 }

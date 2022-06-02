@@ -29,6 +29,34 @@
             }
 
         </div>
+        <div class="my-nav-item px-3 py-1 d-flex justify-content-between ">
+            <div>
+                <span class="oi oi-brush" aria-hidden="true"></span> @localizer["changeFolder"]
+
+            </div>
+            @if (inputFromUser is not null)
+            {
+                @if (directoriesList is not null && DirectoryFromDB is not null)
+                {
+                    <row class="ps-2">
+                        <InputSelect id="folderTitle" @bind-Value="@inputFromUser.Directory" class="my-input">
+                            <option value="@DirectoryFromDB.Name">@DirectoryFromDB.Name</option>
+                            @foreach (var d in directoriesList)
+                            {
+                        @if (d != DirectoryFromDB)
+                                {
+                            <option value="@d.Name">@d.Name</option>
+                                }
+                            }
+
+                </InputSelect>
+
+                <ValidationMessage For="() => inputFromUser.Directory" />
+            </row>
+                }
+
+            }
+        </div>
         <div class="my-nav-item px-3 py-1 my-nav-item-hover" @onclick="() => DeleteFolder(DirectoryFromDB)">
             <span class="oi oi-trash" aria-hidden="true"></span> @localizer["deleteFolder"]
         </div>
@@ -43,17 +71,25 @@
     [CascadingParameter] BlazoredModalInstance? ModalInstance { get; set; }
     [Parameter] public string Title { get; set; } = "New Folder";
     [Parameter] public Directory? DirectoryFromDB { get; set; } = null;
-    public Directory? SelectedDirectory { get; set; } = null;
     private FolderValidation? inputFromUser;
     string? currentUserId;
+    private List<Directory>? directoriesList;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (DirectoryFromDB is not null)
-        {
-            inputFromUser = new FolderValidation(DirectoryFromDB.Name);
-        }
+        if (DirectoryFromDB is null || currentUserId is null)
+            return;
+
+        inputFromUser = new FolderValidation(DirectoryFromDB.Name, DirectoryFromDB.Name);
+
+        var tempDirectories = (await _ds.GetAllNotDeletedDirectoriesForParticularUserAsync(currentUserId));
+
+        if (tempDirectories is null)
+            return;
+
+        directoriesList = tempDirectories.ToList();
+        directoriesList.Sort((x, y) => string.Compare(x.Name, y.Name));
     }
 
     private async Task ValidateDirectory(string name, string currentUserId)
@@ -63,8 +99,22 @@
             var userId = currentUserId;
             if (userId != null)
             {
-                SelectedDirectory = await _ds.GetDirectoryByNameAsync(name, userId);
-                if (SelectedDirectory != null)
+                var selectedDirectory = await _ds.GetDirectoryByNameAsync(name, userId);
+                if (selectedDirectory == null)
+                    throw new Exception("Directory doesn't exist!");
+            }
+        }
+    }
+
+    private async Task ValidateEditingName(string name, string currentUserId)
+    {
+        if (currentUserId is not null)
+        {
+            var userId = currentUserId;
+            if (userId != null)
+            {
+                var selectedDirectory = await _ds.GetDirectoryByNameAsync(name, userId);
+                if (selectedDirectory != null && selectedDirectory.Name != name)
                     throw new Exception("Directory already exists!");
             }
         }
@@ -76,24 +126,43 @@
         {
             if (inputFromUser is not null && currentUserId is not null)
             {
-                await ValidateDirectory(inputFromUser.Title, currentUserId);
-                if (currentUserId != null)
+                var usr = await _ur.GetUserByIdAsync(currentUserId);
+                if (usr is not null && DirectoryFromDB is not null)
                 {
-                    var usr = await _ur.GetUserByIdAsync(currentUserId);
-                    if (usr is not null && DirectoryFromDB is not null)
-                    {
-                        DirectoryFromDB.Name = inputFromUser.Title;
 
+                    if (DirectoryFromDB.Name != inputFromUser.Directory)
+                    {
+                        await ValidateDirectory(inputFromUser.Directory, currentUserId);
+                        Directory? tempDirectory = await _ds.GetDirectoryByNameAsync(inputFromUser.Directory, currentUserId);
+                        if (tempDirectory is not null)
+                        {
+                            var result = await _ds.ChangeParentDirectoryForSubDirectory(DirectoryFromDB.DirectoryId, tempDirectory.DirectoryId);
+                            if (result)
+                                toastService.ShowSuccess("Folder directory has been updated.", "Congrats!");
+                            else
+                                toastService.ShowError("An error occurred while moving folder.", "OOPS!");
+                        }
+                        else
+                        {
+                            toastService.ShowError("An error occurred while moving folder.", "OOPS!");
+                        }
+                    }
+
+                    if (DirectoryFromDB.Name != inputFromUser.Title)
+                    {
+                        await ValidateEditingName(inputFromUser.Title, currentUserId);
+                        DirectoryFromDB.Name = inputFromUser.Title;
                         var result = await _ds.UpdateAsync(DirectoryFromDB);
 
                         if (result)
-                            toastService.ShowSuccess("The directory has been updated.", "Congrats!");
+                            toastService.ShowSuccess("The directory name has been updated.", "Congrats!");
                         else
-                        {
-                            toastService.ShowError("An error occurred while saving directory.", "OOPS!");
-                        }
-                        submitForm(DirectoryFromDB);
+                            toastService.ShowError("An error occurred while changing name of directory.", "OOPS!");
                     }
+
+
+                    submitForm(DirectoryFromDB);
+
                 }
             }
         }
@@ -106,19 +175,6 @@
     private void submitForm(Directory directory)
     {
         ModalInstance?.CloseAsync(ModalResult.Ok(directory.DirectoryId.ToString()));
-    }
-
-    public class FolderValidation
-    {
-        public FolderValidation(string title)
-        {
-            Title = title;
-        }
-
-        [Required(ErrorMessage = "Required field!")]
-        [StringLength(32, ErrorMessage = "Too long!")]
-        [MinLength(2, ErrorMessage = "Too short!")]
-        public string Title { get; set; }
     }
 
     private async Task DeleteFolder(Directory? directory)
