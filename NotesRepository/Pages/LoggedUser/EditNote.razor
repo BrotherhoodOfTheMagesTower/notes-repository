@@ -18,380 +18,386 @@
 @inject CollaboratorsNotesService _cns;
 @inject Data.Flags flags;
 @inject IToastService toastService;
+@inject IJSRuntime JSRuntime;
 
 <PageTitle>@title</PageTitle>
 <HeadContent>
-	<meta name="description" content="@description">
+    <meta name="description" content="@description">
 </HeadContent>
 
 @if (content is null || imagesFromUser is null)
 {
-	<p><em>Loading...</em></p>
+    <p><em>Loading...</em></p>
 }
 else
 {
-	<div class="my-container">
-		@if (!@noteIsInBin)
-		{
-			<div class="my-sub-container p-2 ">
-				<center>
-					@if (@validId && @noteFromDb is not null)
-					{
-						<h3>@noteFromDb.Title @noteFromDb.IconName</h3>
-					}
-					else
-					{
-						<h3>@localizer["content"]</h3>
-					}
-				</center>
-				<textarea class="my-text-area" @bind-value="content" @bind-value:event="oninput"></textarea>
-			</div>
-		}
-		<div class="my-sub-container p-2">
-			<center><h3>@localizer["preview"]</h3></center>
-			<div class="my-preview">
-				@((MarkupString)Markdown.ToHtml(content, pipeline))
-			</div>
-		</div>
+    <div class="my-container">
+        @if (!@noteIsInBin)
+        {
+            <div class="my-sub-container p-2 ">
+                <center>
+                    @if (@validId && @noteFromDb is not null)
+                    {
+                        <h3>@noteFromDb.Title @noteFromDb.IconName</h3>
+                    }
+                    else
+                    {
+                        <h3>@localizer["content"]</h3>
+                    }
+                </center>
+                <textarea class="my-text-area" id="my-text-area-id" @bind-value="content" @bind-value:event="oninput"></textarea>
+            </div>
+        }
+        <div class="my-sub-container p-2">
+            <center><h3>@localizer["preview"]</h3></center>
+            <div class="my-preview" id="my-preview-id">
+                @((MarkupString)Markdown.ToHtml(content, pipeline))
+            </div>
+        </div>
 
-		@if(!@noteIsInBin)
-		{
-			<div class="my-input-container">
-				<div class="my-sub-input-container">
-					@if (@validId && @noteFromDb is not null)
-					{
+        @if (!@noteIsInBin)
+        {
+            <div class="my-input-container">
+                <div class="my-sub-input-container">
+                    @if (@validId && @noteFromDb is not null)
+                    {
+                        <InputFile OnChange="@LoadFile" accept=".jpg, .png" />
+                    }
+                    else
+                    {
+                        <h4 class="px-3">@localizer["toUpload"]</h4>
+                    }
+                    <button type="button" class="btn btn-primary" @onclick="saveNote">@localizer["save"]</button>
+                </div>
+                <div class="my-sub-input-container">
+                    @if (@validId && @noteFromDb is not null)
+                    {
+                        <input class="d-block mb-1 ml-1 input-margin" @bind-value="collaboratorEmail"></input>
+                        <button type="button" class="btn btn-primary" @onclick="() => addCollaboratorToNote()">@localizer["add"]</button>
+                    }
+                </div>
+            </div>
+            <div class="my-tables">
+                <div class="my-table">
+                    @if (imagesFromUser.Count > 0)
+                    {
+                        <div>
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>@localizer["image"]</th>
+                                        <th>URL</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var image in imagesFromUser)
+                                    {
+                                        <tr>
+                                            <th>@image.Name</th>
+                                            <th>@image.FileUrl</th>
+                                            <th><button type="button" class="btn btn-primary" @onclick="() => deleteImageFromNote(image)">@localizer["delete"]</button></th>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
 
-						<InputFile OnChange="@LoadFile" accept=".jpg, .png" />
-
-					}
-					else
-					{
-						<h4>@localizer["toUpload"]</h4>
-					}
-					<button type="button" class="btn btn-primary" @onclick="saveNote">@localizer["save"]</button>
-				</div>
-				<div class="my-sub-input-container">
-					@if (@validId && @noteFromDb is not null)
-					{
-						<input class="d-block mb-1 ml-1 input-margin" @bind-value="collaboratorEmail"></input>
-						<button type="button" class="btn btn-primary" @onclick="() => addCollaboratorToNote()">@localizer["add"]</button>
-					}
-				</div>
-			</div>
-			<div class="my-tables">
-				<div class="my-table">
-					@if (imagesFromUser.Count > 0)
-					{
-						<div>
-							<table class="table table-striped">
-								<thead>
-									<tr>
-										<th>@localizer["image"]</th>
-										<th>URL</th>
-									</tr>
-								</thead>
-								<tbody>
-									@foreach (var image in imagesFromUser)
-									{
-										<tr>
-											<th>@image.Name</th>
-											<th>@image.FileUrl</th>
-											<th><button type="button" class="btn btn-primary" @onclick="() => deleteImageFromNote(image)">@localizer["delete"]</button></th>
-										</tr>
-									}
-								</tbody>
-							</table>
-						</div>
-					}
-				</div>
-
-				<div class="my-table">
-					@if (collaborators.Count > 0)
-					{
-						<div>
-							<table class="table table-striped">
-								<thead>
-									<tr>
-										<th>@localizer["collabEmail"]</th>
-										<th>@localizer["collabNameSurname"]</th>
-									</tr>
-								</thead>
-								<tbody>
-									@foreach (var collaborator in collaborators)
-									{
-										<tr>
-											<th>@collaborator.Email</th>
-											<th>@collaborator.FirstName @collaborator.LastName</th>
-											<th><button type="button" class="button-margin btn btn-primary" @onclick="() => deleteCollaboratorFromNote(collaborator)">@localizer["delete"]</button></th>
-										</tr>
-									}
-								</tbody>
-							</table>
-						</div>
-					}
-				</div>
-			</div>
-		}
-	</div>
+                <div class="my-table">
+                    @if (collaborators.Count > 0)
+                    {
+                        <div>
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>@localizer["collabEmail"]</th>
+                                        <th>@localizer["collabNameSurname"]</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var collaborator in collaborators)
+                                    {
+                                        <tr>
+                                            <th>@collaborator.Email</th>
+                                            <th>@collaborator.FirstName @collaborator.LastName</th>
+                                            <th><button type="button" class="button-margin btn btn-primary" @onclick="() => deleteCollaboratorFromNote(collaborator)">@localizer["delete"]</button></th>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
 }
 
 @code
 {
-	[CascadingParameter] public IModalService Modal { get; set; }
-	[Parameter] public string templateIndex { get; set; }
-	private string content = "";
-	private string description = "Loading...";
-	private string title = "Loading...";
-	private string collaboratorEmail;
-	private bool validId = false;
-	private bool noteIsInBin = false;
-	private MarkdownPipeline? pipeline;
-	private Note? noteFromDb;
-	private Guid parsedId;
-	private List<Image> imagesFromUser;
-	private List<ApplicationUser> collaborators;
+    [CascadingParameter] public IModalService Modal { get; set; }
+    [Parameter] public string templateIndex { get; set; }
+    private string content = "";
+    private string description = "Loading...";
+    private string title = "Loading...";
+    private string collaboratorEmail;
+    private bool validId = false;
+    private bool noteIsInBin = false;
+    private MarkdownPipeline? pipeline;
+    private Note? noteFromDb;
+    private Guid parsedId;
+    private List<Image> imagesFromUser;
+    private List<ApplicationUser> collaborators;
+    private IJSObjectReference _jsModule;
 
-	protected override async Task OnParametersSetAsync()
-	{
-		noteFromDb = null;
-		noteIsInBin = false;
-		description = title = localizer["edit"];
+    protected override async Task OnParametersSetAsync()
+    {
+        noteFromDb = null;
+        noteIsInBin = false;
+        description = title = localizer["edit"];
 
-		int numberOfWaits = 1;
-		while (flags.getNavMenuLoadingStatus())
-		{
-			System.Console.WriteLine($"Thread number {Thread.CurrentThread.ManagedThreadId} from {navigationManager.Uri} -> waits {numberOfWaits++ * 5} [ms] for NavMenu to render.");
-			Thread.Sleep(5); // Wait 5 ms until navbar ends rendering
-		}
+        int numberOfWaits = 1;
+        while (flags.getNavMenuLoadingStatus())
+        {
+            System.Console.WriteLine($"Thread number {Thread.CurrentThread.ManagedThreadId} from {navigationManager.Uri} -> waits {numberOfWaits++ * 5} [ms] for NavMenu to render.");
+            Thread.Sleep(5); // Wait 5 ms until navbar ends rendering
+        }
 
-		imagesFromUser = new List<Image>();
-		collaborators = new List<ApplicationUser>();
+        imagesFromUser = new List<Image>();
+        collaborators = new List<ApplicationUser>();
+        _jsModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./scripts/editNote.js");
+        ChangePreviewWidth();
+        content = templateIndex == "newNote" ? "" : await init();
+        pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build(); // Uruchomienie rozszerzeń markdown
+    }
 
-		content = templateIndex == "newNote" ? "" : await init();
-		pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build(); // Uruchomienie rozszerzeń markdown
-	}
+    private async Task saveNote()
+    {
+        if (content.Length <= 0)
+        {
+            toastService.ShowError(localizer["EditNoteMessageEmptyNote"], "OOPS!");
+        }
+        else if (content.Length > 13500)
+        {
+            toastService.ShowError(localizer["EditNoteMessageTooLongNote"], "OOPS!");
+        }
+        else
+        {
+            try
+            {
+                // Making popup
+                var parameters = new ModalParameters();
 
-	private async Task saveNote()
-	{
-		if (content.Length <= 0)
-		{
-			toastService.ShowError(localizer["EditNoteMessageEmptyNote"], "OOPS!");
-		}
-		else if (content.Length > 13500)
-		{
-			toastService.ShowError(localizer["EditNoteMessageTooLongNote"], "OOPS!");
-		}
-		else
-		{
-			try
-			{
-				// Making popup
-				var parameters = new ModalParameters();
+                if (noteFromDb != null)
+                {
+                    parameters = new ModalParameters();
+                    parameters.Add(nameof(content), content);
+                    parameters.Add(nameof(noteFromDb), noteFromDb);
+                }
+                else
+                {
+                    parameters = new ModalParameters();
+                    parameters.Add(nameof(content), content);
+                }
 
-				if (noteFromDb != null)
-				{
-					parameters = new ModalParameters();
-					parameters.Add(nameof(content), content);
-					parameters.Add(nameof(noteFromDb), noteFromDb);
-				}
-				else
-				{
-					parameters = new ModalParameters();
-					parameters.Add(nameof(content), content);
-				}
+                var saveForm = Modal.Show<SaveNote>(localizer["saveNote"], parameters);
+                var result = await saveForm.Result;
 
-				var saveForm = Modal.Show<SaveNote>(localizer["saveNote"], parameters);
-				var result = await saveForm.Result;
+                // We must check if user cancel popup (null) or submit form (result.data == Guid)
+                if (result.Data != null)
+                {
+                    var tmpGuid = new Guid();
+                    if (Guid.TryParse(result.Data.ToString(), out tmpGuid))
+                    {
+                        var uri = "/editNote/" + result.Data.ToString();
+                        navigationManager.NavigateTo(uri);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                toastService.ShowError(e.Message, "OOPS!");
+            }
+        }
+    }
 
-				// We must check if user cancel popup (null) or submit form (result.data == Guid)
-				if (result.Data != null)
-				{
-					var tmpGuid = new Guid();
-					if (Guid.TryParse(result.Data.ToString(), out tmpGuid))
-					{
-						var uri = "/editNote/" + result.Data.ToString();
-						navigationManager.NavigateTo(uri);
-					}
-				}
-			}
-			catch (Exception e)
-			{
-				toastService.ShowError(e.Message, "OOPS!");
-			}
-		}
-	}
+    private async Task<string> init()
+    {
+        if (templateIndex is not null)
+        {
+            validId = Guid.TryParse(templateIndex, out parsedId);
+            if (validId == false)
+            {
+                return Templates.NotesTemplates[templateIndex];
+            }
+            else
+            {
+                string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (currentUserId != null)
+                {
+                    noteFromDb = await _ns.GetNoteByIdAsync(Guid.Parse(templateIndex));
 
-	private async Task<string> init()
-	{
-		if (templateIndex is not null)
-		{
-			validId = Guid.TryParse(templateIndex, out parsedId);
-			if (validId == false)
-			{
-				return Templates.NotesTemplates[templateIndex];
-			}
-			else
-			{
-				string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-				if (currentUserId != null)
-				{
-					noteFromDb = await _ns.GetNoteByIdAsync(Guid.Parse(templateIndex));
+                    if (noteFromDb is not null)
+                    {
+                        noteIsInBin = noteFromDb.IsMarkedAsDeleted;
+                        var collaborators = (await _cns.GetAllCollaboratorsForNoteAsync(noteFromDb.NoteId)).ToList();
+                        if (collaborators.Count > 0)
+                        {
+                            foreach (var collaborator in collaborators)
+                            {
+                                this.collaborators.Add(collaborator);
+                            }
+                        }
+                    }
 
-					if (noteFromDb is not null)
-					{
-						noteIsInBin = noteFromDb.IsMarkedAsDeleted;
-						var collaborators = (await _cns.GetAllCollaboratorsForNoteAsync(noteFromDb.NoteId)).ToList();
-						if (collaborators.Count > 0)
-						{
-							foreach (var collaborator in collaborators)
-							{
-								this.collaborators.Add(collaborator);
-							}
-						}
-					}
+                    if (noteFromDb is not null)
+                    {
+                        var noteImages = await _is.GetAllNoteImagesAsync(noteFromDb.NoteId);
 
-					if (noteFromDb is not null)
-					{
-						var noteImages = await _is.GetAllNoteImagesAsync(noteFromDb.NoteId);
+                        if (noteImages.Count > 0)
+                        {
+                            foreach (var image in noteImages)
+                            {
+                                imagesFromUser.Add(image);
+                            }
+                        }
+                        return noteFromDb.Content;
+                    }
+                    else
+                    {
+                        return " ";
+                    }
+                }
+                else
+                {
+                    return " ";
+                }
+            }
+        }
+        else
+        {
+            return " ";
+        }
+    }
 
-						if (noteImages.Count > 0)
-						{
-							foreach (var image in noteImages)
-							{
-								imagesFromUser.Add(image);
-							}
-						}
-						return noteFromDb.Content;
-					}
-					else
-					{
-						return " ";
-					}
-				}
-				else
-				{
-					return " ";
-				}
-			}
-		}
-		else
-		{
-			return " ";
-		}
-	}
+    private async void LoadFile(InputFileChangeEventArgs e)
+    {
+        var image = await e.File.RequestImageFileAsync("image/jpg", 2560, 2048);
+        if (image != null)
+        {
+            try
+            {
 
-	private async void LoadFile(InputFileChangeEventArgs e)
-	{
-		var image = await e.File.RequestImageFileAsync("image/jpg", 2560, 2048);
-		if (image != null)
-		{
-			try
-			{
+                if (image.Size > 4194304) // max Size 4MB TODO mozna spróbować to obejść
+                    throw new Exception(localizer["EditNoteMessageTooLargeSize"]);
 
-				if (image.Size > 4194304) // max Size 4MB TODO mozna spróbować to obejść
-					throw new Exception(localizer["EditNoteMessageTooLargeSize"]);
+                string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (currentUserId != null)
+                {
+                    var loggedUser = await _ur.GetUserByIdAsync(currentUserId);
+                    Image newImage;
+                    if (noteFromDb != null)
+                    {
+                        var uniqueImageName = generateUniqueCharacters() + '_' + image.Name;
+                        newImage = new Image(null, uniqueImageName, "", noteFromDb);
+                        var resultAndUrl = await _is.AddImageAsync(newImage, image);    // First element is bool value, second is a url to image
+                        if (resultAndUrl.Item1)
+                        {
+                            content += $"\n![{image.Name}]({resultAndUrl.Item2})\n";
+                            imagesFromUser.Add(newImage);
+                            this.StateHasChanged();
+                        }
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                toastService.ShowError(exception.Message, "OOPS!");
+            }
+        }
+        else
+        {
+            toastService.ShowError(localizer["EditNoteMessageWrongFormat"], "OOPS!");
+        }
+    }
 
-				string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-				if (currentUserId != null)
-				{
-					var loggedUser = await _ur.GetUserByIdAsync(currentUserId);
-					Image newImage;
-					if (noteFromDb != null)
-					{
-						var uniqueImageName = generateUniqueCharacters() + '_' + image.Name;
-						newImage = new Image(null, uniqueImageName, "", noteFromDb);
-						var resultAndUrl = await _is.AddImageAsync(newImage, image);    // First element is bool value, second is a url to image
-						if (resultAndUrl.Item1)
-						{
-							content += $"\n![{image.Name}]({resultAndUrl.Item2})\n";
-							imagesFromUser.Add(newImage);
-							this.StateHasChanged();
-						}
-					}
-				}
-			}
-			catch (Exception exception)
-			{
-				toastService.ShowError(exception.Message, "OOPS!");
-			}
-		}
-		else
-		{
-			toastService.ShowError(localizer["EditNoteMessageWrongFormat"], "OOPS!");
-		}
-	}
+    private async void deleteImageFromNote(Image image)
+    {
+        string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (currentUserId != null)
+        {
+            try
+            {
+                var result = await _is.DeleteImageAsync(image);
+                if (result)
+                {
+                    toastService.ShowSuccess(localizer["EditNoteMessageImageDeleted"]);
+                    string substringWithImage = $"![{image.Name}]({image.FileUrl})"; // TODO nie działa do końca
+                    content.Replace(substringWithImage, " ");
+                    imagesFromUser.Remove(image);
+                }
+                else
+                {
+                    toastService.ShowError(localizer["EditNoteMessageError"]);
+                }
+                this.StateHasChanged();
+            }
+            catch (Exception e)
+            {
+                // DEBUG potem mnie proszę usunąć
+                toastService.ShowError(e.Message);
+            }
+        }
+    }
 
-	private async void deleteImageFromNote(Image image)
-	{
-		string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-		if (currentUserId != null)
-		{
-			try
-			{
-				var result = await _is.DeleteImageAsync(image);
-				if (result)
-				{
-					toastService.ShowSuccess(localizer["EditNoteMessageImageDeleted"]);
-					string substringWithImage = $"![{image.Name}]({image.FileUrl})"; // TODO nie działa do końca
-					content.Replace(substringWithImage, " ");
-					imagesFromUser.Remove(image);
-				}
-				else
-				{
-					toastService.ShowError(localizer["EditNoteMessageError"]);
-				}
-				this.StateHasChanged();
-			}
-			catch (Exception e)
-			{
-				// DEBUG potem mnie proszę usunąć
-				toastService.ShowError(e.Message);
-			}
-		}
-	}
+    private async void deleteCollaboratorFromNote(ApplicationUser collaborator)
+    {
+        string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (currentUserId != null)
+        {
+            var result = await _cns.DeleteCollaboratorFromNoteAsync(collaborator.Id, noteFromDb.NoteId);
+            if (result)
+            {
+                collaborators.Remove(collaborator);
+                toastService.ShowSuccess("Collaborator has been deleted");
+            }
+            this.StateHasChanged();
+        }
 
-	private async void deleteCollaboratorFromNote(ApplicationUser collaborator)
-	{
-		string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-		if (currentUserId != null)
-		{
-			var result = await _cns.DeleteCollaboratorFromNoteAsync(collaborator.Id, noteFromDb.NoteId);
-			if (result)
-			{
-				collaborators.Remove(collaborator);
-				toastService.ShowSuccess("Collaborator has been deleted");
-			}
-			this.StateHasChanged();
-		}
+    }
 
-	}
+    private async void addCollaboratorToNote()
+    {
+        var collaboratorToAdd = await _ur.GetUserByEmailAsync(collaboratorEmail);
+        string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-	private async void addCollaboratorToNote()
-	{
-		var collaboratorToAdd = await _ur.GetUserByEmailAsync(collaboratorEmail);
-		string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (collaboratorToAdd == null)
+            toastService.ShowError("User doesn't exists!");
 
-		if (collaboratorToAdd == null)
-			toastService.ShowError("User doesn't exists!");
+        else if (collaboratorToAdd.Id == currentUserId)
+            toastService.ShowError("You can't add yourself as a collaborator!");
 
-		else if (collaboratorToAdd.Id == currentUserId)
-			toastService.ShowError("You can't add yourself as a collaborator!");
+        else if (collaborators.Contains(collaboratorToAdd))
+            toastService.ShowError("Collaborator is already added!");
+        else
+        {
+            await _cns.AddCollaboratorToNoteAsync(collaboratorToAdd.Id, noteFromDb.NoteId);
+            collaborators.Add(collaboratorToAdd);
+            toastService.ShowSuccess("Collaborator was sucessfully added!");
+            this.StateHasChanged();
+        }
+    }
 
-		else if (collaborators.Contains(collaboratorToAdd))
-			toastService.ShowError("Collaborator is already added!");
-		else
-		{
-			await _cns.AddCollaboratorToNoteAsync(collaboratorToAdd.Id, noteFromDb.NoteId);
-			collaborators.Add(collaboratorToAdd);
-			toastService.ShowSuccess("Collaborator was sucessfully added!");
-			this.StateHasChanged();
-		}
-	}
+    private string generateUniqueCharacters()
+    {
+        string guid = Guid.NewGuid().ToString();
+        var split = guid.Split('-');
+        return split[0];
+    }
 
-	private string generateUniqueCharacters()
-	{
-		string guid = Guid.NewGuid().ToString();
-		var split = guid.Split('-');
-		return split[0];
-	}
+    private void ChangePreviewWidth()
+    {
+        _jsModule.InvokeVoidAsync("changePreviewWidth");
+    }
 }
