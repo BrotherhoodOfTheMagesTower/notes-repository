@@ -128,6 +128,9 @@
   <data name="add" xml:space="preserve">
     <value>Add</value>
   </data>
+  <data name="addEvent" xml:space="preserve">
+    <value>Add Event</value>
+  </data>
   <data name="addFolder" xml:space="preserve">
     <value>Add new folder</value>
   </data>
@@ -162,7 +165,13 @@
     <value>Application can be used on variety of devices ranging from
                 small mobile phones to big TV screens.</value>
   </data>
+  <data name="Day" xml:space="preserve">
+    <value>Day</value>
+  </data>
   <data name="delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="deleteEvent" xml:space="preserve">
     <value>Delete</value>
   </data>
   <data name="deleteFolder" xml:space="preserve">
@@ -195,6 +204,9 @@
   <data name="edit" xml:space="preserve">
     <value>Edit note</value>
   </data>
+  <data name="editEvent" xml:space="preserve">
+    <value>Edit Event</value>
+  </data>
   <data name="editName" xml:space="preserve">
     <value>Edit name</value>
   </data>
@@ -218,6 +230,12 @@
   </data>
   <data name="EditNoteMessageWrongFormat" xml:space="preserve">
     <value>A wrong file has been entered!</value>
+  </data>
+  <data name="End" xml:space="preserve">
+    <value>End</value>
+  </data>
+  <data name="endIsRequired" xml:space="preserve">
+    <value>End is required.</value>
   </data>
   <data name="eventPlanning" xml:space="preserve">
     <value>Event Planning</value>
@@ -247,6 +265,9 @@
   <data name="GoogleAuhenticationDescryption" xml:space="preserve">
     <value>Registering has never been that easy! With Notes Repository you can register/ login with Google.</value>
   </data>
+  <data name="GoToNote" xml:space="preserve">
+    <value>Go to this note</value>
+  </data>
   <data name="homePage" xml:space="preserve">
     <value>Home</value>
   </data>
@@ -259,6 +280,9 @@
   <data name="markdownDescryption" xml:space="preserve">
     <value>Experience the power of Markdown language. Write notes in a quick and an efficient way.</value>
   </data>
+  <data name="Month" xml:space="preserve">
+    <value>Month</value>
+  </data>
   <data name="name" xml:space="preserve">
     <value>Name</value>
   </data>
@@ -267,6 +291,9 @@
   </data>
   <data name="noSharedNotes" xml:space="preserve">
     <value>No shared notes!</value>
+  </data>
+  <data name="noteTitle" xml:space="preserve">
+    <value>Note title</value>
   </data>
   <data name="pinned" xml:space="preserve">
     <value>Pinned</value>
@@ -289,6 +316,9 @@
   <data name="save" xml:space="preserve">
     <value>Save</value>
   </data>
+  <data name="saveEvent" xml:space="preserve">
+    <value>Save</value>
+  </data>
   <data name="saveNote" xml:space="preserve">
     <value>Save note</value>
   </data>
@@ -304,17 +334,29 @@
   <data name="search" xml:space="preserve">
     <value>Search</value>
   </data>
+  <data name="setReminder" xml:space="preserve">
+    <value>Set reminder</value>
+  </data>
   <data name="shared" xml:space="preserve">
     <value>Shared</value>
   </data>
   <data name="shareNote" xml:space="preserve">
     <value>Share note</value>
   </data>
+  <data name="Start" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="startIsRequired" xml:space="preserve">
+    <value>Start is required.</value>
+  </data>
   <data name="templates" xml:space="preserve">
     <value>Templates</value>
   </data>
   <data name="templatesDescryption" xml:space="preserve">
     <value>User is provided with a set of ready to use templates thanks to which they can create notes faster.</value>
+  </data>
+  <data name="Text" xml:space="preserve">
+    <value>Text</value>
   </data>
   <data name="theBestItSoftware" xml:space="preserve">
     <value>The Best IT Software for creating notes</value>
@@ -324,6 +366,9 @@
   </data>
   <data name="title" xml:space="preserve">
     <value>Title</value>
+  </data>
+  <data name="titleIsRequired" xml:space="preserve">
+    <value>Title is required.</value>
   </data>
   <data name="toUpload" xml:space="preserve">
     <value>To upload a image, you must first save the note.</value>
@@ -342,6 +387,9 @@
   </data>
   <data name="view" xml:space="preserve">
     <value>View</value>
+  </data>
+  <data name="Week" xml:space="preserve">
+    <value>Week</value>
   </data>
   <data name="welcomeToNotes" xml:space="preserve">
     <value>Welcome to Notes Repository</value>

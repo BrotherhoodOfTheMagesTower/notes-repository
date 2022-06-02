@@ -264,6 +264,9 @@
   <data name="GoogleAuhenticationDescryption" xml:space="preserve">
     <value>Rejestracja/logowanie nigdy nie były tak proste! Z Notes Repository możesz zarejestrować/zalogować się za pomocą Google.</value>
   </data>
+  <data name="GoToNote" xml:space="preserve">
+    <value>Idź do notatki</value>
+  </data>
   <data name="homePage" xml:space="preserve">
     <value>Strona główna</value>
   </data>
