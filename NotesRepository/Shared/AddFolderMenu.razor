@@ -71,10 +71,10 @@
                         result = await _ds.UpdateAsync(selectedDirectory);
 
                         if (result)
-                            toastService.ShowSuccess("Folder has been created.", "Congrats!");
+                            toastService.ShowSuccess(localizer["folderCreated"], localizer["congrats"]);
                         else
                         {
-                            toastService.ShowError("An error occurred while creating the folder.", "OOPS!");
+                            toastService.ShowError(localizer["errorWhileCreatingFolder"], "OOPS!");
                         }
                         SubmitForm(DirectoryFromDB);
                     }
@@ -101,7 +101,7 @@
             {
                 var tempSelectedDirectory = await _ds.GetDirectoryByNameAsync(name, userId);
                 if (tempSelectedDirectory != null)
-                    throw new Exception("Folder already exists!");
+                    throw new Exception(localizer["folderExists"]);
             }
         }
     }

@@ -186,6 +186,18 @@
   <data name="directory" xml:space="preserve">
     <value>Folder</value>
   </data>
+  <data name="directoryDoesntExist" xml:space="preserve">
+    <value>Folder nie istnieje!</value>
+  </data>
+  <data name="directoryHasBeenDeleted" xml:space="preserve">
+    <value>Folder został usunięty!</value>
+  </data>
+  <data name="directoryNameUpdated" xml:space="preserve">
+    <value>Zaaktualizowano nazwę folderu!</value>
+  </data>
+  <data name="directoryUpdated" xml:space="preserve">
+    <value>Folder został przeniesiony.</value>
+  </data>
   <data name="dontNotes" xml:space="preserve">
     <value>Nie masz żadnych notatek</value>
   </data>
@@ -234,6 +246,24 @@
   <data name="endIsRequired" xml:space="preserve">
     <value>Koniec jest wymagany.</value>
   </data>
+  <data name="error" xml:space="preserve">
+    <value>Błąd!</value>
+  </data>
+  <data name="errorDeletingDir" xml:space="preserve">
+    <value>Błąd podczas usuwania folderu!</value>
+  </data>
+  <data name="errorWhileCreatingFolder" xml:space="preserve">
+    <value>Podczas tworzenia fodleru pojawił się błąd.</value>
+  </data>
+  <data name="errorWhileMoving" xml:space="preserve">
+    <value>Błąd podczas przenoszenia folderu.</value>
+  </data>
+  <data name="errorWhileRenaming" xml:space="preserve">
+    <value>Błąd podczas zmiany nazwy.</value>
+  </data>
+  <data name="errorWhileSavingNote" xml:space="preserve">
+    <value>Błąd podczas zapisywania notatki!</value>
+  </data>
   <data name="eventPlanning" xml:space="preserve">
     <value>Planowanie wydarzeń</value>
   </data>
@@ -242,6 +272,15 @@
   </data>
   <data name="features" xml:space="preserve">
     <value>funkcjonalność</value>
+  </data>
+  <data name="folderCantBeDeleted" xml:space="preserve">
+    <value>Tego folderu nie można usunąć!</value>
+  </data>
+  <data name="folderCreated" xml:space="preserve">
+    <value>Utworzono folder.</value>
+  </data>
+  <data name="folderExists" xml:space="preserve">
+    <value>Folder już istnieje!</value>
   </data>
   <data name="folders" xml:space="preserve">
     <value>Foldery</value>
@@ -288,11 +327,26 @@
   <data name="newNote" xml:space="preserve">
     <value>Nowa notatka</value>
   </data>
+  <data name="noSearchResults" xml:space="preserve">
+    <value>Nie znaleziono </value>
+  </data>
   <data name="noSharedNotes" xml:space="preserve">
     <value>Brak udostępnionych notatek!</value>
   </data>
+  <data name="noteDeleted" xml:space="preserve">
+    <value>Notatka została usunięta!</value>
+  </data>
   <data name="noteTitle" xml:space="preserve">
     <value>Tytuł notatki</value>
+  </data>
+  <data name="noteUpdated" xml:space="preserve">
+    <value>Notatka zostła zaaktualizowana!</value>
+  </data>
+  <data name="pageNotFound" xml:space="preserve">
+    <value>Nie znaleziono!</value>
+  </data>
+  <data name="pageNotFoundDesc" xml:space="preserve">
+    <value>Przepraszamy! Strona, którą próbujesz wyszukać nie istnieje. Upewnij się, że wprowadzony link jest poprawny i spróbuj ponownie.</value>
   </data>
   <data name="pinned" xml:space="preserve">
     <value>Przypiete</value>
@@ -335,6 +389,9 @@
   </data>
   <data name="search" xml:space="preserve">
     <value>Szukaj</value>
+  </data>
+  <data name="searchByContentOrTitle" xml:space="preserve">
+    <value>szukaj po treści lub tytule</value>
   </data>
   <data name="setReminder" xml:space="preserve">
     <value>Ustaw przypomnienie</value>

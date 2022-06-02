@@ -16,8 +16,8 @@
     color: white;
 }
 
-.my-nav{
-    overflow:auto;
+.my-nav {
+    overflow: auto;
 }
 
 .navbar-brand {
@@ -33,8 +33,8 @@
     top: -2px;
 }
 
-.folder-note-margin-left{
-    margin-left:20px;
+.folder-note-margin-left {
+    margin-left: 20px;
 }
 
 .my-nav-item {
@@ -43,30 +43,32 @@
 
 .my-custom-nav-item {
     color: white;
-   
 }
 
-.folder-child:hover{
-   color:black;
-   cursor:pointer;
-}
-
-.my-nav-item-parent:first-child{
-    color:red;
+.folder-child:hover {
+    color: black;
+    cursor: pointer;
 }
 
 .my-options-child:hover {
     color: black;
     cursor: pointer;
 }
-.my-options-child{
-    margin-left:8px;
+
+.my-options-child {
+    margin-left: 8px;
 }
+
+.my-search-wrapper {
+    background-color:white;
+}
+
 .nav-item {
     font-size: 0.8rem;
     padding-bottom: 0.4rem;
     overflow: auto;
 }
+
     .nav-item:first-of-type {
         padding-top: 1rem;
     }

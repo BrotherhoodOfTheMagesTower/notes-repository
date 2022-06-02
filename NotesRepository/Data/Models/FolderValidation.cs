@@ -9,5 +9,10 @@ namespace NotesRepository.Data.Models
             Title = title;
             Directory = directory;
         }
+
+        public FolderValidation(string title) 
+        {
+            Title = title;
+        }
     }
 }
