@@ -147,10 +147,7 @@
                         Directory? tempDirectory = await _ds.GetDirectoryByNameAsync(inputFromUser.Directory, currentUserId);
                         if (tempDirectory is not null)
                         {
-                            NoteFromDB.Directory = tempDirectory;
-
-                            var result = await _ns.UpdateNoteAsync(NoteFromDB);
-
+                            var result = await _ns.ChangeNoteDirectoryAsync(NoteFromDB.NoteId, tempDirectory.DirectoryId);
                             if (result)
                                 toastService.ShowSuccess("The note has been updated.", "Congrats!");
                             else

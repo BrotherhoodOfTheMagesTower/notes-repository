@@ -1,0 +1,13 @@
+﻿
+.options-menu {
+    color: black;
+}
+
+.my-nav-item-hover:hover {
+    color: var(--secondary-color);
+    cursor: pointer;
+}
+
+.my-input {
+    width: 180px !important;
+}
