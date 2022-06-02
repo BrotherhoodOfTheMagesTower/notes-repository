@@ -101,9 +101,7 @@
                     if (usr is not null && DeletedDirectoryFromDB is not null)
                     {
                         Directory? tempDirectory = await _ds.GetDirectoryByNameAsync(inputFromUser.Directory, currentUserId);
-                        DeletedDirectoryFromDB.ParentDir = tempDirectory; //change to method form service
-                        DeletedDirectoryFromDB.IsMarkedAsDeleted = false;
-                        var result = await _ds.UpdateAsync(DeletedDirectoryFromDB);
+                        var result = await _ds.RestoreADirectorySubdirectoriesAndNotesFromBinToDirectory(DeletedDirectoryFromDB.DirectoryId, tempDirectory.DirectoryId);
 
                         if (result)
                             toastService.ShowSuccess("The directory has been restored.", "Congrats!");
@@ -131,7 +129,13 @@
     {
         if(directory is not null)
         {
-            //_ds.RemoveDirectoriesSubdirectoriesAndNotesFromBinAndDb(0);
+            var result = await _ds.RemoveDirectoriesSubdirectoriesAndNotesFromBin(DeletedDirectoryFromDB.DirectoryId);
+            if (result)
+                toastService.ShowSuccess("The directory has been removed.", "Congrats!");
+            else
+            {
+                toastService.ShowError("An error occurred while removing directory.", "OOPS!");
+            }
         }
     }
 }

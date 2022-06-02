@@ -125,17 +125,22 @@
     {
         if (directory is not null)
         {
-            var result = await _ds.MoveDirectorySubdirectoriesAndNotesToBin(directory.DirectoryId);
-
-            if (result)
+            if (directory.Name is not "Default")
             {
-                toastService.ShowSuccess("Directory has been deleted!", "Success!");
+                var result = await _ds.MoveDirectorySubdirectoriesAndNotesToBin(directory.DirectoryId);
+
+                if (result)
+                {
+                    toastService.ShowSuccess("Directory has been deleted!", "Success!");
+                }
+                else
+                {
+                    toastService.ShowSuccess("Error while deleting directory", "Error!");
+                }
+                ModalInstance?.CloseAsync(ModalResult.Ok(directory.DirectoryId.ToString()));
             }
             else
-            {
-                toastService.ShowSuccess("Error while deleting directory", "Error!");
-            }
-            ModalInstance?.CloseAsync(ModalResult.Ok(directory.DirectoryId.ToString()));
+                toastService.ShowError("This folder can not be deleted", "Error!");
         }
     }
 }
