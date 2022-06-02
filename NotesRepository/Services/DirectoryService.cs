@@ -80,7 +80,10 @@ namespace NotesRepository.Services
             return (directories, notes);
         }
 
-        
+        public async Task<bool> ChangeParentDirectoryForSubDirectory(Guid subDirectoryId, Guid directoryId)
+            => await _dr.ChangeParentDirectoryForSubDirectory(subDirectoryId, directoryId);
+
+
 
         public bool RemoveDirectoriesSubdirectoriesAndNotesFromBinAndDbByDate(int daysOld = 30)
         {
