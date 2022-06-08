@@ -25,7 +25,10 @@ public class AddEventReminder : IJob
                 if (_event is not null)
                 {
                     Console.WriteLine($"Attempting to send e-mail for EventId: {_event.NoteId} for time: {_event.ReminderAt}");
-                    var sendGridClient = new SendGridClient("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");
+                    var config = new ConfigurationBuilder()
+                        .AddUserSecrets<Program>()
+                        .Build();
+                    var sendGridClient = new SendGridClient(config["SENDGRID_API_KEY"]);
                     var sendGridMessage = new SendGridMessage();
                     sendGridMessage.SetFrom("brotherhoodofthemagestower@gmail.com", "Notes Repository");
                     sendGridMessage.AddTo(_event.User.Email);
