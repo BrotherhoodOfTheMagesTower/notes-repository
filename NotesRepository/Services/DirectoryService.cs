@@ -1,6 +1,7 @@
 ﻿using NotesRepository.Data.Models;
 using NotesRepository.Repositories;
 using Directory = NotesRepository.Data.Models.Directory;
+using NotesRepository.Services.Azure;
 
 namespace NotesRepository.Services
 {
@@ -8,8 +9,10 @@ namespace NotesRepository.Services
     {
         private readonly NoteRepository _nr;
         private readonly UserRepository _ur;
+        private readonly ImageRepository _ir;
         private readonly DirectoryRepository _dr;
-
+        private readonly string containerName = "imagecontainer";
+        private AzureStorageHelper _azureHelper;
 
 
         public DirectoryService(DirectoryRepository directoryRepository)
@@ -17,11 +20,21 @@ namespace NotesRepository.Services
             _dr = directoryRepository;
         }
 
-        public DirectoryService(NoteRepository noteRepository, DirectoryRepository directoryRepository, UserRepository userRepository)
+        public DirectoryService(NoteRepository noteRepository, DirectoryRepository directoryRepository, UserRepository userRepository, ImageRepository imageRepository)
         {
             _nr = noteRepository;
             _ur = userRepository;
             _dr = directoryRepository;
+            _ir = imageRepository;
+        }
+
+        public DirectoryService(NoteRepository noteRepository, DirectoryRepository directoryRepository, UserRepository userRepository, ImageRepository imageRepository, AzureStorageHelper azureStorageHelper)
+        {
+            _nr = noteRepository;
+            _ur = userRepository;
+            _dr = directoryRepository;
+            _ir = imageRepository;
+            _azureHelper = azureStorageHelper;
         }
 
         public async Task<Directory?> GetDirectoryByIdAsync(Guid directoryId)
@@ -34,12 +47,130 @@ namespace NotesRepository.Services
             => await _dr.AddAsync(directory);
 
         public async Task<bool> DeleteDirectoryByIdAsync(Guid directoryId)
-            => await _dr.DeleteByIdAsync(directoryId);
+        {
+            // Sub directories
+            var subDirectories = await _dr.GetAllSubDirectoriesOfParticularDirectoryAsync(directoryId);
+            if (subDirectories != null)
+            {
+                foreach (var directory in subDirectories)
+                {
+                    var notesFromSubDirectory = await _nr.GetAllNotesForParticularDirectoryAsync(directory.DirectoryId);
+                    foreach (var note in notesFromSubDirectory)
+                    {
+                        var imagesAttachedToNote = await _ir.GetAllNoteImagesAsync(note.NoteId);
+                        if (imagesAttachedToNote != null)
+                        {
+                            foreach (Image image in imagesAttachedToNote)
+                                await _azureHelper.DeleteImageFromAzure(image.Name, containerName);
+                            await _ir.DeleteManyAsync(imagesAttachedToNote);
+                        }
+                    }
+                    await _dr.DeleteAsync(directory);
+                }
+            }
+
+            // Current notes
+            var notesFromParentDirectory = _nr.GetAllNotesForParticularDirectory(directoryId);
+            if (notesFromParentDirectory != null)
+            {
+                foreach (var note in notesFromParentDirectory)
+                {
+                    var imagesAttachedToNote = await _ir.GetAllNoteImagesAsync(note.NoteId);
+                    if (imagesAttachedToNote != null)
+                    {
+                        foreach (Image image in imagesAttachedToNote)
+                            await _azureHelper.DeleteImageFromAzure(image.Name, containerName);
+                        await _ir.DeleteManyAsync(imagesAttachedToNote);
+                    }
+                }
+            }
+            return await _dr.DeleteByIdAsync(directoryId);
+        }
 
         public async Task<bool> DeleteManyDirectoriesAsync(ICollection<Directory> directories)
-           => await _dr.DeleteManyAsync(directories);
+        {
+            foreach (Directory directory in directories)
+            {
+                // Sub directories
+                var subDirectories = await _dr.GetAllSubDirectoriesOfParticularDirectoryAsync(directory.DirectoryId);
+                if (subDirectories != null)
+                {
+                    foreach (var dir in subDirectories)
+                    {
+                        var notesFromSubDirectory = await _nr.GetAllNotesForParticularDirectoryAsync(dir.DirectoryId);
+                        foreach (var note in notesFromSubDirectory)
+                        {
+                            var imagesAttachedToNote = await _ir.GetAllNoteImagesAsync(note.NoteId);
+                            if (imagesAttachedToNote != null)
+                            {
+                                foreach (Image image in imagesAttachedToNote)
+                                    await _azureHelper.DeleteImageFromAzure(image.Name, containerName);
+                                await _ir.DeleteManyAsync(imagesAttachedToNote);
+                            }
+                        }
+                        await _dr.DeleteAsync(dir);
+                    }
+                }
+
+                // Current notes
+                var notesFromParentDirectory = _nr.GetAllNotesForParticularDirectory(directory.DirectoryId);
+                if(notesFromParentDirectory != null)
+                {
+                    foreach (var note in notesFromParentDirectory)
+                    {
+                        var imagesAttachedToNote = await _ir.GetAllNoteImagesAsync(note.NoteId);
+                        if (imagesAttachedToNote != null)
+                        {
+                            foreach (Image image in imagesAttachedToNote)
+                                await _azureHelper.DeleteImageFromAzure(image.Name, containerName);
+                            await _ir.DeleteManyAsync(imagesAttachedToNote);
+                        }
+                    }
+                }
+            }
+            return await _dr.DeleteManyAsync(directories);
+        }
+
         public async Task<bool> DeleteDirectoryAsync(Directory directory)
-            => await _dr.DeleteAsync(directory);
+        {
+            // Sub directories
+            var subDirectories = await _dr.GetAllSubDirectoriesOfParticularDirectoryAsync(directory.DirectoryId);
+            if (subDirectories != null)
+            {
+                foreach (var dir in subDirectories)
+                {
+                    var notesFromSubDirectory = await _nr.GetAllNotesForParticularDirectoryAsync(dir.DirectoryId);
+                    foreach (var note in notesFromSubDirectory)
+                    {
+                        var imagesAttachedToNote = await _ir.GetAllNoteImagesAsync(note.NoteId);
+                        if (imagesAttachedToNote != null)
+                        {
+                            foreach (Image image in imagesAttachedToNote)
+                                await _azureHelper.DeleteImageFromAzure(image.Name, containerName);
+                            await _ir.DeleteManyAsync(imagesAttachedToNote);
+                        }
+                    }
+                    await _dr.DeleteAsync(dir);
+                }
+            }
+
+            // Current notes
+            var notesFromParentDirectory = _nr.GetAllNotesForParticularDirectory(directory.DirectoryId);
+            if (notesFromParentDirectory != null)
+            {
+                foreach (var note in notesFromParentDirectory)
+                {
+                    var imagesAttachedToNote = await _ir.GetAllNoteImagesAsync(note.NoteId);
+                    if (imagesAttachedToNote != null)
+                    {
+                        foreach (Image image in imagesAttachedToNote)
+                            await _azureHelper.DeleteImageFromAzure(image.Name, containerName);
+                        await _ir.DeleteManyAsync(imagesAttachedToNote);
+                    }
+                }
+            }
+            return await _dr.DeleteAsync(directory);
+        }
 
 
         public async Task<Directory?> GetDefaultDirectoryForParticularUserAsync(string userId)

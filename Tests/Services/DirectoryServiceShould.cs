@@ -17,6 +17,7 @@ namespace Tests.Services
     public class DirectoryServiceShould
     {
         private readonly NoteRepository _nr;
+        private readonly ImageRepository _ir;
         private readonly UserRepository _ur;
         private readonly DirectoryRepository _dr;
         private readonly ApplicationDbContext ctx;
@@ -32,6 +33,7 @@ namespace Tests.Services
             _nr = new NoteRepository(ctx);
             _ur = new UserRepository(ctx);
             _dr = new DirectoryRepository(ctx);
+            _ir = new ImageRepository(ctx);
         }
 
         public ApplicationDbContext CreateDbContext()
@@ -46,7 +48,7 @@ namespace Tests.Services
         {
             //Arrange
             var ns = new NoteService(_nr);
-            var ds = new DirectoryService(_nr, _dr, _ur);
+            var ds = new DirectoryService(_nr, _dr, _ur, _ir);
             var usr = new ApplicationUser();
 
             var directory1 = new Directory("Directory name1", usr);
@@ -165,7 +167,7 @@ namespace Tests.Services
         {
             //Arrange
             var ns = new NoteService(_nr);
-            var ds = new DirectoryService(_nr, _dr, _ur);
+            var ds = new DirectoryService(_nr, _dr, _ur, _ir);
             var usr = new ApplicationUser();
 
             var directory1 = new Directory("Directory name1", usr);
@@ -283,7 +285,7 @@ namespace Tests.Services
         {
             //Arrange
             var ns = new NoteService(_nr);
-            var ds = new DirectoryService(_nr, _dr, _ur);
+            var ds = new DirectoryService(_nr, _dr, _ur, _ir);
             var usr = new ApplicationUser();
 
             var directory1 = new Directory("Directory name1", usr);

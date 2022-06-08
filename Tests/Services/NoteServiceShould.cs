@@ -295,7 +295,7 @@ namespace Tests.Services
         public async Task DeleteNotes()
         {
             //Arrange
-            var ns = new NoteService(_nr);
+            var ns = new NoteService(_nr, _ur, _er, _dr, _ir);
             var usr = new ApplicationUser();
             var notes = new List<Note>
             {

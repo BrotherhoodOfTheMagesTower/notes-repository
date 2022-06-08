@@ -126,7 +126,21 @@ namespace NotesRepository.Services
         }
 
         public async Task<bool> DeleteNotesAsync(ICollection<Note> notes)
-            => await _nr.DeleteManyAsync(notes);
+        {
+            foreach (var note in notes)
+            {
+                var imagesAttachedToNote = await _ir.GetAllNoteImagesAsync(note.NoteId);
+
+                if (imagesAttachedToNote != null)
+                {
+                    foreach (Image image in imagesAttachedToNote)
+                        await _azureHelper.DeleteImageFromAzure(image.Name, containerName);
+                    await _ir.DeleteManyAsync(imagesAttachedToNote);
+                }
+
+            }
+            return await _nr.DeleteManyAsync(notes);
+        }
 
         public async Task<bool> SetNoteAsCurrentlyEditedAsync(Guid noteId)
             => await _nr.MarkNoteAsCurrentlyEditedAsync(noteId);

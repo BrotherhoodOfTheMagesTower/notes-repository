@@ -31,7 +31,8 @@ public class DeleteOutdatedNotesAndDirectories : IJob
                 var _dr = new DirectoryRepository(ctx);
                 var _nr = new NoteRepository(ctx);
                 var _ur = new UserRepository(ctx);
-                var _ds = new DirectoryService(_nr, _dr, _ur);
+                var _ir = new ImageRepository(ctx);
+                var _ds = new DirectoryService(_nr, _dr, _ur, _ir);
 
                 var result = _ds.RemoveDirectoriesSubdirectoriesAndNotesFromBinAndDbByDate();
                 if (result == true)
