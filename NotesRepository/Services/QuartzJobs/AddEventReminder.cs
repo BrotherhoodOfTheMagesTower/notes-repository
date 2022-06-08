@@ -1,9 +1,10 @@
 ﻿using NotesRepository.Data;
 using NotesRepository.Repositories;
 using Quartz;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 
 namespace NotesRepository.Services.QuartzJobs;
-
 public class AddEventReminder : IJob
 {
     private readonly IServiceProvider _container;
@@ -24,10 +25,31 @@ public class AddEventReminder : IJob
                 if (_event is not null)
                 {
                     Console.WriteLine($"Attempting to send e-mail for EventId: {_event.NoteId} for time: {_event.ReminderAt}");
-                    //TODO: Implement SendGrid
+                    var sendGridClient = new SendGridClient("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");
+                    var sendGridMessage = new SendGridMessage();
+                    sendGridMessage.SetFrom("brotherhoodofthemagestower@gmail.com", "Notes Repository");
+                    sendGridMessage.AddTo(_event.User.Email);
+                    sendGridMessage.SetTemplateId("d-9b9cb70e0cd74df7a395f459310ae845");
+                    sendGridMessage.SetTemplateData(new
+                    {
+                        email = _event.User.Email,
+                        url = "https://notesrepository.azurewebsites.net/calendar",
+                        startAt = _event.StartAt.ToString("dddd, dd MMMM yyyy")
+                    });
+
+                    var response = sendGridClient.SendEmailAsync(sendGridMessage);
+                    if (response.Result.StatusCode == System.Net.HttpStatusCode.Accepted)
+                    {
+                        Console.WriteLine($"E-mail was successfuly sent!");
+                    }
+                    return Task.CompletedTask;
                 }
-                Console.WriteLine($"Couldn't get the event (ID: {Guid.Parse(context.JobDetail.Key.Name)} from the database.");
-                return Task.CompletedTask;
+                else
+                {
+                    Console.WriteLine($"Couldn't get the event (ID: {Guid.Parse(context.JobDetail.Key.Name)} from the database.");
+                    return Task.CompletedTask;
+                }
+                
             }
             Console.WriteLine("Couldn't get an ApplicationDbContext...");
             return Task.CompletedTask;
