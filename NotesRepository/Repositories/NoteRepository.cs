@@ -54,6 +54,20 @@ namespace NotesRepository.Repositories
         }
 
         /// <summary>
+        /// Removes a note entity from the database
+        /// </summary>
+        /// <param name="note">The note entity</param>
+        /// <returns>true if note was successfully removed; otherwise false</returns>
+        public bool Delete(Note note)
+        {
+            if (note.Event is not null)
+                note.Event = null;
+            ctx.Notes.Remove(note);
+            var result = ctx.SaveChanges();
+            return result > 0;
+        }
+
+        /// <summary>
         /// Removes multiple notes entities from the database
         /// </summary>
         /// <param name="note">The note entity</param>

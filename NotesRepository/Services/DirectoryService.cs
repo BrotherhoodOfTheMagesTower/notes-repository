@@ -229,6 +229,23 @@ namespace NotesRepository.Services
                 foreach (var directory in directories)
                 {
                     RemoveSubdirectoriesByDirectoryId(directory.DirectoryId);
+                    var directoryNotes = _nr.GetAllNotesForParticularDirectory(directory.DirectoryId);
+                    if (directoryNotes.Count > 0)
+                    {
+                        foreach (var note in directoryNotes)
+                        {
+                            var imagesAttachedToNote = _ir.GetAllNoteImages(note.NoteId);    // podpięte zdjęcia pod daną notatkę
+                            if (imagesAttachedToNote != null) // Jeżeli jakieś są to usuwamy
+                            {
+                                foreach (var image in imagesAttachedToNote)
+                                {
+                                    _azureHelper.DeleteImageFromAzureNotAsync(image.Name, containerName); // usuwamy z Azure
+                                    _ir.Delete(image);   // Usuwamy z naszej bazy
+                                }
+                            }
+                            _nr.Delete(note);
+                        }
+                    }
                     _dr.DeleteById(directory.DirectoryId);
                 }
                 return true;
@@ -260,7 +277,26 @@ namespace NotesRepository.Services
             {
                 foreach (var subdirectory in subDirectories)
                 {
-
+                    var subDirectoryNotes = _nr.GetAllNotesForParticularDirectory(subdirectory.DirectoryId);
+                    if(subDirectoryNotes != null)
+                    {
+                        if (subDirectoryNotes.Count > 0)
+                        {
+                            foreach(var note in subDirectoryNotes)
+                            {
+                                var imagesAttachedToNote = _ir.GetAllNoteImages(note.NoteId);
+                                if (imagesAttachedToNote != null)
+                                {
+                                    foreach (var image in imagesAttachedToNote)
+                                    {
+                                        _azureHelper.DeleteImageFromAzureNotAsync(image.Name, containerName);
+                                        _ir.Delete(image);
+                                    }
+                                }
+                                _nr.Delete(note);
+                            }
+                        }
+                    }
                     RemoveSubdirectoriesByDirectoryId(subdirectory.DirectoryId);
                     _dr.DeleteById(subdirectory.DirectoryId);
                 }

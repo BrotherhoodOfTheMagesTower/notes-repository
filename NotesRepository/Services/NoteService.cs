@@ -111,6 +111,20 @@ namespace NotesRepository.Services
             return await _nr.DeleteAsync(note); // Jeżeli nie to usuwamy odrazu notatkę
         }
 
+        public bool DeleteNote(Note note)
+        {
+            var imagesAttachedToNote = _ir.GetAllNoteImages(note.NoteId);
+            if (imagesAttachedToNote != null)
+            {
+                foreach (var image in imagesAttachedToNote)
+                {
+                    _azureHelper.DeleteImageFromAzureNotAsync(image.Name, containerName);
+                    _ir.Delete(image);
+                }
+            }
+            return _nr.Delete(note);
+        }
+
         public async Task<bool> DeleteNoteByIdAsync(Guid noteId)
         {
             var imagesAttachedToNote = await _ir.GetAllNoteImagesAsync(noteId);
