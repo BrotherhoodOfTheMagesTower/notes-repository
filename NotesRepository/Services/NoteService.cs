@@ -111,6 +111,20 @@ namespace NotesRepository.Services
             return await _nr.DeleteAsync(note); // Jeżeli nie to usuwamy odrazu notatkę
         }
 
+        public bool DeleteNote(Note note)
+        {
+            var imagesAttachedToNote = _ir.GetAllNoteImages(note.NoteId);
+            if (imagesAttachedToNote != null)
+            {
+                foreach (var image in imagesAttachedToNote)
+                {
+                    _azureHelper.DeleteImageFromAzureNotAsync(image.Name, containerName);
+                    _ir.Delete(image);
+                }
+            }
+            return _nr.Delete(note);
+        }
+
         public async Task<bool> DeleteNoteByIdAsync(Guid noteId)
         {
             var imagesAttachedToNote = await _ir.GetAllNoteImagesAsync(noteId);
@@ -126,7 +140,21 @@ namespace NotesRepository.Services
         }
 
         public async Task<bool> DeleteNotesAsync(ICollection<Note> notes)
-            => await _nr.DeleteManyAsync(notes);
+        {
+            foreach (var note in notes)
+            {
+                var imagesAttachedToNote = await _ir.GetAllNoteImagesAsync(note.NoteId);
+
+                if (imagesAttachedToNote != null)
+                {
+                    foreach (Image image in imagesAttachedToNote)
+                        await _azureHelper.DeleteImageFromAzure(image.Name, containerName);
+                    await _ir.DeleteManyAsync(imagesAttachedToNote);
+                }
+
+            }
+            return await _nr.DeleteManyAsync(notes);
+        }
 
         public async Task<bool> SetNoteAsCurrentlyEditedAsync(Guid noteId)
             => await _nr.MarkNoteAsCurrentlyEditedAsync(noteId);
