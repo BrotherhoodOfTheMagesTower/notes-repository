@@ -46,135 +46,6 @@ namespace NotesRepository.Services
         public async Task<bool> AddDirectoryAsync(Directory directory)
             => await _dr.AddAsync(directory);
 
-        public async Task<bool> DeleteDirectoryByIdAsync(Guid directoryId)
-        {
-            // Sub directories
-            var subDirectories = await _dr.GetAllSubDirectoriesOfParticularDirectoryAsync(directoryId);
-            if (subDirectories != null)
-            {
-                foreach (var directory in subDirectories)
-                {
-                    var notesFromSubDirectory = await _nr.GetAllNotesForParticularDirectoryAsync(directory.DirectoryId);
-                    foreach (var note in notesFromSubDirectory)
-                    {
-                        var imagesAttachedToNote = await _ir.GetAllNoteImagesAsync(note.NoteId);
-                        if (imagesAttachedToNote != null)
-                        {
-                            foreach (Image image in imagesAttachedToNote)
-                                await _azureHelper.DeleteImageFromAzure(image.Name, containerName);
-                            await _ir.DeleteManyAsync(imagesAttachedToNote);
-                        }
-                    }
-                    await _dr.DeleteAsync(directory);
-                }
-            }
-
-            // Current notes
-            var notesFromParentDirectory = _nr.GetAllNotesForParticularDirectory(directoryId);
-            if (notesFromParentDirectory != null)
-            {
-                foreach (var note in notesFromParentDirectory)
-                {
-                    var imagesAttachedToNote = await _ir.GetAllNoteImagesAsync(note.NoteId);
-                    if (imagesAttachedToNote != null)
-                    {
-                        foreach (Image image in imagesAttachedToNote)
-                            await _azureHelper.DeleteImageFromAzure(image.Name, containerName);
-                        await _ir.DeleteManyAsync(imagesAttachedToNote);
-                    }
-                }
-            }
-            return await _dr.DeleteByIdAsync(directoryId);
-        }
-
-        public async Task<bool> DeleteManyDirectoriesAsync(ICollection<Directory> directories)
-        {
-            foreach (Directory directory in directories)
-            {
-                // Sub directories
-                var subDirectories = await _dr.GetAllSubDirectoriesOfParticularDirectoryAsync(directory.DirectoryId);
-                if (subDirectories != null)
-                {
-                    foreach (var dir in subDirectories)
-                    {
-                        var notesFromSubDirectory = await _nr.GetAllNotesForParticularDirectoryAsync(dir.DirectoryId);
-                        foreach (var note in notesFromSubDirectory)
-                        {
-                            var imagesAttachedToNote = await _ir.GetAllNoteImagesAsync(note.NoteId);
-                            if (imagesAttachedToNote != null)
-                            {
-                                foreach (Image image in imagesAttachedToNote)
-                                    await _azureHelper.DeleteImageFromAzure(image.Name, containerName);
-                                await _ir.DeleteManyAsync(imagesAttachedToNote);
-                            }
-                        }
-                        await _dr.DeleteAsync(dir);
-                    }
-                }
-
-                // Current notes
-                var notesFromParentDirectory = _nr.GetAllNotesForParticularDirectory(directory.DirectoryId);
-                if(notesFromParentDirectory != null)
-                {
-                    foreach (var note in notesFromParentDirectory)
-                    {
-                        var imagesAttachedToNote = await _ir.GetAllNoteImagesAsync(note.NoteId);
-                        if (imagesAttachedToNote != null)
-                        {
-                            foreach (Image image in imagesAttachedToNote)
-                                await _azureHelper.DeleteImageFromAzure(image.Name, containerName);
-                            await _ir.DeleteManyAsync(imagesAttachedToNote);
-                        }
-                    }
-                }
-            }
-            return await _dr.DeleteManyAsync(directories);
-        }
-
-        public async Task<bool> DeleteDirectoryAsync(Directory directory)
-        {
-            // Sub directories
-            var subDirectories = await _dr.GetAllSubDirectoriesOfParticularDirectoryAsync(directory.DirectoryId);
-            if (subDirectories != null)
-            {
-                foreach (var dir in subDirectories)
-                {
-                    var notesFromSubDirectory = await _nr.GetAllNotesForParticularDirectoryAsync(dir.DirectoryId);
-                    foreach (var note in notesFromSubDirectory)
-                    {
-                        var imagesAttachedToNote = await _ir.GetAllNoteImagesAsync(note.NoteId);
-                        if (imagesAttachedToNote != null)
-                        {
-                            foreach (Image image in imagesAttachedToNote)
-                                await _azureHelper.DeleteImageFromAzure(image.Name, containerName);
-                            await _ir.DeleteManyAsync(imagesAttachedToNote);
-                        }
-                    }
-                    await _dr.DeleteAsync(dir);
-                }
-            }
-
-            // Current notes
-            var notesFromParentDirectory = _nr.GetAllNotesForParticularDirectory(directory.DirectoryId);
-            if (notesFromParentDirectory != null)
-            {
-                foreach (var note in notesFromParentDirectory)
-                {
-                    var imagesAttachedToNote = await _ir.GetAllNoteImagesAsync(note.NoteId);
-                    if (imagesAttachedToNote != null)
-                    {
-                        foreach (Image image in imagesAttachedToNote)
-                            await _azureHelper.DeleteImageFromAzure(image.Name, containerName);
-                        await _ir.DeleteManyAsync(imagesAttachedToNote);
-                    }
-                }
-            }
-            return await _dr.DeleteAsync(directory);
-        }
-
-
-        public async Task<Directory?> GetDefaultDirectoryForParticularUserAsync(string userId)
-          => await _dr.GetDirectoryByNameAsync("Default", userId);
 
         public async Task<Directory?> GetBinForParticularUserAsync(string userId)
           => await _dr.GetDirectoryByNameAsync("Bin", userId);
@@ -182,34 +53,14 @@ namespace NotesRepository.Services
         public async Task<ICollection<Directory>?> GetAllDirectoriesForParticularUserAsync(string userId)
         => await _dr.GetAllDirectoriesForParticularUserAsync(userId);
 
-        public async Task<ICollection<Directory>?> GetAllDirectoriesFromBinForParticularUserAsync(string userId)
-        {
-            var directory = await _dr.GetDirectoryByNameAsync("Bin", userId);
-            if (directory != null)
-            {
-                return await _dr.GetAllSubDirectoriesOfParticularDirectoryAsync(directory.DirectoryId);
-            }
-            else return null;
-        }
-
         public async Task<ICollection<Directory>?> GetAllNotDeletedDirectoriesForParticularUserAsync(string userId)
         => await _dr.GetAllNotDeletedDirectoriesForParticularUserAsync(userId);
 
         public async Task<ICollection<Directory>?> GetAllDirectoriesWithoutParentDirectoryForParticularUserAsync(string userId)
         => await _dr.GetAllDirectoriesWithoutParentDirectoryForParticularUserAsync(userId);
 
-        public async Task<ICollection<Directory>?> GetAllSubDirectoriesOfParticularDirectoryAsync(Guid directoryId)
-        => await _dr.GetAllSubDirectoriesOfParticularDirectoryAsync(directoryId);
-
         public ICollection<Directory>? GetAllSubDirectoriesOfParticularDirectorySync(Guid directoryId)
             => _dr.GetAllSubDirectoriesOfParticularDirectorySync(directoryId);
-
-        public async Task<(ICollection<Directory>?, ICollection<Note>?)> GetAllSubDirectoriesAndNotesOfParticularDirectoryAsync(Guid directoryId)
-        {
-            ICollection<Directory>? directories = await _dr.GetAllSubDirectoriesOfParticularDirectoryAsync(directoryId);
-            ICollection<Note>? notes = await _nr.GetAllNotesForParticularDirectoryAsync(directoryId);
-            return (directories, notes);
-        }
 
         public async Task<bool> ChangeParentDirectoryForSubDirectory(Guid subDirectoryId, Guid directoryId)
             => await _dr.ChangeParentDirectoryForSubDirectory(subDirectoryId, directoryId);
@@ -222,30 +73,18 @@ namespace NotesRepository.Services
 
             var singleNotes = _nr.GetAllSingleNotesWhichShouldBeRemovedFromDb(daysOld);
             if (singleNotes.Count > 0)
+            {
+                DeleteImagesFromNotesList(singleNotes);
                 _nr.DeleteMany(singleNotes);
+            }
 
             if (directories.Count > 0)
             {
                 foreach (var directory in directories)
                 {
+                    var subDirectoryNotes = _nr.GetAllNotesForParticularDirectory(directory.DirectoryId);
+                    DeleteImagesFromNotesList(subDirectoryNotes);
                     RemoveSubdirectoriesByDirectoryId(directory.DirectoryId);
-                    var directoryNotes = _nr.GetAllNotesForParticularDirectory(directory.DirectoryId);
-                    if (directoryNotes.Count > 0)
-                    {
-                        foreach (var note in directoryNotes)
-                        {
-                            var imagesAttachedToNote = _ir.GetAllNoteImages(note.NoteId);    // podpięte zdjęcia pod daną notatkę
-                            if (imagesAttachedToNote != null) // Jeżeli jakieś są to usuwamy
-                            {
-                                foreach (var image in imagesAttachedToNote)
-                                {
-                                    _azureHelper.DeleteImageFromAzureNotAsync(image.Name, containerName); // usuwamy z Azure
-                                    _ir.Delete(image);   // Usuwamy z naszej bazy
-                                }
-                            }
-                            _nr.Delete(note);
-                        }
-                    }
                     _dr.DeleteById(directory.DirectoryId);
                 }
                 return true;
@@ -278,29 +117,35 @@ namespace NotesRepository.Services
                 foreach (var subdirectory in subDirectories)
                 {
                     var subDirectoryNotes = _nr.GetAllNotesForParticularDirectory(subdirectory.DirectoryId);
-                    if(subDirectoryNotes != null)
-                    {
-                        if (subDirectoryNotes.Count > 0)
-                        {
-                            foreach(var note in subDirectoryNotes)
-                            {
-                                var imagesAttachedToNote = _ir.GetAllNoteImages(note.NoteId);
-                                if (imagesAttachedToNote != null)
-                                {
-                                    foreach (var image in imagesAttachedToNote)
-                                    {
-                                        _azureHelper.DeleteImageFromAzureNotAsync(image.Name, containerName);
-                                        _ir.Delete(image);
-                                    }
-                                }
-                                _nr.Delete(note);
-                            }
-                        }
-                    }
+                    DeleteImagesFromNotesList(subDirectoryNotes);
                     RemoveSubdirectoriesByDirectoryId(subdirectory.DirectoryId);
                     _dr.DeleteById(subdirectory.DirectoryId);
                 }
                 return true;
+            }
+            return false;
+        }
+
+        public bool DeleteImagesFromNotesList(ICollection<Note> notesList)
+        {
+            if (notesList != null)
+            {
+                if (notesList.Count > 0)
+                {
+                    foreach (var note in notesList)
+                    {
+                        var imagesAttachedToNote = _ir.GetAllNoteImages(note.NoteId);
+                        if (imagesAttachedToNote != null)
+                        {
+                            foreach (var image in imagesAttachedToNote)
+                            {
+                                _azureHelper.DeleteImageFromAzureNotAsync(image.Name, containerName);
+                                _ir.Delete(image);
+                            }
+                        }
+                    }
+                    return true;
+                }
             }
             return false;
         }
@@ -423,13 +268,68 @@ namespace NotesRepository.Services
             return true;
         }
 
-
-
-
-
-
-
         public async Task<bool> UpdateAsync(Directory _directory)
             => await _dr.UpdateAsync(_directory);
     }
+
+    //to develop in future
+
+    //public async Task<bool> DeleteDirectoryByIdAsync(Guid directoryId)
+    //{
+    //    var subDirectoryNotes = _nr.GetAllNotesForParticularDirectory(directoryId);
+    //    DeleteImagesFromNotesList(subDirectoryNotes);
+    //    // Sub directories
+    //    var subDirectories = await _dr.GetAllSubDirectoriesOfParticularDirectoryAsync(directoryId);
+    //    if (subDirectories != null)
+    //    {
+    //        foreach (var directory in subDirectories)
+    //        {
+    //            var notesFromSubDirectory = await _nr.GetAllNotesForParticularDirectoryAsync(directory.DirectoryId);
+    //            DeleteImagesFromNotesList(notesFromSubDirectory);
+    //        }
+    //    }
+
+    //    // Current notes
+    //    var notesFromParentDirectory = _nr.GetAllNotesForParticularDirectory(directoryId);
+    //    DeleteImagesFromNotesList(notesFromParentDirectory);
+    //    return await _dr.DeleteByIdAsync(directoryId);
+    //}
+
+    //public async Task<bool> DeleteManyDirectoriesAsync(ICollection<Directory> directories)
+    //{
+    //    foreach (Directory directory in directories)
+    //    {
+    //        // Sub directories
+    //        var subDirectories = await _dr.GetAllSubDirectoriesOfParticularDirectoryAsync(directory.DirectoryId);
+    //        if (subDirectories != null)
+    //        {
+    //            foreach (var dir in subDirectories)
+    //            {
+    //                var notesFromSubDirectory = await _nr.GetAllNotesForParticularDirectoryAsync(dir.DirectoryId);
+    //                DeleteImagesFromNotesList(notesFromSubDirectory);
+    //                await _dr.DeleteAsync(dir);
+    //            }
+    //        }
+
+    //        // Current notes
+    //        var notesFromParentDirectory = _nr.GetAllNotesForParticularDirectory(directory.DirectoryId);
+    //        DeleteImagesFromNotesList(notesFromParentDirectory);
+    //    }
+    //    return await _dr.DeleteManyAsync(directories);
+    //}
+
+    //public async Task<ICollection<Directory>?> GetAllDirectoriesFromBinForParticularUserAsync(string userId)
+    //{
+    //    var directory = await _dr.GetDirectoryByNameAsync("Bin", userId);
+    //    if (directory != null)
+    //    {
+    //        return await _dr.GetAllSubDirectoriesOfParticularDirectoryAsync(directory.DirectoryId);
+    //    }
+    //    else return null;
+    //}
+
+    //public async Task<Directory?> GetDefaultDirectoryForParticularUserAsync(string userId)
+    //  => await _dr.GetDirectoryByNameAsync("Default", userId);
+    //public async Task<ICollection<Directory>?> GetAllSubDirectoriesOfParticularDirectoryAsync(Guid directoryId)
+    //    => await _dr.GetAllSubDirectoriesOfParticularDirectoryAsync(directoryId);
 }
