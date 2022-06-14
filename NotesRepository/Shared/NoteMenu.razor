@@ -142,25 +142,44 @@
                     var usr = await _ur.GetUserByIdAsync(currentUserId);
                     if (usr is not null && selectedDirectory is not null && NoteFromDB is not null)
                     {
-                        NoteFromDB.Title = inputFromUser.Title;
-                        NoteFromDB.IconName = inputFromUser.Emoji;
-                        Directory? tempDirectory = await _ds.GetDirectoryByNameAsync(inputFromUser.Directory, currentUserId);
-                        if (tempDirectory is not null)
+                        if (NoteFromDB.Title != inputFromUser.Title)
                         {
-                            var result = await _ns.ChangeNoteDirectoryAsync(NoteFromDB.NoteId, tempDirectory.DirectoryId);
-                            if (result)
-                                toastService.ShowSuccess(localizer["noteUpdated"], localizer["congrats"]);
-                            else
+                            var noteExists = await _ns.CheckIfTheNoteTitleExistsForParticularUser(inputFromUser.Title, currentUserId);
+                            if (noteExists == false)
                             {
-                                toastService.ShowError(localizer["errorWhileSavingNote"], "OOPS!");
+                                NoteFromDB.Title = inputFromUser.Title;
+                                var nameChanged = await _ns.UpdateNoteAsync(NoteFromDB);
+                                if (nameChanged)
+                                    toastService.ShowSuccess(localizer["noteTitleChanged"], localizer["congrats"]);
+                            }
+                            else
+                                toastService.ShowError(localizer["errorWhileChangingNoteTitle"], "OOPS!");
+                        }
+                        if (NoteFromDB.IconName != inputFromUser.Emoji)
+                        {
+                            NoteFromDB.IconName = inputFromUser.Emoji;
+                            var emojiChanged = await _ns.UpdateNoteAsync(NoteFromDB);
+                            if (emojiChanged)
+                                toastService.ShowSuccess(localizer["emojiChanged"], localizer["congrats"]);
+                        }
+                        if (NoteFromDB.Directory.Name != inputFromUser.Directory)
+                        {
+                            Directory? tempDirectory = await _ds.GetDirectoryByNameAsync(inputFromUser.Directory, currentUserId);
+                            if (tempDirectory is not null)
+                            {
+                                var result = await _ns.ChangeNoteDirectoryAsync(NoteFromDB.NoteId, tempDirectory.DirectoryId);
+                                if (result)
+                                    toastService.ShowSuccess(localizer["folderChanged"], localizer["congrats"]);
+                                else
+                                {
+                                    toastService.ShowError(localizer["errorWhileChangingFolder"], "OOPS!");
+                                }
                             }
                         }
-                        else
-                        {
-                            toastService.ShowError(localizer["errorWhileSavingNote"], "OOPS!");
-                        }
-                        submitForm(NoteFromDB);
                     }
+                    else
+                        toastService.ShowError(localizer["errorWhileSavingNote"], "OOPS!");
+                    submitForm(NoteFromDB);
                 }
             }
         }

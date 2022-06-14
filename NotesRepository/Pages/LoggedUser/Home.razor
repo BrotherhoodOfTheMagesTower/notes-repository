@@ -152,8 +152,11 @@
             if (usr is not null && directory is not null)
             {
                 // Save new note
-                var note = new Note(null, "Brudnopis", content, usr, directory);
-                var result = await _ns.AddNoteAsync(note);
+                //var note = new Note(null, "Brudnopis", content, usr, directory);
+
+                var note = new Note(null, content, usr, directory);
+                var noteWithGeneratedTitle = await _ns.GenerateTitleForNoteFromDraft(note, usr.Id);
+                var result = await _ns.AddNoteAsync(noteWithGeneratedTitle);
                 if (result)
                 {
                     toastService.ShowSuccess("The note was saved.", "Congrats!");

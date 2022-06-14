@@ -13,6 +13,7 @@ using NotesRepository.Services.QuartzJobs;
 using Plk.Blazor.DragDrop;
 using Quartz;
 using Radzen;
+using Azure.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -195,6 +195,9 @@
   <data name="directoryNameUpdated" xml:space="preserve">
     <value>Zaaktualizowano nazwę folderu!</value>
   </data>
+	<data name="directoryChanged" xml:space="preserve">
+    <value>Folder został zmieniony!</value>
+  </data>
   <data name="directoryUpdated" xml:space="preserve">
     <value>Folder został przeniesiony.</value>
   </data>
@@ -264,12 +267,22 @@
   <data name="errorWhileSavingNote" xml:space="preserve">
     <value>Błąd podczas zapisywania notatki!</value>
   </data>
+	<data name="errorWhileChangingNoteTitle" xml:space="preserve">
+    <value>Błąd podczas ustawiania tytułu notatki. Notatka o podanym tytule już istnieje!</value>
+  </data>
+	<data name="errorWhileChangingFolder" xml:space="preserve">
+    <value>Błąd podczas zmiany folderu!</value>
+  </data>
   <data name="eventPlanning" xml:space="preserve">
     <value>Planowanie wydarzeń</value>
   </data>
   <data name="eventPlanningDescryption" xml:space="preserve">
     <value>Czy zdarza Ci się zapominać o nadchodzących wydarzeniach? Jeśli tak, to Notes Repository jest właśnie dla Ciebie.</value>
   </data>
+	<data name="emojiChanged" xml:space="preserve">
+    <value>Emoji zostało zmienione!</value>
+  </data>
+
   <data name="features" xml:space="preserve">
     <value>funkcjonalność</value>
   </data>
@@ -287,6 +300,9 @@
   </data>
   <data name="folderStructure" xml:space="preserve">
     <value>Struktura folderów</value>
+  </data>
+	<data name="folderChanged" xml:space="preserve">
+    <value>Folder został zmieniony.</value>
   </data>
   <data name="folderStructureDescryption" xml:space="preserve">
     <value>Wszytskie notatki znajdują się w folderach, a te z kolei mogą być zagnieżdżone w innych.</value>
@@ -338,6 +354,9 @@
   </data>
   <data name="noteTitle" xml:space="preserve">
     <value>Tytuł notatki</value>
+  </data>
+	<data name="noteTitleChanged" xml:space="preserve">
+    <value>Tytuł notatki został zmieniony!</value>
   </data>
   <data name="noteUpdated" xml:space="preserve">
     <value>Notatka zostła zaaktualizowana!</value>
