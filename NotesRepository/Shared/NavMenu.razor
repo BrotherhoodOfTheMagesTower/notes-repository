@@ -182,9 +182,14 @@
 
     private RenderFragment ToggleFolders(Directory? directory) => __builder =>
     {
-        if (directory == null)
+        @if (directory == null)
         {
-            allCurrentSubdirectiories = mainDirs;
+            <div class="my-options d-flex justify-content-center my-btn-add-main-folder my-custom-nav-item">
+                <div class="my-options-child">
+                    <i class="fa-solid fa-plus " @onclick="()=> HandleAddingFolderPopup(null)"></i>
+                </div>
+            </div>
+            allCurrentSubdirectiories = _ds.GetAllDirectoriesWithoutParentDirectoryForParticularUserSync(currentUserId);
         }
         else
         {
@@ -223,7 +228,6 @@
                                 <i class="fa-solid fa-ellipsis " @onclick="()=> HandleFolderPopup(dir)"></i>
                             </div>
                         </div>
-
 
                     </div>
 
@@ -345,12 +349,21 @@
             (directory.Name, folderParameters, options);
     }
 
-    private void HandleAddingFolderPopup(Directory directory)
+    private void HandleAddingFolderPopup(Directory? directory)
     {
         addingFolderParameters = new ModalParameters();
         addingFolderParameters.Add("DirectoryFromDB", directory);
-        modal.Show<AddFolderMenu>
-            (directory.Name, addingFolderParameters, options);
+        if(directory is not null)
+        {
+            modal.Show<AddFolderMenu>
+        (directory.Name, addingFolderParameters, options);
+        }
+        else
+        {
+               modal.Show<AddFolderMenu>
+        ("Add new folder", addingFolderParameters, options);
+        }
+
     }
 
     private int CountParentDir(Directory directory)

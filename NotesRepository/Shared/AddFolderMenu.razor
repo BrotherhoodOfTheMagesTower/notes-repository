@@ -48,10 +48,7 @@
     protected override void OnInitialized()
     {
         currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (DirectoryFromDB is not null)
-        {
-            inputFromUser = new FolderValidation("");
-        }
+        inputFromUser = new FolderValidation("");
     }
     private async Task SaveFolder()
     {
@@ -65,10 +62,10 @@
                     var usr = await _ur.GetUserByIdAsync(currentUserId);
                     var folderExists = await _ds.CheckIfTheFolderTitleExistsForParticularUser(inputFromUser.Title, currentUserId);
 
-                         if(folderExists == true)
-                    toastService.ShowError(localizer["errorWhileRenaming"], "OOPS!");
+                    if (folderExists == true)
+                        toastService.ShowError(localizer["errorWhileRenaming"], "OOPS!");
 
-                    else if (usr is not null && DirectoryFromDB is not null )
+                    else if (usr is not null && DirectoryFromDB is not null)
                     {
                         selectedDirectory = new Directory(inputFromUser.Title, usr);
                         selectedDirectory.ParentDir = DirectoryFromDB;
@@ -84,6 +81,22 @@
                             toastService.ShowError(localizer["errorWhileCreatingFolder"], "OOPS!");
                         }
                         SubmitForm(DirectoryFromDB);
+                    }
+                    else if (usr is not null)
+                    {
+                        selectedDirectory = new Directory(inputFromUser.Title, usr);
+                        selectedDirectory.ParentDir = DirectoryFromDB;
+
+                        var result = await _ds.AddDirectoryAsync(selectedDirectory);
+                        result = await _ds.UpdateAsync(selectedDirectory);
+
+                        if (result)
+                            toastService.ShowSuccess(localizer["folderCreated"], localizer["congrats"]);
+                        else
+                        {
+                            toastService.ShowError(localizer["errorWhileCreatingFolder"], "OOPS!");
+                        }
+                        SubmitForm(selectedDirectory);
                     }
                 }
             }

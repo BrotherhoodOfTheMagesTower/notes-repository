@@ -1,7 +1,7 @@
 ﻿using NotesRepository.Data.Models;
 using NotesRepository.Repositories;
-using Directory = NotesRepository.Data.Models.Directory;
 using NotesRepository.Services.Azure;
+using Directory = NotesRepository.Data.Models.Directory;
 
 namespace NotesRepository.Services
 {
@@ -58,6 +58,9 @@ namespace NotesRepository.Services
 
         public async Task<ICollection<Directory>?> GetAllDirectoriesWithoutParentDirectoryForParticularUserAsync(string userId)
         => await _dr.GetAllDirectoriesWithoutParentDirectoryForParticularUserAsync(userId);
+
+        public ICollection<Directory>? GetAllDirectoriesWithoutParentDirectoryForParticularUserSync(string userId)
+        => _dr.GetAllDirectoriesWithoutParentDirectoryForParticularUserSync(userId);
 
         public ICollection<Directory>? GetAllSubDirectoriesOfParticularDirectorySync(Guid directoryId)
             => _dr.GetAllSubDirectoriesOfParticularDirectorySync(directoryId);
@@ -164,12 +167,12 @@ namespace NotesRepository.Services
                     return true;
                 }
                 else return false;
-            }      
+            }
             else return false;
 
         }
 
-        public async Task<bool> MarkDirectorySubdirectoriesAndNotesAsDeleted(Guid directoryId) 
+        public async Task<bool> MarkDirectorySubdirectoriesAndNotesAsDeleted(Guid directoryId)
         {
             var directory = await _dr.GetByIdAsync(directoryId);
 
@@ -228,7 +231,7 @@ namespace NotesRepository.Services
 
         }
 
-        public async Task<bool> MarkDirectorySubdirectoriesAndNotesAsNotDeleted(Guid directoryId) 
+        public async Task<bool> MarkDirectorySubdirectoriesAndNotesAsNotDeleted(Guid directoryId)
         {
             var directory = await _dr.GetByIdAsync(directoryId);
 
