@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Azure.Identity;
+using Microsoft.EntityFrameworkCore;
 using NotesRepository.Data;
 using NotesRepository.Data.Models;
 using NotesRepository.Repositories;
@@ -92,11 +93,15 @@ namespace NotesRepository.Services
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddTransient<AddEventReminder>();
             serviceCollection.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer("Server=localhost,1433;Database=notes;User ID=sa;Password=MyPassword1234!;Integrated Security=false"));
+            var keyVaultEndpoint = new Uri("https://noterepo.vault.azure.net/");
+            var builder = new ConfigurationBuilder();
+            var conf = builder.AddAzureKeyVault(keyVaultEndpoint, new DefaultAzureCredential()).Build();
+            serviceCollection.AddSingleton<IConfiguration>(conf);
 
             var container = serviceCollection.BuildServiceProvider();
             StdSchedulerFactory factory = new StdSchedulerFactory();
             IScheduler scheduler = await factory.GetScheduler();
-            scheduler.JobFactory = new JobFactory(container);
+            scheduler.JobFactory = new JobFactory(container, container.GetRequiredService<IConfiguration>());
 
             if (!scheduler.IsStarted)
                 await scheduler.Start();

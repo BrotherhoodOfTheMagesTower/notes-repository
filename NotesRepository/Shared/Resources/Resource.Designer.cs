@@ -271,6 +271,15 @@ namespace NotesRepository.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The directory has been changed..
+        /// </summary>
+        public static string directoryChanged {
+            get {
+                return ResourceManager.GetString("directoryChanged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Directory doesn&apos;t exist!.
         /// </summary>
         public static string directoryDoesntExist {
@@ -433,6 +442,15 @@ namespace NotesRepository.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Emoji has been changed!.
+        /// </summary>
+        public static string emojiChanged {
+            get {
+                return ResourceManager.GetString("emojiChanged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to End.
         /// </summary>
         public static string End {
@@ -465,6 +483,24 @@ namespace NotesRepository.Shared.Resources {
         public static string errorDeletingDir {
             get {
                 return ResourceManager.GetString("errorDeletingDir", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error occurred while changing folder!.
+        /// </summary>
+        public static string errorWhileChangingFolder {
+            get {
+                return ResourceManager.GetString("errorWhileChangingFolder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error occurred while changing name of note. The note with the given title already exists!.
+        /// </summary>
+        public static string errorWhileChangingNoteTitle {
+            get {
+                return ResourceManager.GetString("errorWhileChangingNoteTitle", resourceCulture);
             }
         }
         
@@ -529,6 +565,15 @@ namespace NotesRepository.Shared.Resources {
         public static string folderCantBeDeleted {
             get {
                 return ResourceManager.GetString("folderCantBeDeleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Folder has been changed..
+        /// </summary>
+        public static string folderChanged {
+            get {
+                return ResourceManager.GetString("folderChanged", resourceCulture);
             }
         }
         
@@ -718,6 +763,15 @@ namespace NotesRepository.Shared.Resources {
         public static string noteTitle {
             get {
                 return ResourceManager.GetString("noteTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The note title has been changed..
+        /// </summary>
+        public static string noteTitleChanged {
+            get {
+                return ResourceManager.GetString("noteTitleChanged", resourceCulture);
             }
         }
         

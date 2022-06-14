@@ -272,5 +272,32 @@ namespace NotesRepository.Services
             }
             return false;
         }
+
+        public async Task<bool> CheckIfTheNoteTitleExistsForParticularUser(string title, string userId)
+        {
+            var directory = await _nr.GetNoteByTitleAsync(title, userId);
+            if (directory == null)
+                return false;
+            else return true;
+        }
+
+        public async Task<Note> GenerateTitleForNoteFromDraft(Note note, string userId)
+        {
+            var title = "SavedFromDraft_" + note.CreatedAt.Year + "-" + note.CreatedAt.Month + "-" + note.CreatedAt.Day;
+            bool titleExists = true;
+            int counter = 0;
+            while (titleExists)
+            {
+                titleExists = await CheckIfTheNoteTitleExistsForParticularUser(title, userId);
+                if (titleExists)
+                {
+                    title = "SavedFromDraft_" + note.CreatedAt.Year + "-" + note.CreatedAt.Month + "-" + note.CreatedAt.Day + "_" + counter;
+                    counter++;
+                }
+            }
+            note.Title = title;
+            var newNote = note;
+            return newNote;
+        }
     }
 }

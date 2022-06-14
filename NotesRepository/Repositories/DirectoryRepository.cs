@@ -100,7 +100,7 @@ namespace NotesRepository.Repositories
             }
             return false;
         }
-        
+
         /// <summary>
         /// Removes a directory entity from the database by directoryId
         /// </summary>
@@ -204,7 +204,7 @@ namespace NotesRepository.Repositories
                 .Where(d => d.ParentDir.DirectoryId == directoryId)
                 .ToListAsync();
         }
-        
+
         /// <summary>
         /// Gets all subdirectories for specific directory
         /// </summary>
@@ -242,6 +242,22 @@ namespace NotesRepository.Repositories
                 .Include(s => s.SubDirectories)
                 .Include(s => s.Notes)
                 .ToListAsync();
+        }
+
+        /// <summary>
+        /// Gets all subdirectories for specific directory
+        /// </summary>
+        /// <param name="directoryId">The unique ID of the directory</param>
+        /// <returns>A collection of subdirectories for specific directory</returns>
+        public ICollection<Directory>? GetAllDirectoriesWithoutParentDirectoryForParticularUserSync(string userId)
+        {
+            return ctx.Directories
+                .Where(u => u.User.Id == userId)
+                .Where(d => d.ParentDir == null)
+                .Where(n => n.Name != "Bin")
+                .Include(s => s.SubDirectories)
+                .Include(s => s.Notes)
+                .ToList();
         }
 
         /// <summary>
@@ -301,7 +317,7 @@ namespace NotesRepository.Repositories
         public ICollection<Directory> GetMainDirectoriesWhichShouldBeRemovedFromDb(int daysOld)
             => ctx.Directories
               .Where(x => x.ParentDir.Name == "Bin"
-                && x.DeletedAt<DateTime.Now.AddDays(-daysOld)
+                && x.DeletedAt < DateTime.Now.AddDays(-daysOld)
                 && x.IsMarkedAsDeleted == true)
             .ToArray();
     }

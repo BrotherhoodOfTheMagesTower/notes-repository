@@ -13,9 +13,12 @@ using NotesRepository.Services.QuartzJobs;
 using Plk.Blazor.DragDrop;
 using Quartz;
 using Radzen;
-
+using Azure.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var keyVaultEndpoint = new Uri("https://noterepo.vault.azure.net/");
+//var conf = builder.Configuration.AddAzureKeyVault(keyVaultEndpoint, new DefaultAzureCredential()).Build();
 
 #if DEBUG
 var connectionString = builder.Configuration.GetConnectionString("LocalApplicationDbContextConnection");
@@ -82,6 +85,7 @@ builder.Services.AddBlazoredToast();
 builder.Services.AddBlazoredModal();
 
 builder.Services.AddSingleton<ViewOptionService>();
+//builder.Services.AddSingleton<IConfiguration>(_ => conf);
 builder.Services.AddScoped<DialogService>();
 
 builder.Services.AddBlazorDragDrop();
