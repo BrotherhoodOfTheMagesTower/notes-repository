@@ -198,6 +198,9 @@
   <data name="directoryNameUpdated" xml:space="preserve">
     <value>The directory name has been updated.</value>
   </data>
+	<data name="directoryChanged" xml:space="preserve">
+    <value>The directory has been changed.</value>
+  </data>
   <data name="directoryUpdated" xml:space="preserve">
     <value>Folder directory has been updated.</value>
   </data>
@@ -267,18 +270,30 @@
   <data name="errorWhileSavingNote" xml:space="preserve">
     <value>An error occurred while saving note.</value>
   </data>
-  <data name="eventPlanning" xml:space="preserve">
+	<data name="errorWhileChangingNoteTitle" xml:space="preserve">
+    <value>An error occurred while changing name of note. The note with the given title already exists!</value>
+  </data> 
+	<data name="errorWhileChangingFolder" xml:space="preserve">
+    <value>An error occurred while changing folder!</value>
+  </data>
+	<data name="eventPlanning" xml:space="preserve">
     <value>Event Planning</value>
   </data>
   <data name="eventPlanningDescryption" xml:space="preserve">
     <value>Do you tend to forget about incoming events? If so, don't
                 worry. Notes Repository has got you covered and provides a complex calendar where you can add events and pin notes to them.</value>
   </data>
-  <data name="folderCantBeDeleted" xml:space="preserve">
+	<data name="emojiChanged" xml:space="preserve">
+    <value>Emoji has been changed!</value>
+  </data>
+	<data name="folderCantBeDeleted" xml:space="preserve">
     <value>This folder can't be deleted!</value>
   </data>
   <data name="folderCreated" xml:space="preserve">
     <value>Folder has been created.</value>
+  </data>
+	<data name="folderChanged" xml:space="preserve">
+    <value>Folder has been changed.</value>
   </data>
   <data name="folderExists" xml:space="preserve">
     <value>Folder already exists!</value>
@@ -340,7 +355,10 @@
   <data name="noteTitle" xml:space="preserve">
     <value>Note title</value>
   </data>
-  <data name="noteUpdated" xml:space="preserve">
+	<data name="noteTitleChanged" xml:space="preserve">
+    <value>The note title has been changed.</value>
+  </data>
+	<data name="noteUpdated" xml:space="preserve">
     <value>The note has been updated.</value>
   </data>
   <data name="pageNotFound" xml:space="preserve">

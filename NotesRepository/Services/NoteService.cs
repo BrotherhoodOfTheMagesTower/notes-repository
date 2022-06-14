@@ -272,5 +272,15 @@ namespace NotesRepository.Services
             }
             return false;
         }
+
+        public async Task<bool> CheckIfTheNoteTitleExistsForParticularUser(string title, string userId)
+        {
+            var directory = await _nr.GetNoteByTitleAsync(title, userId);
+            if (directory == null)
+                return false;
+            else return true;
+        }
+
+        
     }
 }

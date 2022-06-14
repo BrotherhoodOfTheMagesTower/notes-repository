@@ -15,20 +15,20 @@
 @inject IToastService toastService;
 
 <!--TODO Wprowadź tytuł notatki, wybór ikony (emoji), wybór folderu-->
-@if(directoriesList is null)
+@if (directoriesList is null)
 {
     <p><em>Loading...</em></p>
 }
 else
 {
     <EditForm Model="@inputFromUser" OnValidSubmit="saveNote">
-        <DataAnnotationsValidator/>
+        <DataAnnotationsValidator />
         <div>
             <div>
                 <row>@localizer["name"]</row>
                 <row>
                     <InputText id="noteTitle" @bind-Value="@inputFromUser.Title"></InputText>
-                    <ValidationMessage For="() => inputFromUser.Title"/>
+                    <ValidationMessage For="() => inputFromUser.Title" />
                 </row>
             </div>
             <div>
@@ -37,30 +37,30 @@ else
                     <InputSelect id="noteDirecotry" @bind-Value="@inputFromUser.Directory" class="my-input">
                         @foreach (var direcotry in directoriesList)
                         {
-                            <option value="@direcotry.Name">@direcotry.Name</option>
+                        <option value="@direcotry.Name">@direcotry.Name</option>
                         }
-                    </InputSelect>
-                </row>
-            </div>
-            <div>
-                <row>Emoji</row>
-                <row>
-                <InputSelect id="emoji"  @bind-Value="inputFromUser.Emoji">
-                    @foreach(var e in Emoji.emoji)
-                    {
-                        <option value="@e">@e</option>
-                    }
                 </InputSelect>
-                </row>
-            </div>
+            </row>
         </div>
-        <center>
-            <button type="submit" class="btn btn-primary">@localizer["save"]</button>
-        </center>
-    </EditForm>
+        <div>
+            <row>Emoji</row>
+            <row>
+                <InputSelect id="emoji" @bind-Value="inputFromUser.Emoji">
+                    @foreach (var e in Emoji.emoji)
+                        {
+                        <option value="@e">@e</option>
+                        }
+                </InputSelect>
+            </row>
+        </div>
+    </div>
+    <center>
+        <button type="submit" class="btn btn-primary">@localizer["save"]</button>
+    </center>
+</EditForm>
 }
 
-@code 
+@code
 {
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
     [Parameter] public string content { get; set; }
@@ -103,29 +103,13 @@ else
                     var usr = await _ur.GetUserByIdAsync(currentUserId);
                     if (usr is not null && selectedDirectory is not null)
                     {
-                        if(noteFromDb == null)
+                        if (noteFromDb == null)
                         {
                             // Save new note
-                            var note = new Note(null, inputFromUser.Title, content, inputFromUser.Emoji, usr, selectedDirectory);
-                            var result = await _ns.AddNoteAsync(note);
-                            if (result)
-                                toastService.ShowSuccess(localizer["SaveNoteMessageSaved"], localizer["congrats"]);
-                            submitForm(note);
-                        }
-                        else
-                        {
-                            // Update existing note
-                            if (inputFromUser.Directory == noteFromDb.Directory.Name &&
-                                inputFromUser.Title == noteFromDb.Title &&
-                                inputFromUser.Emoji == noteFromDb.IconName)
-                            {
-                                noteFromDb.Content = content;
-                                var result = await _ns.UpdateNoteAsync(noteFromDb);
-                                if (result)
-                                    toastService.ShowSuccess(localizer["SaveNoteMessageOverwritten"], localizer["congrats"]);
-                                submitForm(noteFromDb);
-                            }
-                            else // Save existing note in another place (nie wiem czy potrzebne, narazie zostawię)
+                            var noteExists = await _ns.CheckIfTheNoteTitleExistsForParticularUser(inputFromUser.Title, currentUserId);
+                            if (noteExists == true)
+                                toastService.ShowError(localizer["errorWhileChangingNoteTitle"], "OOPS!");
+                            else
                             {
                                 var note = new Note(null, inputFromUser.Title, content, inputFromUser.Emoji, usr, selectedDirectory);
                                 var result = await _ns.AddNoteAsync(note);
@@ -134,11 +118,64 @@ else
                                 submitForm(note);
                             }
                         }
+                        else
+                        {
+                            bool noteExists;
+                            if (noteFromDb.Title != inputFromUser.Title)
+                            {
+                                noteExists = await _ns.CheckIfTheNoteTitleExistsForParticularUser(inputFromUser.Title, currentUserId);
+                            }
+                            else
+                                noteExists = false;
+                            if (noteExists == true)
+                                toastService.ShowError(localizer["errorWhileChangingNoteTitle"], "OOPS!");
+                            else if (noteExists == false)
+                            {// Update existing note
+
+                                //if (inputFromUser.Directory == noteFromDb.Directory.Name &&
+                                //    inputFromUser.Title == noteFromDb.Title &&
+                                //    inputFromUser.Emoji == noteFromDb.IconName)
+                                //{
+                                if (noteFromDb.Directory.Name != inputFromUser.Directory)
+                                {
+                                    Directory? tempDirectory = await _ds.GetDirectoryByNameAsync(inputFromUser.Directory, currentUserId);
+                                    if (tempDirectory is not null)
+                                    {
+                                        var changed = await _ns.ChangeNoteDirectoryAsync(noteFromDb.NoteId, tempDirectory.DirectoryId);
+                                        if (changed)
+                                            toastService.ShowSuccess(localizer["folderChanged"], localizer["congrats"]);
+                                        else
+                                        {
+                                            toastService.ShowError(localizer["errorWhileChangingFolder"], "OOPS!");
+                                        }
+                                    }
+                                }
+                                if (noteFromDb.Content != content)
+                                noteFromDb.Content = content;
+                                if (noteFromDb.Title != inputFromUser.Title)
+                                noteFromDb.Title = inputFromUser.Title;
+                                if (noteFromDb.IconName != inputFromUser.Emoji)
+                                noteFromDb.IconName = inputFromUser.Emoji;
+                                var result = await _ns.UpdateNoteAsync(noteFromDb);
+                                if (result)
+                                    toastService.ShowSuccess(localizer["SaveNoteMessageOverwritten"], localizer["congrats"]);
+                                submitForm(noteFromDb);
+                                //}
+                                //else // Save existing note in another place (nie wiem czy potrzebne, narazie zostawię)
+                                //{
+                                //    var note = new Note(null, inputFromUser.Title, content, inputFromUser.Emoji, usr, selectedDirectory);
+                                //    var result = await _ns.AddNoteAsync(note);
+                                //    if (result)
+                                //        toastService.ShowSuccess(localizer["SaveNoteMessageSaved"], localizer["congrats"]);
+                                //    submitForm(note);
+                                //}
+                            }
+                        }
 
                     }
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 toastService.ShowError(e.Message, "OOPS!");
             }
