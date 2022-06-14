@@ -261,7 +261,7 @@ namespace Tests.Services
         public async Task DeleteNote()
         {
             //Arrange
-            var ns = new NoteService(_nr);
+            var ns = new NoteService(_nr, _ur, _er, _dr, _ir);
             var usr = new ApplicationUser();
             var note = new Note(null, "Test note", "DeleteNote()", "def-ico", usr, new Directory("Default", usr));
             await ns.AddNoteAsync(note);
@@ -278,7 +278,7 @@ namespace Tests.Services
         public async Task DeleteNoteById()
         {
             //Arrange
-            var ns = new NoteService(_nr);
+            var ns = new NoteService(_nr, _ur, _er, _dr, _ir);
             var usr = new ApplicationUser();
             var note = new Note(null, "Test note", "DeleteNoteById()", "def-ico", usr, new Directory("Default", usr));
             await ns.AddNoteAsync(note);
@@ -295,7 +295,7 @@ namespace Tests.Services
         public async Task DeleteNotes()
         {
             //Arrange
-            var ns = new NoteService(_nr);
+            var ns = new NoteService(_nr, _ur, _er, _dr, _ir);
             var usr = new ApplicationUser();
             var notes = new List<Note>
             {
@@ -317,7 +317,7 @@ namespace Tests.Services
         public async Task DeleteNotesById()
         {
             //Arrange
-            var ns = new NoteService(_nr);
+            var ns = new NoteService(_nr, _ur, _er, _dr, _ir);
             var usr = new ApplicationUser();
             var notes = new List<Note>
             {

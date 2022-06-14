@@ -133,5 +133,11 @@ namespace NotesRepository.Services.Azure
             var container = OpenContianer(containerName);
             await container.DeleteBlobAsync(imageName);
         }
+
+        public void DeleteImageFromAzureNotAsync(string imageName, string containerName)
+        {
+            var container = OpenContianer(containerName);
+            container.DeleteBlobAsync(imageName);
+        }
     }
 }

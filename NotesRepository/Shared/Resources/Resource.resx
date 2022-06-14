@@ -128,6 +128,9 @@
   <data name="add" xml:space="preserve">
     <value>Add</value>
   </data>
+  <data name="addEvent" xml:space="preserve">
+    <value>Add Event</value>
+  </data>
   <data name="addFolder" xml:space="preserve">
     <value>Add new folder</value>
   </data>
@@ -162,7 +165,13 @@
     <value>Application can be used on variety of devices ranging from
                 small mobile phones to big TV screens.</value>
   </data>
+  <data name="Day" xml:space="preserve">
+    <value>Day</value>
+  </data>
   <data name="delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="deleteEvent" xml:space="preserve">
     <value>Delete</value>
   </data>
   <data name="deleteFolder" xml:space="preserve">
@@ -180,6 +189,18 @@
   <data name="directory" xml:space="preserve">
     <value>Directory</value>
   </data>
+  <data name="directoryDoesntExist" xml:space="preserve">
+    <value>Directory doesn't exist!</value>
+  </data>
+  <data name="directoryHasBeenDeleted" xml:space="preserve">
+    <value>Directory has been deleted</value>
+  </data>
+  <data name="directoryNameUpdated" xml:space="preserve">
+    <value>The directory name has been updated.</value>
+  </data>
+  <data name="directoryUpdated" xml:space="preserve">
+    <value>Folder directory has been updated.</value>
+  </data>
   <data name="dontNotes" xml:space="preserve">
     <value>You don't have any notes</value>
   </data>
@@ -194,6 +215,9 @@
   </data>
   <data name="edit" xml:space="preserve">
     <value>Edit note</value>
+  </data>
+  <data name="editEvent" xml:space="preserve">
+    <value>Edit Event</value>
   </data>
   <data name="editName" xml:space="preserve">
     <value>Edit name</value>
@@ -219,12 +243,45 @@
   <data name="EditNoteMessageWrongFormat" xml:space="preserve">
     <value>A wrong file has been entered!</value>
   </data>
+  <data name="End" xml:space="preserve">
+    <value>End</value>
+  </data>
+  <data name="endIsRequired" xml:space="preserve">
+    <value>End is required.</value>
+  </data>
+  <data name="error" xml:space="preserve">
+    <value>Error!</value>
+  </data>
+  <data name="errorDeletingDir" xml:space="preserve">
+    <value>Error while deleting directory</value>
+  </data>
+  <data name="errorWhileCreatingFolder" xml:space="preserve">
+    <value>An error occurred while creating the folder.</value>
+  </data>
+  <data name="errorWhileMoving" xml:space="preserve">
+    <value>An error occurred while moving folder.</value>
+  </data>
+  <data name="errorWhileRenaming" xml:space="preserve">
+    <value>An error occurred while changing name of directory.</value>
+  </data>
+  <data name="errorWhileSavingNote" xml:space="preserve">
+    <value>An error occurred while saving note.</value>
+  </data>
   <data name="eventPlanning" xml:space="preserve">
     <value>Event Planning</value>
   </data>
   <data name="eventPlanningDescryption" xml:space="preserve">
     <value>Do you tend to forget about incoming events? If so, don't
                 worry. Notes Repository has got you covered and provides a complex calendar where you can add events and pin notes to them.</value>
+  </data>
+  <data name="folderCantBeDeleted" xml:space="preserve">
+    <value>This folder can't be deleted!</value>
+  </data>
+  <data name="folderCreated" xml:space="preserve">
+    <value>Folder has been created.</value>
+  </data>
+  <data name="folderExists" xml:space="preserve">
+    <value>Folder already exists!</value>
   </data>
   <data name="folders" xml:space="preserve">
     <value>Folders</value>
@@ -247,6 +304,9 @@
   <data name="GoogleAuhenticationDescryption" xml:space="preserve">
     <value>Registering has never been that easy! With Notes Repository you can register/ login with Google.</value>
   </data>
+  <data name="GoToNote" xml:space="preserve">
+    <value>Go to this note</value>
+  </data>
   <data name="homePage" xml:space="preserve">
     <value>Home</value>
   </data>
@@ -259,14 +319,35 @@
   <data name="markdownDescryption" xml:space="preserve">
     <value>Experience the power of Markdown language. Write notes in a quick and an efficient way.</value>
   </data>
+  <data name="Month" xml:space="preserve">
+    <value>Month</value>
+  </data>
   <data name="name" xml:space="preserve">
     <value>Name</value>
   </data>
   <data name="newNote" xml:space="preserve">
     <value>New note</value>
   </data>
+  <data name="noSearchResults" xml:space="preserve">
+    <value>Sorry, there weren't any search results.</value>
+  </data>
   <data name="noSharedNotes" xml:space="preserve">
     <value>No shared notes!</value>
+  </data>
+  <data name="noteDeleted" xml:space="preserve">
+    <value>Note has been deleted!</value>
+  </data>
+  <data name="noteTitle" xml:space="preserve">
+    <value>Note title</value>
+  </data>
+  <data name="noteUpdated" xml:space="preserve">
+    <value>The note has been updated.</value>
+  </data>
+  <data name="pageNotFound" xml:space="preserve">
+    <value>Page not found!</value>
+  </data>
+  <data name="pageNotFoundDesc" xml:space="preserve">
+    <value>We're sorry, the page you were looking for isn't found here. The link you followed may either be broken or no longer exists. Please try again.</value>
   </data>
   <data name="pinned" xml:space="preserve">
     <value>Pinned</value>
@@ -289,6 +370,9 @@
   <data name="save" xml:space="preserve">
     <value>Save</value>
   </data>
+  <data name="saveEvent" xml:space="preserve">
+    <value>Save</value>
+  </data>
   <data name="saveNote" xml:space="preserve">
     <value>Save note</value>
   </data>
@@ -304,17 +388,32 @@
   <data name="search" xml:space="preserve">
     <value>Search</value>
   </data>
+  <data name="searchByContentOrTitle" xml:space="preserve">
+    <value>search by content or title</value>
+  </data>
+  <data name="setReminder" xml:space="preserve">
+    <value>Set reminder</value>
+  </data>
   <data name="shared" xml:space="preserve">
     <value>Shared</value>
   </data>
   <data name="shareNote" xml:space="preserve">
     <value>Share note</value>
   </data>
+  <data name="Start" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="startIsRequired" xml:space="preserve">
+    <value>Start is required.</value>
+  </data>
   <data name="templates" xml:space="preserve">
     <value>Templates</value>
   </data>
   <data name="templatesDescryption" xml:space="preserve">
     <value>User is provided with a set of ready to use templates thanks to which they can create notes faster.</value>
+  </data>
+  <data name="Text" xml:space="preserve">
+    <value>Text</value>
   </data>
   <data name="theBestItSoftware" xml:space="preserve">
     <value>The Best IT Software for creating notes</value>
@@ -324,6 +423,9 @@
   </data>
   <data name="title" xml:space="preserve">
     <value>Title</value>
+  </data>
+  <data name="titleIsRequired" xml:space="preserve">
+    <value>Title is required.</value>
   </data>
   <data name="toUpload" xml:space="preserve">
     <value>To upload a image, you must first save the note.</value>
@@ -342,6 +444,9 @@
   </data>
   <data name="view" xml:space="preserve">
     <value>View</value>
+  </data>
+  <data name="Week" xml:space="preserve">
+    <value>Week</value>
   </data>
   <data name="welcomeToNotes" xml:space="preserve">
     <value>Welcome to Notes Repository</value>

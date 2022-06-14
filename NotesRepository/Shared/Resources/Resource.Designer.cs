@@ -90,6 +90,15 @@ namespace NotesRepository.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add Event.
+        /// </summary>
+        public static string addEvent {
+            get {
+                return ResourceManager.GetString("addEvent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add new folder.
         /// </summary>
         public static string addFolder {
@@ -190,11 +199,29 @@ namespace NotesRepository.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Day.
+        /// </summary>
+        public static string Day {
+            get {
+                return ResourceManager.GetString("Day", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete.
         /// </summary>
         public static string delete {
             get {
                 return ResourceManager.GetString("delete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete.
+        /// </summary>
+        public static string deleteEvent {
+            get {
+                return ResourceManager.GetString("deleteEvent", resourceCulture);
             }
         }
         
@@ -244,6 +271,42 @@ namespace NotesRepository.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Directory doesn&apos;t exist!.
+        /// </summary>
+        public static string directoryDoesntExist {
+            get {
+                return ResourceManager.GetString("directoryDoesntExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Directory has been deleted.
+        /// </summary>
+        public static string directoryHasBeenDeleted {
+            get {
+                return ResourceManager.GetString("directoryHasBeenDeleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The directory name has been updated..
+        /// </summary>
+        public static string directoryNameUpdated {
+            get {
+                return ResourceManager.GetString("directoryNameUpdated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Folder directory has been updated..
+        /// </summary>
+        public static string directoryUpdated {
+            get {
+                return ResourceManager.GetString("directoryUpdated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You don&apos;t have any notes.
         /// </summary>
         public static string dontNotes {
@@ -285,6 +348,15 @@ namespace NotesRepository.Shared.Resources {
         public static string edit {
             get {
                 return ResourceManager.GetString("edit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit Event.
+        /// </summary>
+        public static string editEvent {
+            get {
+                return ResourceManager.GetString("editEvent", resourceCulture);
             }
         }
         
@@ -361,6 +433,78 @@ namespace NotesRepository.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to End.
+        /// </summary>
+        public static string End {
+            get {
+                return ResourceManager.GetString("End", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to End is required..
+        /// </summary>
+        public static string endIsRequired {
+            get {
+                return ResourceManager.GetString("endIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error!.
+        /// </summary>
+        public static string error {
+            get {
+                return ResourceManager.GetString("error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error while deleting directory.
+        /// </summary>
+        public static string errorDeletingDir {
+            get {
+                return ResourceManager.GetString("errorDeletingDir", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error occurred while creating the folder..
+        /// </summary>
+        public static string errorWhileCreatingFolder {
+            get {
+                return ResourceManager.GetString("errorWhileCreatingFolder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error occurred while moving folder..
+        /// </summary>
+        public static string errorWhileMoving {
+            get {
+                return ResourceManager.GetString("errorWhileMoving", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error occurred while changing name of directory..
+        /// </summary>
+        public static string errorWhileRenaming {
+            get {
+                return ResourceManager.GetString("errorWhileRenaming", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error occurred while saving note..
+        /// </summary>
+        public static string errorWhileSavingNote {
+            get {
+                return ResourceManager.GetString("errorWhileSavingNote", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Event Planning.
         /// </summary>
         public static string eventPlanning {
@@ -376,6 +520,33 @@ namespace NotesRepository.Shared.Resources {
         public static string eventPlanningDescryption {
             get {
                 return ResourceManager.GetString("eventPlanningDescryption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This folder can&apos;t be deleted!.
+        /// </summary>
+        public static string folderCantBeDeleted {
+            get {
+                return ResourceManager.GetString("folderCantBeDeleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Folder has been created..
+        /// </summary>
+        public static string folderCreated {
+            get {
+                return ResourceManager.GetString("folderCreated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Folder already exists!.
+        /// </summary>
+        public static string folderExists {
+            get {
+                return ResourceManager.GetString("folderExists", resourceCulture);
             }
         }
         
@@ -443,6 +614,15 @@ namespace NotesRepository.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Go to this note.
+        /// </summary>
+        public static string GoToNote {
+            get {
+                return ResourceManager.GetString("GoToNote", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Home.
         /// </summary>
         public static string homePage {
@@ -479,6 +659,15 @@ namespace NotesRepository.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Month.
+        /// </summary>
+        public static string Month {
+            get {
+                return ResourceManager.GetString("Month", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Name.
         /// </summary>
         public static string name {
@@ -497,11 +686,65 @@ namespace NotesRepository.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sorry, there weren&apos;t any search results..
+        /// </summary>
+        public static string noSearchResults {
+            get {
+                return ResourceManager.GetString("noSearchResults", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No shared notes!.
         /// </summary>
         public static string noSharedNotes {
             get {
                 return ResourceManager.GetString("noSharedNotes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Note has been deleted!.
+        /// </summary>
+        public static string noteDeleted {
+            get {
+                return ResourceManager.GetString("noteDeleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Note title.
+        /// </summary>
+        public static string noteTitle {
+            get {
+                return ResourceManager.GetString("noteTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The note has been updated..
+        /// </summary>
+        public static string noteUpdated {
+            get {
+                return ResourceManager.GetString("noteUpdated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Page not found!.
+        /// </summary>
+        public static string pageNotFound {
+            get {
+                return ResourceManager.GetString("pageNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to We&apos;re sorry, the page you were looking for isn&apos;t found here. The link you followed may either be broken or no longer exists. Please try again..
+        /// </summary>
+        public static string pageNotFoundDesc {
+            get {
+                return ResourceManager.GetString("pageNotFoundDesc", resourceCulture);
             }
         }
         
@@ -569,6 +812,15 @@ namespace NotesRepository.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Save.
+        /// </summary>
+        public static string saveEvent {
+            get {
+                return ResourceManager.GetString("saveEvent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Save note.
         /// </summary>
         public static string saveNote {
@@ -614,6 +866,24 @@ namespace NotesRepository.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to search by content or title.
+        /// </summary>
+        public static string searchByContentOrTitle {
+            get {
+                return ResourceManager.GetString("searchByContentOrTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Set reminder.
+        /// </summary>
+        public static string setReminder {
+            get {
+                return ResourceManager.GetString("setReminder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Shared.
         /// </summary>
         public static string shared {
@@ -632,6 +902,24 @@ namespace NotesRepository.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Start.
+        /// </summary>
+        public static string Start {
+            get {
+                return ResourceManager.GetString("Start", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Start is required..
+        /// </summary>
+        public static string startIsRequired {
+            get {
+                return ResourceManager.GetString("startIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Templates.
         /// </summary>
         public static string templates {
@@ -646,6 +934,15 @@ namespace NotesRepository.Shared.Resources {
         public static string templatesDescryption {
             get {
                 return ResourceManager.GetString("templatesDescryption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Text.
+        /// </summary>
+        public static string Text {
+            get {
+                return ResourceManager.GetString("Text", resourceCulture);
             }
         }
         
@@ -673,6 +970,15 @@ namespace NotesRepository.Shared.Resources {
         public static string title {
             get {
                 return ResourceManager.GetString("title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Title is required..
+        /// </summary>
+        public static string titleIsRequired {
+            get {
+                return ResourceManager.GetString("titleIsRequired", resourceCulture);
             }
         }
         
@@ -727,6 +1033,15 @@ namespace NotesRepository.Shared.Resources {
         public static string view {
             get {
                 return ResourceManager.GetString("view", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Week.
+        /// </summary>
+        public static string Week {
+            get {
+                return ResourceManager.GetString("Week", resourceCulture);
             }
         }
         

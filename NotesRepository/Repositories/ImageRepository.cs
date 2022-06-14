@@ -53,6 +53,18 @@ namespace NotesRepository.Repositories
         /// <summary>
         /// Method removes image from database.
         /// </summary>
+        /// <param name="image">Image to be deleted from DB.</param>
+        /// <returns>True if image was successfully deleted, otherwise false.</returns>
+        public bool Delete(Image image)
+        {
+            ctx.Images.Remove(image);
+            var result = ctx.SaveChanges();
+            return result > 0;
+        }
+
+        /// <summary>
+        /// Method removes image from database.
+        /// </summary>
         /// <param name="imageId">Id of image to be deleted from DB.</param>
         /// <returns>True if image was successfully deleted, otherwise false.</returns>
         public async Task<bool> DeleteByIdAsync(Guid imageId)
@@ -90,6 +102,14 @@ namespace NotesRepository.Repositories
                 .Where(n => n.Note.NoteId == noteId)
                 .Include(d => d.Note)
                 .ToListAsync();
+        }
+
+        public ICollection<Image> GetAllNoteImages(Guid noteId)
+        {
+            return ctx.Images
+                .Where(n => n.Note.NoteId == noteId)
+                .Include(d => d.Note)
+                .ToList();
         }
 
         /// <summary>

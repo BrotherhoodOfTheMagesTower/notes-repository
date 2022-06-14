@@ -7,6 +7,7 @@
 @inject NoteService noteService;
 @inject UserRepository userRepository;
 @inject EventService eventService;
+@inject NavigationManager navigationManager;
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor
 @inject Microsoft.Extensions.Localization.IStringLocalizer<Resource> localizer
 
@@ -82,7 +83,7 @@
                 }
 </div>
     </div>
-      <div class="col">
+      <div class="col mb-2">
         <RadzenLabel Text=@localizer["noteTitle"] />
           <InputSelect @bind-Value="@noteId">
                 @if (noteId==null)
@@ -101,6 +102,12 @@
                     
                 }
             </InputSelect>
+            @if (noteId != null)
+            {
+                <center>
+                <button type="button" class="btn btn-primary btn-sm mt-2"  @onclick="()=>NavigateToNote()">@localizer["GoToNote"]</button>
+                </center>
+            }
     </div>
 </div>
 <div class="row">
@@ -125,6 +132,7 @@
     private List<Note>? allNotes = new();
     private Note note = new();
     private string noteId;
+    private string selectedNote;
 
     protected override async Task OnInitializedAsync()
     {
@@ -145,11 +153,11 @@
 
     async Task OnSubmit(Event model)
     {
-        if (model.ReminderAt < DateTime.Now)
+        if (model.ReminderAt < DateTime.Now || model.ReminderAt >model.StartAt)
         {
             model.ReminderAt = null;
             DialogService.Close(model);
-            toastService.ShowError("You set reminder before now", "Reminder reset!");
+            toastService.ShowError("You set wrong reminder", "Reminder reset!");
         }
         else
         {
@@ -192,8 +200,11 @@
     }
     async Task OnClickDeleteReminder(Event model)
     {
-
-        await eventService.CancelEventReminderAsync(model);
+        if (model.ReminderAt != null)
+        {
+            await eventService.CancelEventReminderAsync(model);
+            model.ReminderAt = null;
+        }
 
     }
     async Task OnClickEditReminder(Event model)
@@ -212,9 +223,13 @@
         {
             model.ReminderAt = null;
             DialogService.Close(model);
-            toastService.ShowError("Something went wrong","OOPS!");
+            toastService.ShowError("You set wrong reminder","Reminder reset!");
         }
 
 
+    }
+    void NavigateToNote()
+    {
+        navigationManager.NavigateTo("/editNote/" + noteId);
     }
 } 

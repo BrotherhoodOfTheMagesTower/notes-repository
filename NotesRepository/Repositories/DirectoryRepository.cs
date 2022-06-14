@@ -27,13 +27,13 @@ namespace NotesRepository.Repositories
         }
 
 
-/// <summary>
-/// Attaches a subdirectory entity to the particular directory. 
-/// </summary>
-/// <param name="subDirectory">The subdirectory entity</param>
-/// <param name="directoryId">The unique ID of directory</param>
-/// <returns>true if subdirectory was successfully added; otherwise false</returns>
-public async Task<bool> ChangeParentDirectoryForSubDirectory(Guid subDirectoryId, Guid directoryId)
+        /// <summary>
+        /// Attaches a subdirectory entity to the particular directory. 
+        /// </summary>
+        /// <param name="subDirectory">The subdirectory entity</param>
+        /// <param name="directoryId">The unique ID of directory</param>
+        /// <returns>true if subdirectory was successfully added; otherwise false</returns>
+        public async Task<bool> ChangeParentDirectoryForSubDirectory(Guid subDirectoryId, Guid directoryId)
         {
             var dir = await ctx.Directories.SingleOrDefaultAsync(x => x.DirectoryId == directoryId);
             var subDir = await ctx.Directories.SingleOrDefaultAsync(x => x.DirectoryId == subDirectoryId);

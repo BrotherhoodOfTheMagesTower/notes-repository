@@ -54,6 +54,20 @@ namespace NotesRepository.Repositories
         }
 
         /// <summary>
+        /// Removes a note entity from the database
+        /// </summary>
+        /// <param name="note">The note entity</param>
+        /// <returns>true if note was successfully removed; otherwise false</returns>
+        public bool Delete(Note note)
+        {
+            if (note.Event is not null)
+                note.Event = null;
+            ctx.Notes.Remove(note);
+            var result = ctx.SaveChanges();
+            return result > 0;
+        }
+
+        /// <summary>
         /// Removes multiple notes entities from the database
         /// </summary>
         /// <param name="note">The note entity</param>
@@ -249,6 +263,7 @@ namespace NotesRepository.Repositories
             return await ctx.Notes
                 .Where(o => o.Owner.Id == userId)
                 .Where(d => d.IsPinned == true)
+                .Where(b => b.IsMarkedAsDeleted == false)
                 .ToListAsync();
         }
 
@@ -261,6 +276,7 @@ namespace NotesRepository.Repositories
         {
             return await ctx.Notes
                 .Where(o => o.Owner.Id == userId)
+                .Where(b => b.IsMarkedAsDeleted == false)
                 .Where(t => t.Title.Contains(searchText) || t.Content.Contains(searchText))
                 .ToListAsync();
         }
@@ -270,7 +286,7 @@ namespace NotesRepository.Repositories
         /// </summary>
         /// <param name="noteId">The unique ID of note</param>
         /// <returns>true if note was successfully set as currently edited; otherwise false</returns>
-        public async Task<bool> SetNoteAsCurrentlyEditedAsync(Guid noteId)
+        public async Task<bool> MarkNoteAsCurrentlyEditedAsync(Guid noteId)
         {
             var note = await ctx.Notes.SingleOrDefaultAsync(x => x.NoteId == noteId);
             if (note is not null)
@@ -288,7 +304,7 @@ namespace NotesRepository.Repositories
         /// </summary>
         /// <param name="noteId">The unique ID of note</param>
         /// <returns>true if note was successfully set as currently not edited; otherwise false</returns>
-        public async Task<bool> SetNoteAsCurrentlyNotEditedAsync(Guid noteId)
+        public async Task<bool> MarkNoteAsCurrentlyNotEditedAsync(Guid noteId)
         {
             var note = await ctx.Notes.SingleOrDefaultAsync(x => x.NoteId == noteId);
             if (note is not null)
@@ -343,7 +359,7 @@ namespace NotesRepository.Repositories
         /// <returns>Returns <paramref name="count"/> recently edited or created notes of a particular user</returns>
         public async Task<ICollection<Note>> GetRecentlyEditedOrCreatedNotesAsync(string userId, int count)
         {
-            var allNotes = await GetAllUserNotesAsync(userId);
+            var allNotes = (await GetAllUserNotesAsync(userId)).Where(b => b.IsMarkedAsDeleted == false);
             return allNotes.OrderByDescending(x => x.EditedAt).ThenByDescending(x => x.CreatedAt).Take(count).ToArray();
         }
 

@@ -2,17 +2,11 @@
 
 namespace NotesRepository.Data.Models
 {
-    public class DeletedNoteValidation
+    public class DeletedNoteValidation : Validation
     {
-        public DeletedNoteValidation(string directory)
+        public DeletedNoteValidation(string directory)   
         {
             Directory = directory;
         }
-
-        [Required(ErrorMessage = "Required field!")]
-        [StringLength(32, ErrorMessage = "Too long!")]
-        [MinLength(2, ErrorMessage = "Too short!")]
-        public string Directory { get; set; }
-
     }
 }

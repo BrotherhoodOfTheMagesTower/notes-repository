@@ -1,4 +1,6 @@
-﻿using NotesRepository.Data.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using NotesRepository.Data;
+using NotesRepository.Data.Models;
 using NotesRepository.Repositories;
 using NotesRepository.Services.QuartzJobs;
 using Quartz;
@@ -87,8 +89,14 @@ namespace NotesRepository.Services
 
         private async Task ScheduleEventReminderAsync(Event _event)
         {
+            var serviceCollection = new ServiceCollection();
+            serviceCollection.AddTransient<AddEventReminder>();
+            serviceCollection.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer("Server=localhost,1433;Database=notes;User ID=sa;Password=MyPassword1234!;Integrated Security=false"));
+
+            var container = serviceCollection.BuildServiceProvider();
             StdSchedulerFactory factory = new StdSchedulerFactory();
             IScheduler scheduler = await factory.GetScheduler();
+            scheduler.JobFactory = new JobFactory(container);
 
             if (!scheduler.IsStarted)
                 await scheduler.Start();
@@ -97,7 +105,7 @@ namespace NotesRepository.Services
                 .WithIdentity(_event.EventId.ToString(), _event.User.Email)
                 .Build();
 
-            var utcReminder = DateTime.SpecifyKind((DateTime)_event.ReminderAt!, DateTimeKind.Utc);
+            var utcReminder = DateTime.SpecifyKind((DateTime)_event.ReminderAt!, DateTimeKind.Local);
             ITrigger trigger = TriggerBuilder.Create()
                 .WithIdentity($"{_event.EventId}-trigger", _event.User.Email)
                 .StartAt(utcReminder)

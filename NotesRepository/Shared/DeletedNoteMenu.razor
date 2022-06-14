@@ -98,9 +98,7 @@
                         Directory? tempDirectory = await _ds.GetDirectoryByNameAsync(inputFromUser.Directory, currentUserId);
                         if (tempDirectory is not null)
                         {
-                            DeletedNoteFromDB.Directory = tempDirectory;
-                            DeletedNoteFromDB.IsMarkedAsDeleted = false;
-                            var result = await _ns.UpdateNoteAsync(DeletedNoteFromDB);
+                            var result = await (_ns.RestoreASingleNoteFromTheBinAsync(DeletedNoteFromDB.NoteId, tempDirectory.DirectoryId));
 
                             if (result)
                                 toastService.ShowSuccess("The note has been restored.", "Congrats!");
@@ -145,9 +143,15 @@
 
     private async Task DeleteNote(Note? note)
     {
-        if(note is not null)
+        if (note is not null)
         {
-            //_ds.RemoveDirectoriesSubdirectoriesAndNotesFromBinAndDb(0);
+            var result = await _ns.DeleteNoteByIdAsync(DeletedNoteFromDB.NoteId);
+            if (result)
+                toastService.ShowSuccess("The note has been removed.", "Congrats!");
+            else
+            {
+                toastService.ShowError("An error occurred while removing note.", "OOPS!");
+            }
         }
     }
 }

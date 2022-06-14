@@ -25,17 +25,26 @@
 
     <AuthorizeView>
         <Authorized>
-            <BlazoredTypeahead SearchMethod="NotesSearch" @bind-Value="searchPhrase">
-                <SelectedTemplate Context="searchContext">
-                    @searchContext.Content
-                </SelectedTemplate>
-                <ResultTemplate Context="resultContext">
-                    @resultContext.Content
-                </ResultTemplate>
-                <NotFoundTemplate Context="notFoundContext">
-                    Sorry, there weren't any search results.
-                </NotFoundTemplate>
-            </BlazoredTypeahead>
+            <div class="my-search-wrapper">
+                <BlazoredTypeahead SearchMethod="NotesSearch"
+                                   @bind-Value="searchPhrase"
+                                   placeholder=" @localizer["searchByContentOrTitle"]">
+                    <SelectedTemplate Context="searchContext">
+                        @searchContext?.Title
+                    </SelectedTemplate>
+                    <ResultTemplate Context="resultContext">
+                        @resultContext.Title
+                    </ResultTemplate>
+                    <NotFoundTemplate Context="notFoundContext">
+                        @localizer["noSearchResults"]
+                    </NotFoundTemplate>
+                </BlazoredTypeahead>
+            </div>
+            @if (searchPhrase is not null)
+            {
+                GoToNote(searchPhrase.NoteId.ToString());
+                searchPhrase = null;
+            }
             <br />
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="/editNote/newNote">
@@ -103,12 +112,13 @@
     private ICollection<Directory>? mainDirs;
     private bool areTrashToggled = false;
     private ICollection<Directory>? binDirs;
-    public Note searchPhrase;
+    public Note? searchPhrase;
     private bool searching = false;
-    private List<Note> notes;
+    private List<Note>? notes;
     private int parentDirsCount = 1;
     private int parentDirsCountForBin = 0;
     private int parentDirsCountForNotes = 0;
+    string? currentUserId;
     private Directory? bin;
     private ModalOptions options = new ModalOptions()
         {
@@ -129,23 +139,13 @@
     private async Task init()
     {
         flags.setNavMenuLoadingStatus(true);
-        string? currentUserId = GetCurrentUserId();
+        currentUserId = GetCurrentUserId();
         if (currentUserId is not null)
         {
             mainDirs = await _ds.GetAllDirectoriesWithoutParentDirectoryForParticularUserAsync(currentUserId);
             bin = await _ds.GetBinForParticularUserAsync(currentUserId);
         }
         flags.setNavMenuLoadingStatus(false);
-    }
-
-    protected override void OnInitialized()
-    {
-        notes = new List<Note>
-            {
-                new Note("Ala ma kota"),
-                new Note("Ala Jakaś"),
-                new Note("Taaa"),
-            };
     }
 
     private void ToggleSubmenu()
@@ -163,28 +163,19 @@
         directory.IsToggled = !directory.IsToggled;
     }
 
-    private async Task<IEnumerable<Note>> NotesSearch(string searchText)
-    {
-        return notes;
-    }
-
     private string? GetCurrentUserId()
     {
         string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         return currentUserId;
     }
 
-    private void SearchPhrase()
+    private async Task<IEnumerable<Note>?> NotesSearch(string searchText)
     {
-        // Wywołanie funkcji szukającej
-        if (searchPhrase == null)
+        if (currentUserId is not null)
         {
-            searching = false;
+            notes = await _ns.SearchNotesByTitleAndContentAsync(searchText, currentUserId);
         }
-        else
-        {
-            searching = true;
-        }
+        return notes;
     }
 
     private ICollection<Directory>? allCurrentSubdirectiories;
@@ -198,7 +189,6 @@
         else
         {
             allCurrentSubdirectiories = _ds.GetAllSubDirectoriesOfParticularDirectorySync(directory.DirectoryId);
-            parentDirsCount = CountParentDir(directory);
         }
 
         @if (allCurrentSubdirectiories is not null && allCurrentSubdirectiories.Count() > 0)
@@ -394,7 +384,7 @@
                         </div>
                         <div class="my-options">
                             <div class="my-options-child">
-                            @if (note.IsMarkedAsDeleted)
+                                @if (note.IsMarkedAsDeleted)
                                 {
                                     <i class="fa-solid fa-ellipsis " @onclick="()=> HandleDeletedNotesPopup(note)"></i>
                                 }

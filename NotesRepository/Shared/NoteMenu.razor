@@ -14,7 +14,7 @@
 @inject NoteService _ns;
 @inject IToastService toastService;
 
-<EditForm Model="@inputFromUser" OnValidSubmit="saveNote">
+<EditForm Model="@inputFromUser" OnValidSubmit="SaveNote">
     <DataAnnotationsValidator />
     <div class="options-menu">
         @if (NoteFromDB is not null && NoteFromDB.IsPinned)
@@ -130,7 +130,7 @@
         directoriesList.Sort((x, y) => string.Compare(x.Name, y.Name));
 
     }
-    private async Task saveNote()
+    private async Task SaveNote()
     {
         try
         {
@@ -147,20 +147,17 @@
                         Directory? tempDirectory = await _ds.GetDirectoryByNameAsync(inputFromUser.Directory, currentUserId);
                         if (tempDirectory is not null)
                         {
-                            NoteFromDB.Directory = tempDirectory;
-
-                            var result = await _ns.UpdateNoteAsync(NoteFromDB);
-
+                            var result = await _ns.ChangeNoteDirectoryAsync(NoteFromDB.NoteId, tempDirectory.DirectoryId);
                             if (result)
-                                toastService.ShowSuccess("The note has been updated.", "Congrats!");
+                                toastService.ShowSuccess(localizer["noteUpdated"], localizer["congrats"]);
                             else
                             {
-                                toastService.ShowError("An error occurred while saving note.", "OOPS!");
+                                toastService.ShowError(localizer["errorWhileSavingNote"], "OOPS!");
                             }
                         }
                         else
                         {
-                            toastService.ShowError("An error occurred while saving note.", "OOPS!");
+                            toastService.ShowError(localizer["errorWhileSavingNote"], "OOPS!");
                         }
                         submitForm(NoteFromDB);
                     }
@@ -187,7 +184,7 @@
             {
                 selectedDirectory = await _ds.GetDirectoryByNameAsync(name, userId);
                 if (selectedDirectory == null)
-                    throw new Exception("There is no such folder!");
+                    throw new Exception(localizer["directoryDoesntExist"]);
             }
         }
     }
@@ -208,11 +205,11 @@
 
             if (result)
             {
-                toastService.ShowSuccess("Note has been deleted!", "Success!");
+                toastService.ShowSuccess(localizer["noteDeleted"], localizer["congrats"]);
             }
             else
             {
-                toastService.ShowSuccess("Error while deleting note", "Error!");
+                toastService.ShowSuccess(localizer["errorWhileSavingNote"], localizer["error"]);
             }
             ModalInstance?.CloseAsync(ModalResult.Ok(note.NoteId.ToString()));
         }

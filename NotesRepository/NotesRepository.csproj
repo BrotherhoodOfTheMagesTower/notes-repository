@@ -15,6 +15,7 @@
     <None Remove="Pages\LoggedUser\TemplatePreview.razor.css" />
     <None Remove="Pages\LoggedUser\TrashPage.razor.css" />
     <None Remove="Pages\NotLoggedUser\Features.razor.css" />
+    <None Remove="Shared\DeletedFolderMenu.razor.css" />
     <None Remove="Shared\Resources\AddFolderMenu.razor.css" />
   </ItemGroup>
 
@@ -23,6 +24,7 @@
     <Content Include="Pages\LoggedUser\TemplatePreview.razor.css" />
     <Content Include="Pages\LoggedUser\TrashPage.razor.css" />
     <Content Include="Pages\NotLoggedUser\Features.razor.css" />
+    <Content Include="Shared\DeletedFolderMenu.razor.css" />
   </ItemGroup>
 
   <ItemGroup>
@@ -50,7 +52,9 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.Design" Version="1.1.0" />
     <PackageReference Include="Quartz" Version="3.4.0" />
     <PackageReference Include="Quartz.AspNetCore" Version="3.4.0" />
+    <PackageReference Include="Quartz.Extensions.DependencyInjection" Version="3.4.0" />
     <PackageReference Include="Radzen.Blazor" Version="3.18.8" />
+    <PackageReference Include="SendGrid" Version="9.28.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.0" />
     <PackageReference Include="WindowsAzure.Storage" Version="9.3.3" />
   </ItemGroup>

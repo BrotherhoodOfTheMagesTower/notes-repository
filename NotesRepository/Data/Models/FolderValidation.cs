@@ -2,16 +2,17 @@
 
 namespace NotesRepository.Data.Models
 {
-    public class FolderValidation
+    public class FolderValidation : Validation
     {
-        public FolderValidation(string title)
+        public FolderValidation(string title, string directory) : base(title, directory)
+        {
+            Title = title;
+            Directory = directory;
+        }
+
+        public FolderValidation(string title) 
         {
             Title = title;
         }
-
-        [Required(ErrorMessage = "Required field!")]
-        [StringLength(32, ErrorMessage = "Too long!")]
-        [MinLength(2, ErrorMessage = "Too short!")]
-        public string Title { get; set; }
     }
 }
