@@ -291,7 +291,7 @@ namespace NotesRepository.Services
                 titleExists = await CheckIfTheNoteTitleExistsForParticularUser(title, userId);
                 if (titleExists)
                 {
-                    title = "SavedFromDraft_" + note.CreatedAt.Year + "-" + note.CreatedAt.Month + "-" + note.CreatedAt.Day + "-" + counter;
+                    title = "SavedFromDraft_" + note.CreatedAt.Year + "-" + note.CreatedAt.Month + "-" + note.CreatedAt.Day + "_" + counter;
                     counter++;
                 }
             }
