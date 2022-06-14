@@ -70,7 +70,7 @@ else
                     <button type="button" class="btn btn-primary" @onclick="saveNote">@localizer["save"]</button>
                 </div>
                 <div class="my-sub-input-container">
-                    @if (@validId && @noteFromDb is not null)
+                    @if (@validId && @noteFromDb is not null && editedByOwner)
                     {
                         <input class="d-block mb-1 ml-1 input-margin" @bind-value="collaboratorEmail"></input>
                         <button type="button" class="btn btn-primary" @onclick="() => addCollaboratorToNote()">@localizer["add"]</button>
@@ -121,7 +121,10 @@ else
                                         <tr>
                                             <th>@collaborator.Email</th>
                                             <th>@collaborator.FirstName @collaborator.LastName</th>
+                                            @if(editedByOwner)
+                                            {
                                             <th><button type="button" class="button-margin btn btn-primary" @onclick="() => deleteCollaboratorFromNote(collaborator)">@localizer["delete"]</button></th>
+                                            }
                                         </tr>
                                     }
                                 </tbody>
@@ -150,6 +153,7 @@ else
     private List<Image> imagesFromUser;
     private List<ApplicationUser> collaborators;
     private IJSObjectReference _jsModule;
+    private bool editedByOwner = true;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -236,10 +240,12 @@ else
                 string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if (currentUserId != null)
                 {
-                    noteFromDb = await _ns.GetNoteByIdAsync(Guid.Parse(templateIndex));
-
+			noteFromDb = await _ns.GetNoteByIdAsync(Guid.Parse(templateIndex));
                     if (noteFromDb is not null)
                     {
+                        if (!noteFromDb.Owner.Id.Equals(currentUserId))
+                            editedByOwner = false;
+
                         noteIsInBin = noteFromDb.IsMarkedAsDeleted;
                         var collaborators = (await _cns.GetAllCollaboratorsForNoteAsync(noteFromDb.NoteId)).ToList();
                         if (collaborators.Count > 0)

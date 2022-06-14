@@ -31,22 +31,25 @@ else
                     <ValidationMessage For="() => inputFromUser.Title" />
                 </row>
             </div>
-            <div>
-                <row>@localizer["directory"]</row>
-                <row>
-                    <InputSelect id="noteDirecotry" @bind-Value="@inputFromUser.Directory" class="my-input">
-                        @foreach (var direcotry in directoriesList)
-                        {
+            @if (editedByOwner)
+            {
+                <div>
+                    <row>@localizer["directory"]</row>
+                    <row>
+                        <InputSelect id="noteDirecotry" @bind-Value="@inputFromUser.Directory" class="my-input">
+                            @foreach (var direcotry in directoriesList)
+                            {
                         <option value="@direcotry.Name">@direcotry.Name</option>
-                        }
+                            }
                 </InputSelect>
             </row>
         </div>
-        <div>
-            <row>Emoji</row>
-            <row>
-                <InputSelect id="emoji" @bind-Value="inputFromUser.Emoji">
-                    @foreach (var e in Emoji.emoji)
+            }
+            <div>
+                <row>Emoji</row>
+                <row>
+                    <InputSelect id="emoji" @bind-Value="inputFromUser.Emoji">
+                        @foreach (var e in Emoji.emoji)
                         {
                         <option value="@e">@e</option>
                         }
@@ -68,6 +71,7 @@ else
     [Parameter] public string IconName { get; set; } = Emoji.getRandomEmoji();
     [Parameter] public Note? noteFromDb { get; set; } = null;
     private Directory? selectedDirectory;
+    private bool editedByOwner = true;
     private NoteValidation inputFromUser;
     private List<Directory>? directoriesList;
 
@@ -75,6 +79,12 @@ else
     {
         inputFromUser = noteFromDb == null ? new NoteValidation(Title, IconName, "Default") : new NoteValidation(noteFromDb.Title, noteFromDb.IconName, noteFromDb.Directory.Name);
         var currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (noteFromDb != null)
+        {
+            if (!noteFromDb.Owner.Id.Equals(currentUserId))
+            editedByOwner = false;
+        }
 
         directoriesList = (await _ds.GetAllNotDeletedDirectoriesForParticularUserAsync(currentUserId)).ToList();
 
