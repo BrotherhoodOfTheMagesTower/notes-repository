@@ -11,6 +11,7 @@ pool:
 
 variables:
   buildConfiguration: 'Release'
+  sendGridKey: $(SENDGRID_KEY)
 
 steps:
  - task: Docker@2
