@@ -40,14 +40,24 @@
                 {
                     <row class="ps-2">
                         <InputSelect id="folderTitle" @bind-Value="@inputFromUser.Directory" class="my-input">
-                            <option checked value="@DirectoryFromDB.Name">@DirectoryFromDB.Name</option>
-                            @foreach (var d in directoriesList)
+                            @if (DirectoryFromDB.ParentDir is not null)
                             {
-                        @if (d != DirectoryFromDB)
+                        <option checked value="@DirectoryFromDB.Name">@DirectoryFromDB.ParentDir.Name</option>
+                        @foreach (var d in directoriesList)
                                 {
+                            @if (d == DirectoryFromDB || d == DirectoryFromDB.ParentDir)
+                                    {
+                                        continue;
+                                    }
                             <option value="@d.Name">@d.Name</option>
                                 }
                             }
+                            else
+                            {
+                        <option checked value="@DirectoryFromDB.Name">---</option>
+
+                            }
+
 
                 </InputSelect>
 
@@ -150,7 +160,7 @@
 
                     if (DirectoryFromDB.Name != inputFromUser.Title)
                     {
-                        bool result;
+                        bool result = false;
                         await ValidateEditingName(inputFromUser.Title, currentUserId);
                         var folderExists = await _ds.CheckIfTheFolderTitleExistsForParticularUser(inputFromUser.Title, currentUserId);
                         if (folderExists == false)
@@ -158,7 +168,6 @@
                             DirectoryFromDB.Name = inputFromUser.Title;
                             result = await _ds.UpdateAsync(DirectoryFromDB);
                         }
-                        else result = false;
 
                         if (result)
                             toastService.ShowSuccess(localizer["directoryNameUpdated"], localizer["congrats"]);
