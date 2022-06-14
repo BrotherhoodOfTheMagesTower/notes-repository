@@ -63,10 +63,17 @@
                 if (currentUserId != null)
                 {
                     var usr = await _ur.GetUserByIdAsync(currentUserId);
-                    if (usr is not null && DirectoryFromDB is not null)
+                    var folderExists = await _ds.CheckIfTheFolderTitleExistsForParticularUser(inputFromUser.Title, currentUserId);
+
+                         if(folderExists == true)
+                    toastService.ShowError(localizer["errorWhileRenaming"], "OOPS!");
+
+                    else if (usr is not null && DirectoryFromDB is not null )
                     {
                         selectedDirectory = new Directory(inputFromUser.Title, usr);
                         selectedDirectory.ParentDir = DirectoryFromDB;
+
+
                         var result = await _ds.AddDirectoryAsync(selectedDirectory);
                         result = await _ds.UpdateAsync(selectedDirectory);
 

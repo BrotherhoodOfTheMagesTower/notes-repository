@@ -40,7 +40,7 @@
                 {
                     <row class="ps-2">
                         <InputSelect id="folderTitle" @bind-Value="@inputFromUser.Directory" class="my-input">
-                            <option value="@DirectoryFromDB.Name">@DirectoryFromDB.Name</option>
+                            <option checked value="@DirectoryFromDB.Name">@DirectoryFromDB.Name</option>
                             @foreach (var d in directoriesList)
                             {
                         @if (d != DirectoryFromDB)
@@ -150,9 +150,15 @@
 
                     if (DirectoryFromDB.Name != inputFromUser.Title)
                     {
+                        bool result;
                         await ValidateEditingName(inputFromUser.Title, currentUserId);
-                        DirectoryFromDB.Name = inputFromUser.Title;
-                        var result = await _ds.UpdateAsync(DirectoryFromDB);
+                        var folderExists = await _ds.CheckIfTheFolderTitleExistsForParticularUser(inputFromUser.Title, currentUserId);
+                        if (folderExists == false)
+                        {
+                            DirectoryFromDB.Name = inputFromUser.Title;
+                            result = await _ds.UpdateAsync(DirectoryFromDB);
+                        }
+                        else result = false;
 
                         if (result)
                             toastService.ShowSuccess(localizer["directoryNameUpdated"], localizer["congrats"]);

@@ -270,6 +270,14 @@ namespace NotesRepository.Services
 
         public async Task<bool> UpdateAsync(Directory _directory)
             => await _dr.UpdateAsync(_directory);
+
+        public async Task<bool> CheckIfTheFolderTitleExistsForParticularUser(string title, string userId)
+        {
+            var directory = await _dr.GetDirectoryByNameAsync(title, userId);
+            if (directory == null)
+                return false;
+            else return true;
+        }
     }
 
     //to develop in future
