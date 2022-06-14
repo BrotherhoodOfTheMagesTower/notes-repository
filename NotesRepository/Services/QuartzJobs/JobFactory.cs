@@ -12,7 +12,7 @@ public class JobFactory : IJobFactory
 
     protected readonly ConcurrentDictionary<IJob, IServiceScope> _scopes = new ConcurrentDictionary<IJob, IServiceScope>();
 
-    public JobFactory(IServiceProvider serviceProvider)
+    public JobFactory(IServiceProvider serviceProvider, IConfiguration configuration)
     {
         _serviceProvider = serviceProvider;
     }
