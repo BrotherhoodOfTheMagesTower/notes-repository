@@ -75,8 +75,9 @@ else
     {
         inputFromUser = noteFromDb == null ? new NoteValidation(Title, IconName, "Default") : new NoteValidation(noteFromDb.Title, noteFromDb.IconName, noteFromDb.Directory.Name);
         var currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        directoriesList = (await _ds.GetAllDirectoriesForParticularUserAsync(currentUserId)).ToList();
-        directoriesList.Remove(directoriesList.Find(d => d.Name == "Bin"));
+
+        directoriesList = (await _ds.GetAllNotDeletedDirectoriesForParticularUserAsync(currentUserId)).ToList();
+
         directoriesList.Sort((x, y) => string.Compare(x.Name, y.Name));
     }
 
@@ -151,11 +152,11 @@ else
                                     }
                                 }
                                 if (noteFromDb.Content != content)
-                                noteFromDb.Content = content;
+                                    noteFromDb.Content = content;
                                 if (noteFromDb.Title != inputFromUser.Title)
-                                noteFromDb.Title = inputFromUser.Title;
+                                    noteFromDb.Title = inputFromUser.Title;
                                 if (noteFromDb.IconName != inputFromUser.Emoji)
-                                noteFromDb.IconName = inputFromUser.Emoji;
+                                    noteFromDb.IconName = inputFromUser.Emoji;
                                 var result = await _ns.UpdateNoteAsync(noteFromDb);
                                 if (result)
                                     toastService.ShowSuccess(localizer["SaveNoteMessageOverwritten"], localizer["congrats"]);
