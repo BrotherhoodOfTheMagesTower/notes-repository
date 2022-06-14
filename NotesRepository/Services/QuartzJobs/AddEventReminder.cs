@@ -8,7 +8,6 @@ namespace NotesRepository.Services.QuartzJobs;
 public class AddEventReminder : IJob
 {
     private readonly IServiceProvider _container;
-
     public AddEventReminder(IServiceProvider container)
     {
         _container = container;
@@ -25,10 +24,8 @@ public class AddEventReminder : IJob
                 if (_event is not null)
                 {
                     Console.WriteLine($"Attempting to send e-mail for EventId: {_event.NoteId} for time: {_event.ReminderAt}");
-                    var config = new ConfigurationBuilder()
-                        .AddUserSecrets<Program>()
-                        .Build();
-                    var sendGridClient = new SendGridClient(config["SENDGRID_API_KEY"]);
+                    var key = _container.GetRequiredService<IConfiguration>()["sendgrid-api-key"];
+                    var sendGridClient = new SendGridClient(key);
                     var sendGridMessage = new SendGridMessage();
                     sendGridMessage.SetFrom("brotherhoodofthemagestower@gmail.com", "Notes Repository");
                     sendGridMessage.AddTo(_event.User.Email);
