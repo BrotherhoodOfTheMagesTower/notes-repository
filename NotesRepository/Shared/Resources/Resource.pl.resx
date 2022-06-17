@@ -291,28 +291,28 @@
   <data name="enterEmail" xml:space="preserve">
     <value>Wprowadź swój email</value>
   </data>
-	<data name="error" xml:space="preserve">
+  <data name="error" xml:space="preserve">
     <value>Błąd!</value>
   </data>
-	<data name="errorDeletingDir" xml:space="preserve">
+  <data name="errorDeletingDir" xml:space="preserve">
     <value>Błąd podczas usuwania folderu!</value>
   </data>
-	<data name="errorWhileCreatingFolder" xml:space="preserve">
+  <data name="errorWhileCreatingFolder" xml:space="preserve">
     <value>Podczas tworzenia fodleru pojawił się błąd.</value>
   </data>
-	<data name="errorWhileMoving" xml:space="preserve">
+  <data name="errorWhileMoving" xml:space="preserve">
     <value>Błąd podczas przenoszenia folderu.</value>
   </data>
-	<data name="errorWhileRenaming" xml:space="preserve">
+  <data name="errorWhileRenaming" xml:space="preserve">
     <value>Błąd podczas zmiany nazwy.</value>
   </data>
-	<data name="errorWhileSavingNote" xml:space="preserve">
+  <data name="errorWhileSavingNote" xml:space="preserve">
     <value>Błąd podczas zapisywania notatki!</value>
   </data>
-	<data name="errorWhileChangingNoteTitle" xml:space="preserve">
+  <data name="errorWhileChangingNoteTitle" xml:space="preserve">
     <value>Błąd podczas ustawiania tytułu notatki. Notatka o podanym tytule już istnieje!</value>
   </data>
-	<data name="errorWhileChangingFolder" xml:space="preserve">
+  <data name="errorWhileChangingFolder" xml:space="preserve">
     <value>Błąd podczas zmiany folderu!</value>
   </data>
   <data name="eventPlanning" xml:space="preserve">
@@ -336,7 +336,7 @@
   <data name="folderChanged" xml:space="preserve">
     <value>Folder został zmieniony.</value>
   </data>
-	<data name="forgotPassword" xml:space="preserve">
+  <data name="forgotPassword" xml:space="preserve">
     <value>Zapomniałeś hasła?</value>
   </data>
   <data name="folderStructureDescryption" xml:space="preserve">
@@ -367,7 +367,7 @@
     <value>Użyj lokalnego konta aby się zalogować</value>
   </data>
   <data name="localPasswordOrLogin" xml:space="preserve">
-    <value>Nie masz lokajnej nazwy użtkownika/hasła dla tej witryny. Dodaj lokalne konto, dzięki czemumożesz zalogować się bez zewnętrznego loginu.</value>
+    <value>Nie masz lokajnej nazwy użytkownika/hasła dla tej witryny. Dodaj lokalne konto, dzięki czemu możesz zalogować się bez zewnętrznego loginu.</value>
   </data>
   <data name="logIn" xml:space="preserve">
     <value>Zaloguj się</value>
@@ -417,13 +417,13 @@
   <data name="pageNotFoundDesc" xml:space="preserve">
     <value>Przepraszamy! Strona, którą próbujesz wyszukać nie istnieje. Upewnij się, że wprowadzony link jest poprawny i spróbuj ponownie.</value>
   </data>
-	<data name="password" xml:space="preserve">
+  <data name="password" xml:space="preserve">
     <value>Hasło</value>
   </data>
-	<data name="permanentlyRemove" xml:space="preserve">
+  <data name="permanentlyRemove" xml:space="preserve">
     <value>Usunięcie tych danych spowoduje trwałe usunięcie twojego konta i nie będzie można go odzyskać.</value>
   </data>
-	<data name="personalData" xml:space="preserve">
+  <data name="personalData" xml:space="preserve">
     <value>Dane osobiste</value>
   </data>
   <data name="pinned" xml:space="preserve">
@@ -481,7 +481,7 @@
     <value>Wyślij email weryfikacyjny</value>
   </data>
   <data name="serviceLogIn" xml:space="preserve">
-    <value>Uzyj innego serwisu, żeby się zalogować</value>
+    <value>Użyj innego serwisu, żeby się zalogować</value>
   </data>
   <data name="setPassword" xml:space="preserve">
     <value>Ustaw hasło</value>
@@ -489,7 +489,7 @@
   <data name="setReminder" xml:space="preserve">
     <value>Ustaw przypomnienie</value>
   </data>
-	<data name="searchByContentOrTitle" xml:space="preserve">
+  <data name="searchByContentOrTitle" xml:space="preserve">
     <value>szukaj po treści lub tytule</value>
   </data>
   <data name="shared" xml:space="preserve">
@@ -562,12 +562,57 @@
     <value>Tydzień</value>
   </data>
   <data name="welcomeToNotes" xml:space="preserve">
-    <value>Witaj w Notes Repository!</value>
+    <value>Witaj w Repozytorium Notatek!</value>
   </data>
   <data name="noChangesDetected" xml:space="preserve">
     <value>Nie wykryto żadnych nowych zmian!</value>
   </data>
   <data name="yourAccountPersonalData" xml:space="preserve">
     <value>Twoje konto zawiera dane osobowe, które nam przekazałeś. Ta strona umożliwia pobranie lub usunięcie tych danych.</value>
+  </data>
+  <data name="loginWithGoogle" xml:space="preserve">
+    <value>Zaloguj się przy pomocy Google</value>
+  </data>
+  <data name="registerWithGoogle" xml:space="preserve">
+    <value>Zarejestruj się przy pomocy Google</value>
+  </data>
+  <data name="rememberMe" xml:space="preserve">
+    <value>Zapamiętaj mnie</value>
+  </data>
+  <data name="confirmPassword" xml:space="preserve">
+    <value>Potwierdź hasło</value>
+  </data>
+  <data name="firstName" xml:space="preserve">
+    <value>Imię</value>
+  </data>
+  <data name="lastName" xml:space="preserve">
+    <value>Nazwisko</value>
+  </data>
+  <data name="addAnotherServiceToLogIn" xml:space="preserve">
+    <value>Dodaj kolejny zewnętrzny serwis </value>
+  </data>
+  <data name="confirmNewPassword" xml:space="preserve">
+    <value>Potwierdź nowe hasło</value>
+  </data>
+  <data name="currentPassword" xml:space="preserve">
+    <value>Aktualne hasło</value>
+  </data>
+  <data name="hello" xml:space="preserve">
+    <value>Cześć</value>
+  </data>
+  <data name="newEmail" xml:space="preserve">
+    <value>Nowy email</value>
+  </data>
+  <data name="newPassword" xml:space="preserve">
+    <value>Nowe hasło</value>
+  </data>
+  <data name="phoneNumber" xml:space="preserve">
+    <value>Numer telefonu</value>
+  </data>
+  <data name="username" xml:space="preserve">
+    <value>Nazwa użytkownika</value>
+  </data>
+  <data name="notesRepository" xml:space="preserve">
+    <value>Repozytorium Notatek</value>
   </data>
 </root>

@@ -306,17 +306,17 @@
   <data name="eventPlanning" xml:space="preserve">
     <value>Event Planning</value>
   </data>
-	<data name="emailConfirmation" xml:space="preserve">
+  <data name="emailConfirmation" xml:space="preserve">
     <value>Resend email confirmation</value>
   </data>
-	<data name="enterEmail" xml:space="preserve">
+  <data name="enterEmail" xml:space="preserve">
     <value>Enter your email</value>
   </data>
   <data name="eventPlanningDescryption" xml:space="preserve">
     <value>Do you tend to forget about incoming events? If so, don't
                 worry. Notes Repository has got you covered and provides a complex calendar where you can add events and pin notes to them.</value>
   </data>
-	<data name="externalLogins" xml:space="preserve">
+  <data name="externalLogins" xml:space="preserve">
     <value>External logins</value>
   </data>
   <data name="folderCantBeDeleted" xml:space="preserve">
@@ -384,7 +384,7 @@
   <data name="markdownDescryption" xml:space="preserve">
     <value>Experience the power of Markdown language. Write notes in a quick and an efficient way.</value>
   </data>
-	<data name="Month" xml:space="preserve">
+  <data name="Month" xml:space="preserve">
     <value>Month</value>
   </data>
   <data name="name" xml:space="preserve">
@@ -564,5 +564,50 @@
   </data>
   <data name="noChangesDetected" xml:space="preserve">
     <value>No new changes detected!</value>
+  </data>
+  <data name="loginWithGoogle" xml:space="preserve">
+    <value>Log in with Google</value>
+  </data>
+  <data name="registerWithGoogle" xml:space="preserve">
+    <value>Sign up with Google</value>
+  </data>
+  <data name="rememberMe" xml:space="preserve">
+    <value>Remember me</value>
+  </data>
+  <data name="confirmPassword" xml:space="preserve">
+    <value>Confirm password</value>
+  </data>
+  <data name="firstName" xml:space="preserve">
+    <value>First name</value>
+  </data>
+  <data name="lastName" xml:space="preserve">
+    <value>Last name</value>
+  </data>
+  <data name="addAnotherServiceToLogIn" xml:space="preserve">
+    <value>Add another service to log in.</value>
+  </data>
+  <data name="confirmNewPassword" xml:space="preserve">
+    <value>Confirm new Password</value>
+  </data>
+  <data name="currentPassword" xml:space="preserve">
+    <value>Current password</value>
+  </data>
+  <data name="hello" xml:space="preserve">
+    <value>Hello</value>
+  </data>
+  <data name="newEmail" xml:space="preserve">
+    <value>New email</value>
+  </data>
+  <data name="newPassword" xml:space="preserve">
+    <value>New password</value>
+  </data>
+  <data name="phoneNumber" xml:space="preserve">
+    <value>Phone number</value>
+  </data>
+  <data name="username" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="notesRepository" xml:space="preserve">
+    <value>Notes Repository</value>
   </data>
 </root>
