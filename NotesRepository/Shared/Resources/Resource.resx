@@ -125,11 +125,11 @@
         The purpose of this application is to provide the user with a complex solution to take notes.
         App makes use of Markdown language which allows quick and effective text formatting as well as nesting html code inside of the note.</value>
   </data>
+  <data name="account" xml:space="preserve">
+    <value>account</value>
+  </data>
   <data name="add" xml:space="preserve">
     <value>Add</value>
-  </data>
-  <data name="addEvent" xml:space="preserve">
-    <value>Add Event</value>
   </data>
   <data name="addFolder" xml:space="preserve">
     <value>Add new folder</value>
@@ -137,14 +137,35 @@
   <data name="addNote" xml:space="preserve">
     <value>Add note</value>
   </data>
+  <data name="anotherRegister" xml:space="preserve">
+    <value>Use another service to register</value>
+  </data>
+  <data name="associateYour" xml:space="preserve">
+    <value>Associate your</value>
+  </data>
   <data name="calendar" xml:space="preserve">
     <value>Calendar</value>
+  </data>
+  <data name="changeAccountSettings" xml:space="preserve">
+    <value>Change your account settings</value>
+  </data>
+  <data name="changeEmail" xml:space="preserve">
+    <value>Change email</value>
   </data>
   <data name="changeFolder" xml:space="preserve">
     <value>Change folder</value>
   </data>
+  <data name="changePassword" xml:space="preserve">
+    <value>Change password</value>
+  </data>
   <data name="clear" xml:space="preserve">
     <value>Clear</value>
+  </data>
+  <data name="clickLogout" xml:space="preserve">
+    <value>Click here to Logout</value>
+  </data>
+  <data name="closeAccount" xml:space="preserve">
+    <value>Delete data and close my account</value>
   </data>
   <data name="collabEmail" xml:space="preserve">
     <value>Collaborator's e-mail</value>
@@ -158,6 +179,9 @@
   <data name="content" xml:space="preserve">
     <value>Content</value>
   </data>
+  <data name="createAccount" xml:space="preserve">
+    <value>Create a new account</value>
+  </data>
   <data name="crossPlatform" xml:space="preserve">
     <value>Cross Platform</value>
   </data>
@@ -165,13 +189,7 @@
     <value>Application can be used on variety of devices ranging from
                 small mobile phones to big TV screens.</value>
   </data>
-  <data name="Day" xml:space="preserve">
-    <value>Day</value>
-  </data>
   <data name="delete" xml:space="preserve">
-    <value>Delete</value>
-  </data>
-  <data name="deleteEvent" xml:space="preserve">
     <value>Delete</value>
   </data>
   <data name="deleteFolder" xml:space="preserve">
@@ -185,6 +203,9 @@
   </data>
   <data name="deleteNotePermanently" xml:space="preserve">
     <value>Delete Note Permanently</value>
+  </data>
+  <data name="deletePersonalData" xml:space="preserve">
+    <value>Delete personal data</value>
   </data>
   <data name="directory" xml:space="preserve">
     <value>Directory</value>
@@ -212,6 +233,12 @@
   </data>
   <data name="dontUpcomingEvents" xml:space="preserve">
     <value>You don't have any events anytime soon</value>
+  </data>
+  <data name="download" xml:space="preserve">
+    <value>Download</value>
+  </data>
+  <data name="downloadYourData" xml:space="preserve">
+    <value>Download your data</value>
   </data>
   <data name="draft" xml:space="preserve">
     <value>Draft</value>
@@ -279,9 +306,18 @@
   <data name="eventPlanning" xml:space="preserve">
     <value>Event Planning</value>
   </data>
+	<data name="emailConfirmation" xml:space="preserve">
+    <value>Resend email confirmation</value>
+  </data>
+	<data name="enterEmail" xml:space="preserve">
+    <value>Enter your email</value>
+  </data>
   <data name="eventPlanningDescryption" xml:space="preserve">
     <value>Do you tend to forget about incoming events? If so, don't
                 worry. Notes Repository has got you covered and provides a complex calendar where you can add events and pin notes to them.</value>
+  </data>
+	<data name="externalLogins" xml:space="preserve">
+    <value>External logins</value>
   </data>
   <data name="folderCantBeDeleted" xml:space="preserve">
     <value>This folder can't be deleted!</value>
@@ -325,13 +361,30 @@
   <data name="image" xml:space="preserve">
     <value>Image</value>
   </data>
+  <data name="localAccount" xml:space="preserve">
+    <value>Use a local account to log in.</value>
+  </data>
+  <data name="localPasswordOrLogin" xml:space="preserve">
+    <value>You do not have a local username/password for this site. Add a local
+ You do not have a local username/password for this site. Add a local
+    account so you can log in without an external login.</value>
+  </data>
   <data name="logIn" xml:space="preserve">
     <value>Log in</value>
+  </data>
+  <data name="logout" xml:space="preserve">
+    <value>Logout</value>
+  </data>
+  <data name="manageAccount" xml:space="preserve">
+    <value>Manage your account</value>
+  </data>
+  <data name="manageEmail" xml:space="preserve">
+    <value>Manage email</value>
   </data>
   <data name="markdownDescryption" xml:space="preserve">
     <value>Experience the power of Markdown language. Write notes in a quick and an efficient way.</value>
   </data>
-  <data name="Month" xml:space="preserve">
+	<data name="Month" xml:space="preserve">
     <value>Month</value>
   </data>
   <data name="name" xml:space="preserve">
@@ -342,6 +395,9 @@
   </data>
   <data name="noSearchResults" xml:space="preserve">
     <value>Sorry, there weren't any search results.</value>
+  </data>
+  <data name="newUser" xml:space="preserve">
+    <value>Register as a new user</value>
   </data>
   <data name="noSharedNotes" xml:space="preserve">
     <value>No shared notes!</value>
@@ -361,17 +417,36 @@
   <data name="pageNotFoundDesc" xml:space="preserve">
     <value>We're sorry, the page you were looking for isn't found here. The link you followed may either be broken or no longer exists. Please try again.</value>
   </data>
+  <data name="password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="permanentlyRemove" xml:space="preserve">
+    <value>Deleting this data will permanently remove your account, and this cannot be recovered.</value>
+  </data>
+  <data name="personalData" xml:space="preserve">
+    <value>Personal data</value>
+  </data>
   <data name="pinned" xml:space="preserve">
     <value>Pinned</value>
+  </data>
+  <data name="pleaseEnter" xml:space="preserve">
+    <value>Please enter an email address for this site below and click the Register button to finish
+    logging in.</value>
   </data>
   <data name="preveiw" xml:space="preserve">
     <value>Preview</value>
   </data>
-  <data name="reguster" xml:space="preserve">
+  <data name="profile" xml:space="preserve">
+    <value>Profile</value>
+  </data>
+  <data name="register" xml:space="preserve">
     <value>Register</value>
   </data>
   <data name="renameFolder" xml:space="preserve">
     <value>Rename this folder</value>
+  </data>
+  <data name="resetPassword" xml:space="preserve">
+    <value>Reset Password</value>
   </data>
   <data name="restoreFolder" xml:space="preserve">
     <value>Restore folder</value>
@@ -406,11 +481,26 @@
   <data name="setReminder" xml:space="preserve">
     <value>Set reminder</value>
   </data>
+  <data name="sendEmail" xml:space="preserve">
+    <value>Send verification email</value>
+  </data>
+  <data name="serviceLogIn" xml:space="preserve">
+    <value>Use another service to log in</value>
+  </data>
+  <data name="setPassword" xml:space="preserve">
+    <value>Set your password</value>
+  </data>
   <data name="shared" xml:space="preserve">
     <value>Shared</value>
   </data>
   <data name="shareNote" xml:space="preserve">
     <value>Share note</value>
+  </data>
+  <data name="successfullyAuthenticated" xml:space="preserve">
+    <value>You've successfully authenticated with</value>
+  </data>
+  <data name="successfullyLogged" xml:space="preserve">
+    <value>You have successfully logged out of the application</value>
   </data>
   <data name="Start" xml:space="preserve">
     <value>Start</value>
@@ -445,8 +535,14 @@
   <data name="trash" xml:space="preserve">
     <value>Trash</value>
   </data>
+  <data name="twoFactorAuthentication" xml:space="preserve">
+    <value>Two-factor authentication</value>
+  </data>
   <data name="upcomingEvents" xml:space="preserve">
     <value>Upcoming events</value>
+  </data>
+  <data name="updatePassword" xml:space="preserve">
+    <value>Update password</value>
   </data>
   <data name="userFriendlyUI" xml:space="preserve">
     <value>User friendly UI</value>
@@ -462,6 +558,9 @@
   </data>
   <data name="welcomeToNotes" xml:space="preserve">
     <value>Welcome to Notes Repository</value>
+  </data>
+  <data name="yourAccountPersonalData" xml:space="preserve">
+    <value>Your account contains personal data that you have given us. This page allows you to download or delete that data.</value>
   </data>
   <data name="noChangesDetected" xml:space="preserve">
     <value>No new changes detected!</value>
