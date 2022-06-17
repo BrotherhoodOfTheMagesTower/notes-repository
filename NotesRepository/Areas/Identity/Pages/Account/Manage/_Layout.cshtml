@@ -1,4 +1,8 @@
-﻿<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
+﻿@using NotesRepository.Shared.Resources
+
+@inject Microsoft.Extensions.Localization.IStringLocalizer<Resource> localizer;
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
 <link rel="stylesheet" href="~/css/socialButtons.css" />
 @{
     if (ViewData.TryGetValue("ParentLayout", out var parentLayout))
@@ -11,10 +15,10 @@
     }
 }
 
-<h1 class="text-center">Manage your account</h1>
+<h1 class="text-center">@localizer["manageAccount"]</h1>
 
 <div>
-    <h2 class="text-center">Change your account settings</h2>
+    <h2 class="text-center">@localizer["changeAccountSettings"]</h2>
     <hr  style="margin-bottom:30px"/>
     <div class="row">
         <div class="col-md-3">

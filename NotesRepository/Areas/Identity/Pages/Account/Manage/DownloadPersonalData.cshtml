@@ -1,7 +1,10 @@
 ﻿@page
+@using NotesRepository.Shared.Resources
+
+@inject Microsoft.Extensions.Localization.IStringLocalizer<Resource> localizer;
 @model DownloadPersonalDataModel
 @{
-    ViewData["Title"] = "Download Your Data";
+    ViewData["Title"] = @localizer["downloadYourData"];
     ViewData["ActivePage"] = ManageNavPages.PersonalData;
 }
 

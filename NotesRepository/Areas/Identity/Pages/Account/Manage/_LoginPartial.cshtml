@@ -1,8 +1,10 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using NotesRepository.Areas.Identity.Data
+@using NotesRepository.Shared.Resources
 
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
+@inject Microsoft.Extensions.Localization.IStringLocalizer<Resource> localizer;
 
 <ul class="navbar-nav">
 @if (SignInManager.IsSignedIn(User))
@@ -12,17 +14,17 @@
     </li>
     <li class="nav-item">
         <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/Index", new { area = "" })">
-            <button id="logout" type="submit" class="nav-link btn btn-link text-dark">Logout</button>
+            <button id="logout" type="submit" class="nav-link btn btn-link text-dark">@localizer["logout"]</button>
         </form>
     </li>
 }
 else
 {
     <li class="nav-item">
-        <a class="nav-link text-dark" id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
+        <a class="nav-link text-dark" id="register" asp-area="Identity" asp-page="/Account/Register"> @localizer["register"] </a>
     </li>
     <li class="nav-item">
-        <a class="nav-link text-dark" id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
+        <a class="nav-link text-dark" id="login" asp-area="Identity" asp-page="/Account/Login"> @localizer["logIn"] </a>
     </li>
 }
 </ul>

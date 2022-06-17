@@ -1,7 +1,10 @@
 ﻿@page
+@using NotesRepository.Shared.Resources
+
+@inject Microsoft.Extensions.Localization.IStringLocalizer<Resource> localizer;
 @model EmailModel
 @{
-    ViewData["Title"] = "Manage Email";
+    ViewData["Title"] = @localizer["manageEmail"];
     ViewData["ActivePage"] = ManageNavPages.Email;
 }
 
@@ -26,7 +29,7 @@
                 <div class="form-floating">
                     <input asp-for="Email" class="form-control" disabled />
                     <label asp-for="Email" class="form-label"></label>
-                    <button id="email-verification" type="submit" asp-page-handler="SendVerificationEmail" class="btn btn-link">Send verification email</button>
+                    <button id="email-verification" type="submit" asp-page-handler="SendVerificationEmail" class="btn btn-link">@localizer["sendEmail"]</button>
                 </div>
             }
             <div class="form-floating">
@@ -34,7 +37,7 @@
                 <label asp-for="Input.NewEmail" class="form-label"></label>
                 <span asp-validation-for="Input.NewEmail" class="text-danger"></span>
             </div>
-            <button id="change-email-button" type="submit" asp-page-handler="ChangeEmail" class="w-100 btn btn-lg btn-primary">Change email</button>
+            <button id="change-email-button" type="submit" asp-page-handler="ChangeEmail" class="w-100 btn btn-lg btn-primary">@localizer["changeEmail"]</button>
         </form>
     </div>
 </div>

@@ -1,7 +1,10 @@
 ﻿@page
+@using NotesRepository.Shared.Resources
+
+@inject Microsoft.Extensions.Localization.IStringLocalizer<Resource> localizer;
 @model DeletePersonalDataModel
 @{
-    ViewData["Title"] = "Delete Personal Data";
+    ViewData["Title"] = @localizer["deletePersonalData"];
     ViewData["ActivePage"] = ManageNavPages.PersonalData;
 }
 
@@ -9,7 +12,7 @@
 
 <div class="alert alert-warning" role="alert">
     <p>
-        <strong>Deleting this data will permanently remove your account, and this cannot be recovered.</strong>
+        <strong>@localizer["permanentlyRemove"]</strong>
     </p>
 </div>
 
@@ -24,7 +27,7 @@
                 <span asp-validation-for="Input.Password" class="text-danger"></span>
             </div>
         }
-        <button class="w-100 btn btn-lg btn-danger" type="submit">Delete data and close my account</button>
+        <button class="w-100 btn btn-lg btn-danger" type="submit">@localizer["closeAccount"]</button>
     </form>
 </div>
 
