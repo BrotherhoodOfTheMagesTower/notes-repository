@@ -1,13 +1,15 @@
 ﻿@using Microsoft.AspNetCore.Hosting
 @using Microsoft.AspNetCore.Mvc.ViewEngines
+@using NotesRepository.Shared.Resources
 @inject IWebHostEnvironment Environment
 @inject ICompositeViewEngine Engine
+@inject Microsoft.Extensions.Localization.IStringLocalizer<Resource> localizer;
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - NotesRepository</title>
+    <title>@ViewData["Title"] - @localizer["notesRepository"]</title>
 
     <environment include="Development">
         <link rel="stylesheet" href="~/Identity/lib/bootstrap/dist/css/bootstrap.css" />
@@ -25,7 +27,7 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" href="~/">NotesRepository</a>
+                <a class="navbar-brand" href="~/">@localizer["notesRepository"]</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -57,7 +59,7 @@
     </div>
     <footer class="footer border-top pl-3 text-muted">
         <div class="container">
-        &copy; 2022 - NotesRepository
+        &copy; 2022 - @localizer["notesRepository"]
             @{
                 var foundPrivacy = Url.Page("/Privacy", new { area = "" });
             }

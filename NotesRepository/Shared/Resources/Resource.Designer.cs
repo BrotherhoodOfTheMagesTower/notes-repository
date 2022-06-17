@@ -97,18 +97,16 @@ namespace NotesRepository.Shared.Resources {
                 return ResourceManager.GetString("add", resourceCulture);
             }
         }
-
+        
         /// <summary>
-        ///   Looks up a localized string similar to Add Event.
+        ///   Looks up a localized string similar to Add another service to log in..
         /// </summary>
-        public static string addEvent
-        {
-            get
-            {
-                return ResourceManager.GetString("addEvent", resourceCulture);
+        public static string addAnotherServiceToLogIn {
+            get {
+                return ResourceManager.GetString("addAnotherServiceToLogIn", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Add new folder.
         /// </summary>
@@ -236,6 +234,24 @@ namespace NotesRepository.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Confirm new Password.
+        /// </summary>
+        public static string confirmNewPassword {
+            get {
+                return ResourceManager.GetString("confirmNewPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Confirm password.
+        /// </summary>
+        public static string confirmPassword {
+            get {
+                return ResourceManager.GetString("confirmPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Congrats!.
         /// </summary>
         public static string congrats {
@@ -282,11 +298,11 @@ namespace NotesRepository.Shared.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Day.
+        ///   Looks up a localized string similar to Current password.
         /// </summary>
-        public static string Day {
+        public static string currentPassword {
             get {
-                return ResourceManager.GetString("Day", resourceCulture);
+                return ResourceManager.GetString("currentPassword", resourceCulture);
             }
         }
         
@@ -296,15 +312,6 @@ namespace NotesRepository.Shared.Resources {
         public static string delete {
             get {
                 return ResourceManager.GetString("delete", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Delete.
-        /// </summary>
-        public static string deleteEvent {
-            get {
-                return ResourceManager.GetString("deleteEvent", resourceCulture);
             }
         }
         
@@ -552,6 +559,15 @@ namespace NotesRepository.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Resend email confirmation.
+        /// </summary>
+        public static string emailConfirmation {
+            get {
+                return ResourceManager.GetString("emailConfirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to End.
         /// </summary>
         public static string End {
@@ -566,6 +582,15 @@ namespace NotesRepository.Shared.Resources {
         public static string endIsRequired {
             get {
                 return ResourceManager.GetString("endIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter your email.
+        /// </summary>
+        public static string enterEmail {
+            get {
+                return ResourceManager.GetString("enterEmail", resourceCulture);
             }
         }
         
@@ -661,6 +686,24 @@ namespace NotesRepository.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to External logins.
+        /// </summary>
+        public static string externalLogins {
+            get {
+                return ResourceManager.GetString("externalLogins", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to First name.
+        /// </summary>
+        public static string firstName {
+            get {
+                return ResourceManager.GetString("firstName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This folder can&apos;t be deleted!.
         /// </summary>
         public static string folderCantBeDeleted {
@@ -704,40 +747,7 @@ namespace NotesRepository.Shared.Resources {
                 return ResourceManager.GetString("folders", resourceCulture);
             }
         }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Resend email confirmation.
-        /// </summary>
-        public static string emailConfirmation
-        {
-            get
-            {
-                return ResourceManager.GetString("emailConfirmation", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Enter your email.
-        /// </summary>
-        public static string enterEmail
-        {
-            get
-            {
-                return ResourceManager.GetString("enterEmail", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to External logins.
-        /// </summary>
-        public static string externalLogins
-        {
-            get
-            {
-                return ResourceManager.GetString("externalLogins", resourceCulture);
-            }
-        }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Folder structure.
         /// </summary>
@@ -753,15 +763,6 @@ namespace NotesRepository.Shared.Resources {
         public static string folderStructureDescryption {
             get {
                 return ResourceManager.GetString("folderStructureDescryption", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Forgot your password?.
-        /// </summary>
-        public static string forgotPassword {
-            get {
-                return ResourceManager.GetString("forgotPassword", resourceCulture);
             }
         }
         
@@ -802,6 +803,24 @@ namespace NotesRepository.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Go to this note.
+        /// </summary>
+        public static string GoToNote {
+            get {
+                return ResourceManager.GetString("GoToNote", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hello.
+        /// </summary>
+        public static string hello {
+            get {
+                return ResourceManager.GetString("hello", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Home.
         /// </summary>
         public static string homePage {
@@ -809,24 +828,22 @@ namespace NotesRepository.Shared.Resources {
                 return ResourceManager.GetString("homePage", resourceCulture);
             }
         }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Go to this note.
-        /// </summary>
-        public static string GoToNote
-        {
-            get
-            {
-                return ResourceManager.GetString("GoToNote", resourceCulture);
-            }
-        }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Image.
         /// </summary>
         public static string image {
             get {
                 return ResourceManager.GetString("image", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Last name.
+        /// </summary>
+        public static string lastName {
+            get {
+                return ResourceManager.GetString("lastName", resourceCulture);
             }
         }
         
@@ -860,20 +877,11 @@ namespace NotesRepository.Shared.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Experience the power of Markdown language. Write notes in a quick and an efficient way..
+        ///   Looks up a localized string similar to Log in with Google.
         /// </summary>
-        public static string markdownDescryption {
+        public static string loginWithGoogle {
             get {
-                return ResourceManager.GetString("markdownDescryption", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Month.
-        /// </summary>
-        public static string Month {
-            get {
-                return ResourceManager.GetString("Month", resourceCulture);
+                return ResourceManager.GetString("loginWithGoogle", resourceCulture);
             }
         }
         
@@ -905,6 +913,24 @@ namespace NotesRepository.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Experience the power of Markdown language. Write notes in a quick and an efficient way..
+        /// </summary>
+        public static string markdownDescryption {
+            get {
+                return ResourceManager.GetString("markdownDescryption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Month.
+        /// </summary>
+        public static string Month {
+            get {
+                return ResourceManager.GetString("Month", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Name.
         /// </summary>
         public static string name {
@@ -914,11 +940,38 @@ namespace NotesRepository.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to New email.
+        /// </summary>
+        public static string newEmail {
+            get {
+                return ResourceManager.GetString("newEmail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to New note.
         /// </summary>
         public static string newNote {
             get {
                 return ResourceManager.GetString("newNote", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New password.
+        /// </summary>
+        public static string newPassword {
+            get {
+                return ResourceManager.GetString("newPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Register as a new user.
+        /// </summary>
+        public static string newUser {
+            get {
+                return ResourceManager.GetString("newUser", resourceCulture);
             }
         }
         
@@ -941,15 +994,6 @@ namespace NotesRepository.Shared.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Register as a new user.
-        /// </summary>
-        public static string newUser {
-            get {
-                return ResourceManager.GetString("newUser", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to No shared notes!.
         /// </summary>
         public static string noSharedNotes {
@@ -964,6 +1008,15 @@ namespace NotesRepository.Shared.Resources {
         public static string noteDeleted {
             get {
                 return ResourceManager.GetString("noteDeleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Notes Repository.
+        /// </summary>
+        public static string notesRepository {
+            get {
+                return ResourceManager.GetString("notesRepository", resourceCulture);
             }
         }
         
@@ -1031,6 +1084,15 @@ namespace NotesRepository.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Phone number.
+        /// </summary>
+        public static string phoneNumber {
+            get {
+                return ResourceManager.GetString("phoneNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Pinned.
         /// </summary>
         public static string pinned {
@@ -1073,6 +1135,24 @@ namespace NotesRepository.Shared.Resources {
         public static string register {
             get {
                 return ResourceManager.GetString("register", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sign up with Google.
+        /// </summary>
+        public static string registerWithGoogle {
+            get {
+                return ResourceManager.GetString("registerWithGoogle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remember me.
+        /// </summary>
+        public static string rememberMe {
+            get {
+                return ResourceManager.GetString("rememberMe", resourceCulture);
             }
         }
         
@@ -1185,15 +1265,6 @@ namespace NotesRepository.Shared.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Set reminder.
-        /// </summary>
-        public static string setReminder {
-            get {
-                return ResourceManager.GetString("setReminder", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Send verification email.
         /// </summary>
         public static string sendEmail {
@@ -1217,6 +1288,15 @@ namespace NotesRepository.Shared.Resources {
         public static string setPassword {
             get {
                 return ResourceManager.GetString("setPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Set reminder.
+        /// </summary>
+        public static string setReminder {
+            get {
+                return ResourceManager.GetString("setReminder", resourceCulture);
             }
         }
         
@@ -1397,6 +1477,15 @@ namespace NotesRepository.Shared.Resources {
         public static string userFriendlyUIDescryption {
             get {
                 return ResourceManager.GetString("userFriendlyUIDescryption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Username.
+        /// </summary>
+        public static string username {
+            get {
+                return ResourceManager.GetString("username", resourceCulture);
             }
         }
         
