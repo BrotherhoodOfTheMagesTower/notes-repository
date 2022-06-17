@@ -34,7 +34,7 @@ public class AddEventReminder : IJob
                     {
                         email = _event.User.Email,
                         url = "https://notesrepository.azurewebsites.net/calendar",
-                        startAt = _event.StartAt.ToString("dddd, dd MMMM yyyy")
+                        startAt = _event.StartAt.ToString("HH:mm dddd, dd MMMM yyyy")
                     });
 
                     var response = sendGridClient.SendEmailAsync(sendGridMessage);
