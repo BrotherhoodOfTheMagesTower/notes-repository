@@ -152,9 +152,8 @@
             if (usr is not null && directory is not null)
             {
                 // Save new note
-                //var note = new Note(null, "Brudnopis", content, usr, directory);
 
-                var note = new Note(null, content, usr, directory);
+                var note = new Note(null, content, usr, usr, directory);
                 var noteWithGeneratedTitle = await _ns.GenerateTitleForNoteFromDraft(note, usr.Id);
                 var result = await _ns.AddNoteAsync(noteWithGeneratedTitle);
                 if (result)

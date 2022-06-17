@@ -81,7 +81,7 @@ namespace NotesRepository.Repositories
             var result = await ctx.SaveChangesAsync();
             return result > 0;
         }
-        
+
         /// <summary>
         /// Removes multiple notes entities from the database
         /// </summary>
@@ -126,6 +126,12 @@ namespace NotesRepository.Repositories
             ctx.Notes.Update(note);
             var result = await ctx.SaveChangesAsync();
             return result > 0;
+        }
+
+        public void UpdateSync(Note note)
+        {
+            ctx.Notes.Update(note);
+            ctx.SaveChanges();
         }
 
         /// <summary>
@@ -183,6 +189,18 @@ namespace NotesRepository.Repositories
                 .FirstOrDefaultAsync(i => i.NoteId == noteId);
         }
 
+        public Note? GetByIdSync(Guid noteId)
+        {
+            return ctx.Notes
+                .Include(d => d.Directory)
+                .Include(o => o.Owner)
+                .Include(i => i.Images)
+                .Include(e => e.EditedBy)
+                .Include(ev => ev.Event)
+                .Include(c => c.CollaboratorsNotes)
+                .FirstOrDefault(i => i.NoteId == noteId);
+        }
+
         /// <summary>
         /// Gets the note from the database by title
         /// </summary>
@@ -219,7 +237,7 @@ namespace NotesRepository.Repositories
                 .Include(c => c.CollaboratorsNotes)
                 .ToListAsync();
         }
-        
+
         /// <summary>
         /// Gets all notes from the database, that are assigned to specific directory 
         /// </summary>
@@ -369,8 +387,8 @@ namespace NotesRepository.Repositories
         /// <returns>An ICollection of Note entities, which were transferred 'in bulk' to bin at least 30 days ago</returns>
         public ICollection<Note> GetAllSingleNotesWhichShouldBeRemovedFromDb(int daysOld = 30)
             => ctx.Notes
-            .Where(x => x.DeletedAt < DateTime.Now.AddDays(-daysOld) 
-                && x.Directory.Name == "Bin" 
+            .Where(x => x.DeletedAt < DateTime.Now.AddDays(-daysOld)
+                && x.Directory.Name == "Bin"
                 && x.IsMarkedAsDeleted == true)
             .ToArray();
     }

@@ -41,6 +41,9 @@ namespace NotesRepository.Services
         public async Task<Note?> GetNoteByIdAsync(Guid noteId)
             => await _nr.GetByIdAsync(noteId);
 
+        public Note? GetNoteById(Guid noteId)
+            => _nr.GetByIdSync(noteId);
+
         public async Task<List<Note>> GetAllUserNotesByIdAsync(string userId)
             => (await _nr.GetAllUserNotesAsync(userId)).ToList();
 
@@ -96,6 +99,9 @@ namespace NotesRepository.Services
 
         public async Task<bool> UpdateNoteAsync(Note note)
             => await _nr.UpdateAsync(note);
+
+        public void UpdateNoteSync(Note note)
+            => _nr.UpdateSync(note);
 
         public async Task<bool> DeleteNoteAsync(Note note)
         {
@@ -158,10 +164,10 @@ namespace NotesRepository.Services
 
         public async Task<bool> SetNoteAsCurrentlyEditedAsync(Guid noteId)
             => await _nr.MarkNoteAsCurrentlyEditedAsync(noteId);
-        
+
         public async Task<bool> SetNoteAsCurrentlyNotEditedAsync(Guid noteId)
             => await _nr.MarkNoteAsCurrentlyNotEditedAsync(noteId);
-        
+
         public async Task<bool> SetLastEditedTimeAndUserAsync(DateTime editedAt, string userId, Guid noteId)
         {
             var user = await _ur.GetUserByIdAsync(userId);
@@ -183,7 +189,7 @@ namespace NotesRepository.Services
         public async Task<bool> MoveSingleNoteToBinAsync(Guid noteId)
         {
             var note = await _nr.GetByIdAsync(noteId);
-            if(note is not null)
+            if (note is not null)
             {
                 var isMarkedAsDeleted = await _nr.MarkNoteAsDeletedAsync(noteId);
                 var bin = await _dr.GetDirectoryByNameAsync("Bin", note.Owner.Id);
@@ -203,11 +209,11 @@ namespace NotesRepository.Services
         public async Task<bool> RestoreASingleNoteFromTheBinAsync(Guid noteId, Guid directoryId)
         {
             var note = await _nr.GetByIdAsync(noteId);
-            if(note is not null)
+            if (note is not null)
             {
                 var isMarkedAsNotDeleted = await _nr.MarkNoteAsNotDeletedAsync(noteId);
                 var dir = await _dr.GetByIdAsync(directoryId);
-                if(dir is not null)
+                if (dir is not null)
                 {
                     var isMovedToNewDir = await ChangeNoteDirectoryAsync(noteId, directoryId);
                     if (isMarkedAsNotDeleted && isMovedToNewDir)
@@ -227,7 +233,7 @@ namespace NotesRepository.Services
             }
             return false;
         }
-        
+
         public async Task<bool> UnpinNoteAsync(Guid noteId)
         {
             var note = await _nr.GetByIdAsync(noteId);
@@ -238,7 +244,7 @@ namespace NotesRepository.Services
             }
             return false;
         }
-        
+
         public async Task<bool> EditNoteContentAsync(Guid noteId, string newContent)
         {
             var note = await _nr.GetByIdAsync(noteId);
@@ -249,7 +255,7 @@ namespace NotesRepository.Services
             }
             return false;
         }
-        
+
         public async Task<bool> EditNoteTitleAsync(Guid noteId, string newTitle)
         {
             var note = await _nr.GetByIdAsync(noteId);
@@ -260,7 +266,7 @@ namespace NotesRepository.Services
             }
             return false;
         }
-        
+
         public async Task<bool> ChangeNoteDirectoryAsync(Guid noteId, Guid newDirectoryId)
         {
             var note = await _nr.GetByIdAsync(noteId);

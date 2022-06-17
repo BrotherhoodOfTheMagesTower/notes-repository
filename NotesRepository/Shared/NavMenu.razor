@@ -14,6 +14,7 @@
 @inject NoteService _ns;
 @inject Data.Flags flags;
 @inject NavigationManager NavigationManager;
+@inject IToastService toastService;
 
 <nav class="flex-column navigation" id="my-nav">
     <div class="top-row ps-3 navbar navbar-dark">
@@ -304,7 +305,24 @@
 
     private void GoToNote(string Id)
     {
-        NavigationManager.NavigateTo($"/editNote/{Id}");
+        var note = _ns.GetNoteById(Guid.Parse(Id));
+        var currentUser = _ur.GetUserByIdSync(currentUserId);
+        if (note.IsCurrentlyEdited == false)
+        {
+            note.IsCurrentlyEdited = true;
+            note.EditedBy = currentUser;
+            note.EditedAt = DateTime.Now;
+            _ns.UpdateNoteSync(note);
+            NavigationManager.NavigateTo($"/editNote/{Id}");
+        }
+        if (note.EditedBy == null)
+            toastService.ShowError("You can't enter a note because no editBy is assigned and the condition can't be checked!");
+        else if (note.EditedBy.Id.Equals(currentUserId) && note.IsCurrentlyEdited == true)
+        {
+            NavigationManager.NavigateTo($"/editNote/{Id}");
+        }
+        else
+            toastService.ShowError("Note is currently edited by another user! You have to wait", "OOPS!");
     }
 
     private void NavigateToShared()
@@ -319,10 +337,31 @@
 
     private void HandleNotesPopup(Note note)
     {
-        noteParameters = new ModalParameters();
-        noteParameters.Add("NoteFromDB", note);
-        modal.Show<NoteMenu>
+
+        if (note.IsCurrentlyEdited == false)
+        {
+            noteParameters = new ModalParameters();
+            noteParameters.Add("NoteFromDB", note);
+            modal.Show<NoteMenu>
             (note.Title, noteParameters, options);
+        } 
+        if (note.IsCurrentlyEdited == true)
+        {
+            if (note.EditedBy == null)
+                toastService.ShowError("You can't enter a note because no editBy is assigned and the condition can't be checked!");
+
+            else if (note.EditedBy.Id.Equals(currentUserId))
+            {
+                noteParameters = new ModalParameters();
+                noteParameters.Add("NoteFromDB", note);
+                modal.Show<NoteMenu>
+                (note.Title, noteParameters, options);
+            }
+            else
+            toastService.ShowError("Note is currently edited by another user! You have to wait", "OOPS!");
+        }
+        
+
     }
 
     private void HandleDeletedNotesPopup(Note note)
@@ -353,15 +392,15 @@
     {
         addingFolderParameters = new ModalParameters();
         addingFolderParameters.Add("DirectoryFromDB", directory);
-        if(directory is not null)
+        if (directory is not null)
         {
             modal.Show<AddFolderMenu>
         (directory.Name, addingFolderParameters, options);
         }
         else
         {
-               modal.Show<AddFolderMenu>
-        ("Add new folder", addingFolderParameters, options);
+            modal.Show<AddFolderMenu>
+     ("Add new folder", addingFolderParameters, options);
         }
 
     }

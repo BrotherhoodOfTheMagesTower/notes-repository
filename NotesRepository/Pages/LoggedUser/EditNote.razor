@@ -68,6 +68,15 @@ else
                         <h4 class="px-3">@localizer["toUpload"]</h4>
                     }
                     <button type="button" class="btn btn-primary" @onclick="saveNote">@localizer["save"]</button>
+                   
+                    
+                </div>
+                <div class="my-sub-input-container">
+                @if (@validId && @noteFromDb is not null)
+                    {
+                        <label>Odblokuj notatkę, aby inni mogli ją edytować</label>
+                         <button type="button" class="btn btn-primary" @onclick="unlockNote">Odblokuj notatkę</button>
+                    }
                 </div>
                 <div class="my-sub-input-container">
                     @if (@validId && @noteFromDb is not null && editedByOwner)
@@ -174,6 +183,21 @@ else
         ChangePreviewWidth();
         content = templateIndex == "newNote" ? "" : await init();
         pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build(); // Uruchomienie rozszerzeń markdown
+    }
+
+    private async Task unlockNote()
+    {
+        if(noteFromDb!=null)
+        {
+            if(noteFromDb.IsCurrentlyEdited==true)
+            {
+                noteFromDb.IsCurrentlyEdited = false;
+                var updated = await _ns.UpdateNoteAsync(noteFromDb);
+                if(updated)
+                toastService.ShowSuccess("Note has been correctly unlocked!");
+                navigationManager.NavigateTo("/editNote/newNote");
+            }
+        }
     }
 
     private async Task saveNote()

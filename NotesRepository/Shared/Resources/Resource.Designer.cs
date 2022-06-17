@@ -442,15 +442,6 @@ namespace NotesRepository.Shared.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Emoji has been changed!.
-        /// </summary>
-        public static string emojiChanged {
-            get {
-                return ResourceManager.GetString("emojiChanged", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to End.
         /// </summary>
         public static string End {
@@ -731,6 +722,15 @@ namespace NotesRepository.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No new changes detected!.
+        /// </summary>
+        public static string noChangesDetected {
+            get {
+                return ResourceManager.GetString("noChangesDetected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sorry, there weren&apos;t any search results..
         /// </summary>
         public static string noSearchResults {
@@ -763,15 +763,6 @@ namespace NotesRepository.Shared.Resources {
         public static string noteTitle {
             get {
                 return ResourceManager.GetString("noteTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The note title has been changed..
-        /// </summary>
-        public static string noteTitleChanged {
-            get {
-                return ResourceManager.GetString("noteTitleChanged", resourceCulture);
             }
         }
         
