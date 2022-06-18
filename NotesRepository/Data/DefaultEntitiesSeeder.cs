@@ -119,6 +119,8 @@ namespace NotesRepository.Data
                     Title = "Password list",
                     Content = "Note under default directory",
                     CreatedAt = new DateTime(2019, 12, 24, 4, 20, 0),
+                    EditedAt = new DateTime(2021, 4, 21, 7, 42, 0),
+                    EditedBy = user,
                     Owner = user,
                     Directory = defDir
                 };
@@ -134,6 +136,8 @@ namespace NotesRepository.Data
                     Title = "Trips I want to take",
                     Content = "Note under custom directory",
                     CreatedAt = new DateTime(2021, 4, 12, 5, 12, 0),
+                    EditedAt = new DateTime(2021, 4, 12, 5, 12, 0),
+                    EditedBy = user,
                     Owner = user,
                     Directory = customDirWithSubDirs
                 };
@@ -149,6 +153,8 @@ namespace NotesRepository.Data
                     Title = "Sicilia monuments",
                     Content = "Note under subdirectory_1 of custom dir",
                     CreatedAt = new DateTime(2018, 6, 1, 2, 2, 0),
+                    EditedAt = new DateTime(2018, 6, 1, 2, 2, 0),
+                    EditedBy = user,
                     Owner = user,
                     Directory = customDirWithSubDirs.SubDirectories.ElementAt(0)
                 };
@@ -164,6 +170,8 @@ namespace NotesRepository.Data
                     Title = "Madeira monuments",
                     Content = "Note under subdirectory_2 of custom dir",
                     CreatedAt = new DateTime(2019, 9, 5, 12, 44, 0),
+                    EditedAt = new DateTime(2022, 2, 12, 17, 21, 0),
+                    EditedBy = user,
                     Owner = user,
                     Directory = customDirWithSubDirs.SubDirectories.ElementAt(1)
                 };
@@ -179,6 +187,8 @@ namespace NotesRepository.Data
                     Title = "Fast cars",
                     Content = "Note under subdirectory_2 of default dir",
                     CreatedAt = new DateTime(2019, 9, 5, 12, 44, 0),
+                    EditedAt = new DateTime(2019, 9, 5, 12, 44, 0),
+                    EditedBy = user,
                     Owner = user,
                     Directory = subDirsOfDefault.ElementAt(1)
                 };
@@ -194,6 +204,8 @@ namespace NotesRepository.Data
                     Title = "BMW M4",
                     Content = "Note under subsubdirectory_1 of default dir",
                     CreatedAt = new DateTime(2022, 2, 1, 5, 23, 0),
+                    EditedAt = new DateTime(2022, 2, 1, 5, 23, 0),
+                    EditedBy = user,
                     Owner = user,
                     Directory = subDirsOfDefault.ElementAt(1).SubDirectories.ElementAt(0)
                 };
@@ -209,6 +221,8 @@ namespace NotesRepository.Data
                     Title = "Audi RS6",
                     Content = "Note under subsubdirectory_2 of default dir",
                     CreatedAt = new DateTime(2017, 11, 12, 2, 11, 0),
+                    EditedAt = new DateTime(2020, 9, 3, 15, 12, 0),
+                    EditedBy = user,
                     Owner = user,
                     Directory = subDirsOfDefault.ElementAt(1).SubDirectories.ElementAt(1)
                 };
@@ -224,6 +238,8 @@ namespace NotesRepository.Data
                     Title = "Audi SQ7",
                     Content = "Note under subsubdirectory_2 of default dir",
                     CreatedAt = new DateTime(2019, 2, 12, 9, 43, 0),
+                    EditedAt = new DateTime(2019, 2, 12, 9, 43, 0),
+                    EditedBy = user,
                     Owner = user,
                     Directory = subDirsOfDefault.ElementAt(1).SubDirectories.ElementAt(1)
                 };
@@ -239,6 +255,8 @@ namespace NotesRepository.Data
                     Title = "Gift ideas for aunt's birthday",
                     Content = "Samsung Galaxy S20 // Oppo Reno 5",
                     CreatedAt = new DateTime(2022, 2, 14, 9, 43, 0),
+                    EditedAt = new DateTime(2022, 2, 14, 9, 43, 0),
+                    EditedBy = user,
                     Owner = user,
                     Directory = defDir
                 };
@@ -253,6 +271,8 @@ namespace NotesRepository.Data
                     Title = "From start in the bin.",
                     Content = "This note was seeded, being already in recycle bin.",
                     CreatedAt = new DateTime(2018, 2, 14, 9, 43, 0),
+                    EditedAt = new DateTime(2018, 2, 14, 9, 43, 0),
+                    EditedBy = user,
                     DeletedAt = DateTime.Now,
                     IsMarkedAsDeleted = true,
                     Owner = user,

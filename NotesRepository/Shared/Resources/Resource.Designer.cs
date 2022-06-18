@@ -1139,6 +1139,15 @@ namespace NotesRepository.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Registered logins.
+        /// </summary>
+        public static string registeredLogins {
+            get {
+                return ResourceManager.GetString("registeredLogins", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sign up with Google.
         /// </summary>
         public static string registerWithGoogle {

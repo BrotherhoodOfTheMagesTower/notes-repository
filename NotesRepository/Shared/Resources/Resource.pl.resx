@@ -615,4 +615,7 @@
   <data name="notesRepository" xml:space="preserve">
     <value>Repozytorium Notatek</value>
   </data>
+  <data name="registeredLogins" xml:space="preserve">
+    <value>Zarejestrowane logowania zewnętrzne</value>
+  </data>
 </root>

@@ -610,4 +610,7 @@
   <data name="notesRepository" xml:space="preserve">
     <value>Notes Repository</value>
   </data>
+  <data name="registeredLogins" xml:space="preserve">
+    <value>Registered logins</value>
+  </data>
 </root>
