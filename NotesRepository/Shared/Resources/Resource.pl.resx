@@ -618,4 +618,16 @@
   <data name="registeredLogins" xml:space="preserve">
     <value>Zarejestrowane logowania zewnętrzne</value>
   </data>
+  <data name="createdDate" xml:space="preserve">
+    <value>Data utworzenia</value>
+  </data>
+  <data name="lastEditedDate" xml:space="preserve">
+    <value>Data ostatniej edycji</value>
+  </data>
+  <data name="lastEditedUser" xml:space="preserve">
+    <value>Ostatnio edytujący użytkownik</value>
+  </data>
+  <data name="owner" xml:space="preserve">
+    <value>Właściciel</value>
+  </data>
 </root>

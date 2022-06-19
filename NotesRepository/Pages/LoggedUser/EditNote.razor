@@ -31,19 +31,28 @@
 }
 else
 {
+    @if (@validId && @noteFromDb is not null)
+        {
+            <center>
+            <h2>@noteFromDb.Title @noteFromDb.IconName</h2>
+            </center>
+            <div class="my-tables" style="display:flex;">
+            <div class="my-table" style="display:flow-root;">
+            <h6>@localizer["owner"]: @noteFromDb.Owner</h6>
+            <h6>@localizer["createdDate"]: @noteFromDb.CreatedAt</h6>
+            </div>
+            <div class="my-table" style="display:flow-root;">
+            <h6>@localizer["lastEditedUser"]: @noteFromDb.EditedBy</h6>
+            <h6>@localizer["lastEditedDate"]: @noteFromDb.EditedAt</h6>
+            </div>
+            </div>
+        }
     <div class="my-container">
         @if (!@noteIsInBin)
         {
             <div class="my-sub-container p-2 ">
                 <center>
-                    @if (@validId && @noteFromDb is not null)
-                    {
-                        <h3>@noteFromDb.Title @noteFromDb.IconName</h3>
-                    }
-                    else
-                    {
                         <h3>@localizer["content"]</h3>
-                    }
                 </center>
                 <textarea class="my-text-area" id="my-text-area-id" @bind-value="content" @bind-value:event="oninput"></textarea>
             </div>

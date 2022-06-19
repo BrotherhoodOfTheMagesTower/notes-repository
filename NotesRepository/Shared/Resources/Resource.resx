@@ -613,4 +613,16 @@
   <data name="registeredLogins" xml:space="preserve">
     <value>Registered logins</value>
   </data>
+  <data name="createdDate" xml:space="preserve">
+    <value>Created date</value>
+  </data>
+  <data name="lastEditedDate" xml:space="preserve">
+    <value>Last edited Date</value>
+  </data>
+  <data name="lastEditedUser" xml:space="preserve">
+    <value>Last edited user</value>
+  </data>
+  <data name="owner" xml:space="preserve">
+    <value>Owner</value>
+  </data>
 </root>

@@ -279,6 +279,15 @@ namespace NotesRepository.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Created date.
+        /// </summary>
+        public static string createdDate {
+            get {
+                return ResourceManager.GetString("createdDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cross Platform.
         /// </summary>
         public static string crossPlatform {
@@ -839,6 +848,24 @@ namespace NotesRepository.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Last edited Date.
+        /// </summary>
+        public static string lastEditedDate {
+            get {
+                return ResourceManager.GetString("lastEditedDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Last edited user.
+        /// </summary>
+        public static string lastEditedUser {
+            get {
+                return ResourceManager.GetString("lastEditedUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Last name.
         /// </summary>
         public static string lastName {
@@ -1035,6 +1062,15 @@ namespace NotesRepository.Shared.Resources {
         public static string noteUpdated {
             get {
                 return ResourceManager.GetString("noteUpdated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Owner.
+        /// </summary>
+        public static string owner {
+            get {
+                return ResourceManager.GetString("owner", resourceCulture);
             }
         }
         
