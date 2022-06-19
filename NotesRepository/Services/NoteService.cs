@@ -86,7 +86,7 @@ namespace NotesRepository.Services
             => await _nr.GetAllPinnedNotesFromUserAsync(userId);
 
         public async Task<ICollection<Note>> GetRecentlyEditedOrCreatedNotesAsync(string userId, int count = 10)
-            => await _nr.GetRecentlyEditedOrCreatedNotesAsync(userId, count);
+            => await _nr.GetRecentlyEditedNotesAsync(userId, count);
 
         public async Task<List<Note>> SearchNotesByTitleAndContentAsync(string searchText, string userId)
             => await _nr.SearchNoteByTitleAndContentAsync(searchText, userId);

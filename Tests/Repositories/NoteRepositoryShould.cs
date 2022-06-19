@@ -261,7 +261,7 @@ namespace Tests.Repositories
             await nr.DeleteAsync(note);
         }
         
-        [Fact(DisplayName = "User is able to get recently edited and created notes")]
+        [Fact(DisplayName = "User is able to get recently edited notes")]
         public async Task GetRecentlyEditedOrCreatedNotes()
         {
             // Arrange
@@ -273,9 +273,10 @@ namespace Tests.Repositories
                 new Note
                 {
                     CreatedAt = DateTime.Now,
+                    EditedAt = DateTime.Now,
                     NoteId = Guid.NewGuid(),
                     Title = "3",
-                    Content = "for GetRecentlyEditedOrCreatedNotes()",
+                    Content = "for GetRecentlyEditedNotes()",
                     IconName = "",
                     Owner = usr,
                     Directory = dir
@@ -284,9 +285,10 @@ namespace Tests.Repositories
                 new Note
                 {
                     CreatedAt = DateTime.Now.AddMinutes(1),
+                    EditedAt = DateTime.Now.AddMinutes(1),
                     NoteId = Guid.NewGuid(),
                     Title = "2",
-                    Content = "for GetRecentlyEditedOrCreatedNotes()",
+                    Content = "for GetRecentlyEditedNotes()",
                     IconName = "",
                     Owner = usr,
                     Directory = dir
@@ -298,7 +300,7 @@ namespace Tests.Repositories
                     EditedAt = DateTime.Now.AddHours(1),
                     NoteId = Guid.NewGuid(),
                     Title = "1",
-                    Content = "for GetRecentlyEditedOrCreatedNotes()",
+                    Content = "for GetRecentlyEditedNotes()",
                     IconName = "",
                     Owner = usr,
                     Directory = dir
@@ -310,7 +312,7 @@ namespace Tests.Repositories
             await nr.AddManyAsync(notes);
 
             // Act
-            var result = await nr.GetRecentlyEditedOrCreatedNotesAsync(usr.Id, 5);
+            var result = await nr.GetRecentlyEditedNotesAsync(usr.Id, 5);
 
             // Assert
             result.Should().NotBeEmpty().And.HaveCount(3);

@@ -375,10 +375,10 @@ namespace NotesRepository.Repositories
         /// <param name="userId"></param>
         /// <param name="count"></param>
         /// <returns>Returns <paramref name="count"/> recently edited or created notes of a particular user</returns>
-        public async Task<ICollection<Note>> GetRecentlyEditedOrCreatedNotesAsync(string userId, int count)
+        public async Task<ICollection<Note>> GetRecentlyEditedNotesAsync(string userId, int count)
         {
             var allNotes = (await GetAllUserNotesAsync(userId)).Where(b => b.IsMarkedAsDeleted == false);
-            return allNotes.OrderByDescending(x => x.EditedAt).ThenByDescending(x => x.CreatedAt).Take(count).ToArray();
+            return allNotes.OrderByDescending(x => x.EditedAt).Take(count).ToArray();
         }
 
         /// <summary>
