@@ -101,7 +101,7 @@
                     if (usr is not null && DeletedDirectoryFromDB is not null)
                     {
                         Directory? tempDirectory = await _ds.GetDirectoryByNameAsync(inputFromUser.Directory, currentUserId);
-                        var result = await _ds.RestoreADirectorySubdirectoriesAndNotesFromBinToDirectory(DeletedDirectoryFromDB.DirectoryId, tempDirectory.DirectoryId);
+                        var result = await _ds.CascadeRestoreDirectoryWithStructureOfSubdirectoriesAndNotesFromBinToDirectoryAsync(DeletedDirectoryFromDB.DirectoryId, tempDirectory.DirectoryId);
 
                         if (result)
                             toastService.ShowSuccess("The directory has been restored.", "Congrats!");
@@ -129,7 +129,7 @@
     {
         if(directory is not null)
         {
-            var result = await _ds.RemoveDirectoriesSubdirectoriesAndNotesFromBin(DeletedDirectoryFromDB.DirectoryId);
+            var result = await _ds.CascadeRemoveDirectoryWithStructureOfSubdirectoriesAndNotesFromBinAsync(DeletedDirectoryFromDB.DirectoryId);
             if (result)
                 toastService.ShowSuccess("The directory has been removed.", "Congrats!");
             else

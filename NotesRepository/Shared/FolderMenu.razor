@@ -146,7 +146,7 @@
                         Directory? tempDirectory = await _ds.GetDirectoryByNameAsync(inputFromUser.Directory, currentUserId);
                         if (tempDirectory is not null)
                         {
-                            var result = await _ds.ChangeParentDirectoryForSubDirectory(DirectoryFromDB.DirectoryId, tempDirectory.DirectoryId);
+                            var result = await _ds.ChangeParentDirectoryForSubDirectoryAsync(DirectoryFromDB.DirectoryId, tempDirectory.DirectoryId);
                             if (result)
                                 toastService.ShowSuccess(localizer["directoryUpdated"], localizer["congrats"]);
                             else
@@ -162,7 +162,7 @@
                     {
                         bool result = false;
                         await ValidateEditingName(inputFromUser.Title, currentUserId);
-                        var folderExists = await _ds.CheckIfTheFolderTitleExistsForParticularUser(inputFromUser.Title, currentUserId);
+                        var folderExists = await _ds.CheckIfTheFolderTitleExistsForParticularUserAsync(inputFromUser.Title, currentUserId);
                         if (folderExists == false)
                         {
                             DirectoryFromDB.Name = inputFromUser.Title;
@@ -198,7 +198,7 @@
         {
             if (directory.Name is not "Default")
             {
-                var result = await _ds.MoveDirectorySubdirectoriesAndNotesToBin(directory.DirectoryId);
+                var result = await _ds.MoveDirectoryWithStructureOfSubdirectoriesAndNotesToBinAsync(directory.DirectoryId);
 
                 if (result)
                 {

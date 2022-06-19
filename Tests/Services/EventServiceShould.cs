@@ -194,7 +194,7 @@ namespace Tests.Services
             //Arrange
             var es = new EventService(_er);
             var usr = new ApplicationUser();
-            var _event = new Event(null, "DeleteById()", new DateTime(2031, 12, 12), new DateTime(2034, 12, 12), usr);
+            var _event = new Event(null, "DeleteByIdSync()", new DateTime(2031, 12, 12), new DateTime(2034, 12, 12), usr);
             await es.AddAsync(_event);
 
             // Act
