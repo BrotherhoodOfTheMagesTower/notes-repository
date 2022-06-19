@@ -186,7 +186,7 @@
                             if (result)
                                 toastService.ShowSuccess(localizer["noteUpdated"], localizer["congrats"]);
                         }
-                        else if ((!(emojiChanged && titleChanged))&&(!directoryChanged))
+                        else if ((!(emojiChanged && titleChanged)) && (!directoryChanged))
 
                             toastService.ShowInfo(localizer["noChangesDetected"]);
 
@@ -206,6 +206,7 @@
 
     private void submitForm(Note note)
     {
+
         ModalInstance?.CloseAsync(ModalResult.Ok(note.NoteId.ToString()));
     }
 
