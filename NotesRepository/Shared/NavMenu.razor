@@ -337,26 +337,15 @@
 
     private void HandleNotesPopup(Note note)
     {
-        var newNote = _ns.GetNoteById(note.NoteId);
-        if (newNote.IsCurrentlyEdited == false)
+        if (note.IsCurrentlyEdited == false || (note.IsCurrentlyEdited == true && note.EditedBy.Id.Equals(currentUserId)))
         {
             noteParameters = new ModalParameters();
-            noteParameters.Add("NoteFromDB", newNote);
+            noteParameters.Add("NoteFromDB", note);
             modal.Show<NoteMenu>
-            (newNote.Title, noteParameters, options);
+            (note.Title, noteParameters, options);
         }
-        if (newNote.IsCurrentlyEdited == true)
-        {
-            if (newNote.EditedBy.Id.Equals(currentUserId))
-            {
-                noteParameters = new ModalParameters();
-                noteParameters.Add("NoteFromDB", newNote);
-                modal.Show<NoteMenu>
-                (newNote.Title, noteParameters, options);
-            }
-            else
-                toastService.ShowError("Note is currently edited by another user! You have to wait", "OOPS!");
-        }
+        else
+        toastService.ShowError("Note is currently edited by another user! You have to wait", "OOPS!");
     }
 
     private void HandleDeletedNotesPopup(Note note)

@@ -116,18 +116,9 @@
 
     protected override async Task OnInitializedAsync()
     {
-        NoteFromDB = _ns.GetNoteById(NoteFromDB.NoteId);
         currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (NoteFromDB is null || currentUserId is null)
             return;
-
-        if (!(NoteFromDB.EditedBy.Id.Equals(currentUserId) && NoteFromDB.IsCurrentlyEdited == true))
-        {
-            toastService.ShowError("Note is currently edited by another user! You have to wait", "OOPS!");
-            navigationManager.NavigateTo("/editNote/newNote");
-
-            StateHasChanged();
-        }
 
         inputFromUser = new NoteValidation(NoteFromDB.Title, NoteFromDB.IconName, NoteFromDB.Directory.Name);
         var tempDirectories = (await _ds.GetAllNotDeletedDirectoriesForParticularUserAsync(currentUserId));
@@ -215,6 +206,7 @@
 
     private void submitForm(Note note)
     {
+
         ModalInstance?.CloseAsync(ModalResult.Ok(note.NoteId.ToString()));
     }
 
