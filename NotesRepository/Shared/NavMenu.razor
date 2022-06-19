@@ -305,24 +305,24 @@
 
     private void GoToNote(string Id)
     {
-        var note = _ns.GetNoteById(Guid.Parse(Id));
-        var currentUser = _ur.GetUserByIdSync(currentUserId);
-        if (note.IsCurrentlyEdited == false)
-        {
-            note.IsCurrentlyEdited = true;
-            note.EditedBy = currentUser;
-            note.EditedAt = DateTime.Now;
-            _ns.UpdateNoteSync(note);
-            NavigationManager.NavigateTo($"/editNote/{Id}");
-        }
-        if (note.EditedBy == null)
-            toastService.ShowError("You can't enter a note because no editBy is assigned and the condition can't be checked!");
-        else if (note.EditedBy.Id.Equals(currentUserId) && note.IsCurrentlyEdited == true)
-        {
-            NavigationManager.NavigateTo($"/editNote/{Id}");
-        }
-        else
-            toastService.ShowError("Note is currently edited by another user! You have to wait", "OOPS!");
+        NavigationManager.NavigateTo($"/editNote/{Id}", forceLoad: true);
+        //var note = _ns.GetNoteById(Guid.Parse(Id));
+        //var currentUser = _ur.GetUserByIdSync(currentUserId);
+        //if (note.IsCurrentlyEdited == false)
+        //{
+        //    note.IsCurrentlyEdited = true;
+        //    note.EditedBy = currentUser;
+        //    _ns.UpdateNoteSync(note);
+        //    NavigationManager.NavigateTo($"/editNote/{Id}");
+        //}
+        //if (note.EditedBy == null)
+        //    toastService.ShowError("You can't enter a note because no editBy is assigned and the condition can't be checked!");
+        //else if (note.EditedBy.Id.Equals(currentUserId) && note.IsCurrentlyEdited == true)
+        //{
+        //    NavigationManager.NavigateTo($"/editNote/{Id}");
+        //}
+        //else
+        //    toastService.ShowError("Note is currently edited by another user! You have to wait", "OOPS!");
     }
 
     private void NavigateToShared()
@@ -337,31 +337,26 @@
 
     private void HandleNotesPopup(Note note)
     {
-
-        if (note.IsCurrentlyEdited == false)
+        var newNote = _ns.GetNoteById(note.NoteId);
+        if (newNote.IsCurrentlyEdited == false)
         {
             noteParameters = new ModalParameters();
-            noteParameters.Add("NoteFromDB", note);
+            noteParameters.Add("NoteFromDB", newNote);
             modal.Show<NoteMenu>
-            (note.Title, noteParameters, options);
-        } 
-        if (note.IsCurrentlyEdited == true)
+            (newNote.Title, noteParameters, options);
+        }
+        if (newNote.IsCurrentlyEdited == true)
         {
-            if (note.EditedBy == null)
-                toastService.ShowError("You can't enter a note because no editBy is assigned and the condition can't be checked!");
-
-            else if (note.EditedBy.Id.Equals(currentUserId))
+            if (newNote.EditedBy.Id.Equals(currentUserId))
             {
                 noteParameters = new ModalParameters();
-                noteParameters.Add("NoteFromDB", note);
+                noteParameters.Add("NoteFromDB", newNote);
                 modal.Show<NoteMenu>
-                (note.Title, noteParameters, options);
+                (newNote.Title, noteParameters, options);
             }
             else
-            toastService.ShowError("Note is currently edited by another user! You have to wait", "OOPS!");
+                toastService.ShowError("Note is currently edited by another user! You have to wait", "OOPS!");
         }
-        
-
     }
 
     private void HandleDeletedNotesPopup(Note note)

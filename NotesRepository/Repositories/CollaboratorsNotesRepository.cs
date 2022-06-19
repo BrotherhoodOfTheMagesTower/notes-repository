@@ -103,6 +103,7 @@ namespace NotesRepository.Repositories
         {
             return await ctx.CollaboratorsNotes
                 .Where(a => a.ApplicationUserId == appUserId)
+                .Where(i => i.SharedNote.IsMarkedAsDeleted != true)
                 .Select(x => x.SharedNote)
                 .ToListAsync();
         }
