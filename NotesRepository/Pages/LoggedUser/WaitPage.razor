@@ -8,6 +8,7 @@
 @inject Microsoft.Extensions.Localization.IStringLocalizer<Resource> localizer;
 @inject NavigationManager navigationManager
 @inject NoteService _ns;
+@inject CollaboratorsNotesService _cns;
 @inject Data.Flags flags;
 @inject IToastService toastService;
 
@@ -112,13 +113,19 @@ else
                 if (currentUserId != null)
                 {
                     noteFromDb = await _ns.GetNoteByIdAsync(Guid.Parse(index));
+                    var sharedNotes = await _cns.GetAllSharedNotesForUserAsync(currentUserId);
                     if (noteFromDb is not null)
                     {
                         if (noteFromDb.IsMarkedAsDeleted)
                         {
-                            throw new Exception("Another user deleted this note.");
+                            throw new Exception("Owner deleted this note.");
                         }
-                        else if (noteFromDb.IsCurrentlyEdited)
+                        if(sharedNotes is not null && !noteFromDb.Owner.Id.Equals(currentUserId))
+                        {
+                            if(!sharedNotes.Contains(noteFromDb))
+                            throw new Exception("Owner removed you from this note.");
+                        }
+                        if (noteFromDb.IsCurrentlyEdited)
                             return false;
                         else
                             return true;

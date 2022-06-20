@@ -253,6 +253,11 @@ namespace NotesRepository.Repositories
         /// <returns>A collection of notes assigned to particular directory, that are currently stored in the database</returns>
         public ICollection<Note> GetAllNotesForParticularDirectory(Guid directoryId)
         {
+            var notes = ctx.Notes.Where(d => d.Directory.DirectoryId == directoryId).ToList();
+
+            foreach(var note in notes)
+            ctx.Entry(note).Reload();
+
             return ctx.Notes
                 .Where(d => d.Directory.DirectoryId == directoryId)
                 .Include(d => d.Directory)

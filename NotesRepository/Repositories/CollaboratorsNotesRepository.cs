@@ -101,6 +101,15 @@ namespace NotesRepository.Repositories
         /// <returns>A collection of notes that were shared with a specified user</returns>
         public async Task<ICollection<Note>> GetAllSharedNotesForUser(string appUserId)
         {
+            var sharedNotes = await ctx.CollaboratorsNotes
+                .Where(a => a.ApplicationUserId == appUserId)
+                .Where(i => i.SharedNote.IsMarkedAsDeleted != true)
+                .Select(x => x.SharedNote)
+                .ToListAsync();
+
+            foreach (var note in sharedNotes)
+                ctx.Entry(note).Reload();
+
             return await ctx.CollaboratorsNotes
                 .Where(a => a.ApplicationUserId == appUserId)
                 .Where(i => i.SharedNote.IsMarkedAsDeleted != true)
