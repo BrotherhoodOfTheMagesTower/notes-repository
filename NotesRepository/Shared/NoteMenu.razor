@@ -19,13 +19,13 @@
     <div class="options-menu">
         @if (NoteFromDB is not null && NoteFromDB.IsPinned)
         {
-            <div class="my-nav-item px-3 py-2 my-nav-item-hover" @onclick="() => PinNote(NoteFromDB)">
+            <div class="my-nav-item px-3 py-2 my-nav-item-hover" @onclick="() => UnpinNote()">
                 <span class="oi oi-pin" aria-hidden="true"></span> @localizer["unPinNote"]
             </div>
         }
         else
         {
-            <div class="my-nav-item px-3  py-1 my-nav-item-hover" @onclick="() => PinNote(NoteFromDB)">
+            <div class="my-nav-item px-3  py-1 my-nav-item-hover" @onclick="() => PinNote()">
                 <span class="oi oi-pin" aria-hidden="true"></span> @localizer["pinNote"]
             </div>
         }
@@ -189,8 +189,6 @@
                         else if ((!(emojiChanged && titleChanged)) && (!directoryChanged))
 
                             toastService.ShowInfo(localizer["noChangesDetected"]);
-
-
                     }
                     else
                         toastService.ShowError(localizer["errorWhileSavingNote"], "OOPS!");
@@ -224,12 +222,24 @@
         }
     }
 
-    private void PinNote(Note? note)
+    private async void UnpinNote()
     {
-        if (note is not null)
-        {
-            note.IsPinned = !note.IsPinned;
-        }
+        NoteFromDB.IsPinned = false;
+        var result = await _ns.UpdateNoteAsync(NoteFromDB);
+        if(result)
+            toastService.ShowSuccess(localizer["noteUpdated"], localizer["congrats"]);
+        else
+            toastService.ShowError(localizer["errorWhileSavingNote"], "OOPS!");
+    }
+    
+    private async void PinNote()
+    {
+        NoteFromDB.IsPinned = true;
+        var result = await _ns.UpdateNoteAsync(NoteFromDB);
+        if(result)
+            toastService.ShowSuccess(localizer["noteUpdated"], localizer["congrats"]);
+        else
+            toastService.ShowError(localizer["errorWhileSavingNote"], "OOPS!");
     }
 
     private async Task DeleteNote(Note? note)

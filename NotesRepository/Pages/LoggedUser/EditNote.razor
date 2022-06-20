@@ -21,48 +21,50 @@
 @inject IJSRuntime JSRuntime;
 
 <PageTitle>@title</PageTitle>
-<HeadContent>
-    <meta name="description" content="@description">
-</HeadContent>
+<AuthorizeView Context="Authorize">
+    <Authorized>
+        <HeadContent>
+            <meta name="description" content="@description">
+        </HeadContent>
 
-@if (content is null || imagesFromUser is null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    @if (@validId && @noteFromDb is not null)
-    {
-        <center>
-            <h2>@noteFromDb.Title @noteFromDb.IconName</h2>
-        </center>
-        <div class="my-tables" style="display:flex;">
-            <div class="my-table" style="display:flow-root;">
-                <h6>@localizer["owner"]: @noteFromDb.Owner</h6>
-                <h6>@localizer["createdDate"]: @noteFromDb.CreatedAt</h6>
-            </div>
-            <div class="my-table" style="display:flow-root;">
-                <h6>@localizer["lastEditedUser"]: @noteFromDb.EditedBy</h6>
-                <h6>@localizer["lastEditedDate"]: @noteFromDb.EditedAt</h6>
-            </div>
-        </div>
-    }
-    <div class="my-container">
-        @if (!@noteIsInBin)
+        @if (content is null || imagesFromUser is null)
         {
-            <div class="my-sub-container p-2 ">
-                <center>
-                    <h3>@localizer["content"]</h3>
-                </center>
-                <textarea class="my-text-area" id="my-text-area-id" @bind-value="content" @bind-value:event="oninput"></textarea>
-            </div>
+            <p><em>Loading...</em></p>
         }
-        <div class="my-sub-container p-2">
-            <center><h3>@localizer["preview"]</h3></center>
-            <div class="my-preview" id="my-preview-id">
-                @((MarkupString)Markdown.ToHtml(content, pipeline))
-            </div>
-        </div>
+        else
+        {
+            @if (@validId && @noteFromDb is not null)
+            {
+                <center>
+                    <h2>@noteFromDb.Title @noteFromDb.IconName</h2>
+                </center>
+                <div class="my-tables" style="display:flex;">
+                    <div class="my-table" style="display:flow-root;">
+                        <h6>@localizer["owner"]: @noteFromDb.Owner</h6>
+                        <h6>@localizer["createdDate"]: @noteFromDb.CreatedAt</h6>
+                    </div>
+                    <div class="my-table" style="display:flow-root;">
+                        <h6>@localizer["lastEditedUser"]: @noteFromDb.EditedBy</h6>
+                        <h6>@localizer["lastEditedDate"]: @noteFromDb.EditedAt</h6>
+                    </div>
+                </div>
+            }
+            <div class="my-container">
+                @if (!@noteIsInBin)
+                {
+                    <div class="my-sub-container p-2 ">
+                        <center>
+                            <h3>@localizer["content"]</h3>
+                        </center>
+                        <textarea class="my-text-area" id="my-text-area-id" @bind-value="content" @bind-value:event="oninput"></textarea>
+                    </div>
+                }
+                <div class="my-sub-container p-2">
+                    <center><h3>@localizer["preview"]</h3></center>
+                    <div class="my-preview" id="my-preview-id">
+                        @((MarkupString)Markdown.ToHtml(content, pipeline))
+                    </div>
+                </div>
 
         @if (!@noteIsInBin)
         {
@@ -122,38 +124,49 @@ else
                     }
                 </div>
 
-                <div class="my-table">
-                    @if (collaborators.Count > 0)
-                    {
-                        <div>
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>@localizer["collabEmail"]</th>
-                                        <th>@localizer["collabNameSurname"]</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var collaborator in collaborators)
-                                    {
-                                        <tr>
-                                            <th>@collaborator.Email</th>
-                                            <th>@collaborator.FirstName @collaborator.LastName</th>
-                                            @if (editedByOwner)
+                        <div class="my-table">
+                            @if (collaborators.Count > 0)
+                            {
+                                <div>
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>@localizer["collabEmail"]</th>
+                                                <th>@localizer["collabNameSurname"]</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var collaborator in collaborators)
                                             {
-                                                <th><button type="button" class="button-margin btn btn-primary" @onclick="() => deleteCollaboratorFromNote(collaborator)">@localizer["delete"]</button></th>
+                                                <tr>
+                                                    <th>@collaborator.Email</th>
+                                                    <th>@collaborator.FirstName @collaborator.LastName</th>
+                                                    @if (editedByOwner)
+                                                    {
+                                                        <th><button type="button" class="button-margin btn btn-primary" @onclick="() => deleteCollaboratorFromNote(collaborator)">@localizer["delete"]</button></th>
+                                                    }
+                                                </tr>
                                             }
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
                         </div>
-                    }
-                </div>
+                    </div>
+                }
             </div>
         }
-    </div>
-}
+    </Authorized>
+    <NotAuthorized>
+        <div class="my-container">
+            <div class="my-sub-container p-2 ">
+                <center>
+                    <h3>Log in, to edit a note.</h3>
+                </center>
+            </div>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
 
 @code
 {
@@ -294,7 +307,7 @@ else
             }
             else
             {
-               string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if (currentUserId != null)
                 {
                     noteFromDb = await _ns.GetNoteByIdAsync(Guid.Parse(templateIndex));

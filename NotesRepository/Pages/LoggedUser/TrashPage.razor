@@ -1,10 +1,22 @@
 ﻿@page "/trash"
 
 <PageTitle>@title</PageTitle>
-<HeadContent>
-    <meta name="description" content="@description">
-</HeadContent>
-
+<AuthorizeView Context="Authorize">
+    <Authorized>
+        <HeadContent>
+            <meta name="description" content="@description">
+        </HeadContent>
+    </Authorized>
+    <NotAuthorized>
+        <div class="my-container">
+            <div class="my-sub-container p-2 ">
+                <center>
+                    <h3>Log in, to visit your trash.</h3>
+                </center>
+            </div>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
 
 @code {
     private string description = "trash";
