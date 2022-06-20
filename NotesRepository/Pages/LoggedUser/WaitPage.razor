@@ -1,0 +1,142 @@
+﻿@page "/waitPage/{index}/{message}"
+
+@using NotesRepository.Data.Models
+@using NotesRepository.Services
+@using System.Security.Claims
+
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor
+@inject Microsoft.Extensions.Localization.IStringLocalizer<Resource> localizer;
+@inject NavigationManager navigationManager
+@inject NoteService _ns;
+@inject Data.Flags flags;
+@inject IToastService toastService;
+
+@implements IDisposable
+
+<PageTitle>@localizer["wait"]</PageTitle>
+
+@if (noteFromDb is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <center>
+        <h3>@message</h3>
+        <div>
+            <img src="./animations/Spin_Wait_animation.gif" style="width:150px; height:150px"/>
+        </div>
+    </center>
+}
+
+@code 
+{
+    [Parameter] public string message { get; set; }
+    [Parameter] public string index { get; set; }
+    PeriodicTimer timer;
+    private Note? noteFromDb;
+    private bool isIdValid = false;
+    private bool isNoteAvailable = false;
+    private Guid parsedId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (message == "")
+            message = localizer["wait"];
+        try
+        {
+            int numberOfWaits = 1;
+            while (flags.getNavMenuLoadingStatus())
+            {
+                System.Console.WriteLine($"Thread number {Thread.CurrentThread.ManagedThreadId} from {navigationManager.Uri} -> waits {numberOfWaits++ * 5} [ms] for NavMenu to render.");
+                Thread.Sleep(5); // Wait 5 ms until navbar ends rendering
+            }
+
+            isNoteAvailable = await checkNoteAvailability();
+            if (isNoteAvailable)
+            {
+                navigationManager.NavigateTo("/editNote/" + index);
+            }
+
+            StateHasChanged();
+        }
+        catch(Exception e)
+        {
+            toastService.ShowError(e.Message, "OOPS!");
+            navigationManager.NavigateTo("/");
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        timer = new PeriodicTimer(TimeSpan.FromSeconds(2));
+        if (message == "")
+            message = localizer["wait"];
+        try
+        {
+            int numberOfWaits = 1;
+            while (flags.getNavMenuLoadingStatus())
+            {
+                System.Console.WriteLine($"Thread number {Thread.CurrentThread.ManagedThreadId} from {navigationManager.Uri} -> waits {numberOfWaits++ * 5} [ms] for NavMenu to render.");
+                Thread.Sleep(5); // Wait 5 ms until navbar ends rendering
+            }
+
+            while (await timer.WaitForNextTickAsync())
+            {
+                isNoteAvailable = await checkNoteAvailability();
+                if (isNoteAvailable)
+                {
+                    navigationManager.NavigateTo("/editNote/" + index);
+                }
+            }
+        }
+        catch(Exception e)
+        {
+            toastService.ShowError(e.Message, "OOPS!");
+            navigationManager.NavigateTo("/");
+        }
+    }
+
+    private async Task<bool> checkNoteAvailability()
+    {
+        if (index is not null)
+        {
+            isIdValid = Guid.TryParse(index, out parsedId);
+            if (!isIdValid)
+            {
+                throw new Exception("Wrong index format!");
+            }
+            else
+            {
+                string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (currentUserId != null)
+                {
+                    noteFromDb = await _ns.GetNoteByIdAsync(Guid.Parse(index));
+                    if (noteFromDb is not null)
+                    {
+                        if (noteFromDb.IsMarkedAsDeleted)
+                        {
+                            throw new Exception("Another user deleted this note.");
+                        }
+                        else if (noteFromDb.IsCurrentlyEdited)
+                            return false;
+                        else
+                            return true;
+                    }
+                    else
+                        throw new Exception("Note is null!");
+                }
+                else
+                    throw new Exception("User id is not valid!");
+            }
+        }
+        else
+            throw new Exception("Index is null!");
+        return false;
+    }
+
+    public void Dispose()
+     {
+         timer?.Dispose();
+     }
+}

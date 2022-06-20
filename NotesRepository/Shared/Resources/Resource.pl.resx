@@ -630,4 +630,7 @@
   <data name="owner" xml:space="preserve">
     <value>Właściciel</value>
   </data>
+  <data name="wait" xml:space="preserve">
+    <value>Proszę czekać</value>
+  </data>
 </root>

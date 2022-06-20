@@ -625,4 +625,7 @@
   <data name="owner" xml:space="preserve">
     <value>Owner</value>
   </data>
+  <data name="wait" xml:space="preserve">
+    <value>Please wait</value>
+  </data>
 </root>

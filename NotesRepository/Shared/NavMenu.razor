@@ -305,7 +305,7 @@
 
     private void GoToNote(string Id)
     {
-        NavigationManager.NavigateTo($"/editNote/{Id}", forceLoad: true);
+        NavigationManager.NavigateTo($"/editNote/{Id}"/*, forceLoad: true*/);
         //var note = _ns.GetNoteById(Guid.Parse(Id));
         //var currentUser = _ur.GetUserByIdSync(currentUserId);
         //if (note.IsCurrentlyEdited == false)
@@ -337,12 +337,13 @@
 
     private void HandleNotesPopup(Note note)
     {
-        if (note.IsCurrentlyEdited == false || (note.IsCurrentlyEdited == true && note.EditedBy.Id.Equals(currentUserId)))
+        var reloadedNote = _ns.GetNoteById(note.NoteId);
+        if (reloadedNote.IsCurrentlyEdited == false || (reloadedNote.IsCurrentlyEdited == true && reloadedNote.EditedBy.Id.Equals(currentUserId)))
         {
             noteParameters = new ModalParameters();
-            noteParameters.Add("NoteFromDB", note);
+            noteParameters.Add("NoteFromDB", reloadedNote);
             modal.Show<NoteMenu>
-            (note.Title, noteParameters, options);
+            (reloadedNote.Title, noteParameters, options);
         }
         else
         toastService.ShowError("Note is currently edited by another user! You have to wait", "OOPS!");

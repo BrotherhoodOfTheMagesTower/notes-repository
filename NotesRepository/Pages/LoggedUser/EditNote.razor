@@ -77,9 +77,8 @@ else
                         <h4 class="px-3">@localizer["toUpload"]</h4>
                     }
                     <button type="button" class="btn btn-primary" @onclick="saveNote">@localizer["save"]</button>
-
-
                 </div>
+
                 <div class="my-sub-input-container">
                     @if (@validId && @noteFromDb is not null)
                     {
@@ -87,6 +86,7 @@ else
                         <button type="button" class="btn btn-primary" @onclick="unlockNote">Odblokuj notatkę</button>
                     }
                 </div>
+
                 <div class="my-sub-input-container">
                     @if (@validId && @noteFromDb is not null && editedByOwner)
                     {
@@ -195,7 +195,7 @@ else
 
         if (noteFromDb != null)
         {
-           // navigationManager.NavigateTo("/editNote/{noteFromDb.NoteId}");
+            // navigationManager.NavigateTo("/editNote/{noteFromDb.NoteId}");
             string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var currentUser = await _ur.GetUserByIdAsync(currentUserId);
             var note = _ns.GetNoteById(Guid.Parse(templateIndex));
@@ -209,7 +209,8 @@ else
             else if (!(note.EditedBy.Id.Equals(currentUserId) && note.IsCurrentlyEdited == true))
             {
                 toastService.ShowError("Note is currently edited by another user! You have to wait", "OOPS!");
-                navigationManager.NavigateTo("/editNote/newNote");
+                var waitInfo = "Wait for user " + note.EditedBy + " to finish editing the note.";
+                navigationManager.NavigateTo("/waitPage/" + templateIndex + "/" + waitInfo);
                 
                 StateHasChanged();
             }

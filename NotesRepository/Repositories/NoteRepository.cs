@@ -179,6 +179,10 @@ namespace NotesRepository.Repositories
         /// <returns>A note entity if it exists in the db; otherwise null</returns>
         public async Task<Note?> GetByIdAsync(Guid noteId)
         {
+            var note = await ctx.Notes.FirstOrDefaultAsync(n => n.NoteId == noteId);
+
+            ctx.Entry(note).Reload();
+
             return await ctx.Notes
                 .Include(d => d.Directory)
                 .Include(o => o.Owner)
@@ -191,6 +195,10 @@ namespace NotesRepository.Repositories
 
         public Note? GetByIdSync(Guid noteId)
         {
+            var note = ctx.Notes.FirstOrDefault(n => n.NoteId == noteId);
+
+            ctx.Entry(note).Reload();
+
             return ctx.Notes
                 .Include(d => d.Directory)
                 .Include(o => o.Owner)
