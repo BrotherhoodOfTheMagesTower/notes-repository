@@ -3,7 +3,9 @@
 @using NotesRepository.Repositories
 @using NotesRepository.Services
 @using System.Security.Claims;
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 
+@inject ProtectedLocalStorage BrowserStorage
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor;
 @inject Microsoft.Extensions.Localization.IStringLocalizer<Resource> localizer;
 @inject NavigationManager navigationManager;
@@ -17,7 +19,6 @@
 
 
 <div class="home-page">
-    @*<div class="my-image"></div>*@
     <div>
         <video autoplay muted loop id="myVideo">
             <source src="video/makingNotes.mp4" type="video/mp4">
@@ -52,7 +53,7 @@
                 <select @onchange="DisplayLatest" class="my-select">
                     @for (int i = 5; i < 50; i = i + 5)
                     {
-                        @if (i == 10)
+                        @if (i == numberOfLatest)
                         {
                             <option value="@i" selected>@i</option>
                         }
@@ -125,7 +126,7 @@
     private List<Event>? upcomingEventsList = new();
     private string content = "";
     private string? userId;
-    public int j = 5;
+    public int numberOfLatest = 10;
 
     protected override async Task OnInitializedAsync()
     {
@@ -134,13 +135,14 @@
         userId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (userId != null)
         {
+            var result = await BrowserStorage.GetAsync<int>("numberOfLatestNotes");
+            numberOfLatest = result.Success ? result.Value : 10;
             pinnedList = (await _ns.GetAllPinnedNotesFromUserAsync(userId)).ToList();
 
-            latestList = (await (_ns.GetRecentlyEditedOrCreatedNotesAsync(userId, 10))).ToList();
+            latestList = (await (_ns.GetRecentlyEditedOrCreatedNotesAsync(userId, numberOfLatest))).ToList();
 
             upcomingEventsList = (await (_es.GetIncomingEventsAsync(10, userId))).ToList();
         }
-
     }
 
     private async void SaveDraft()
@@ -186,7 +188,8 @@
 
     private async Task DisplayLatest(ChangeEventArgs e)
     {
-        j = Int32.Parse(e.Value.ToString());
-        latestList = (await (_ns.GetRecentlyEditedOrCreatedNotesAsync(userId, j))).ToList();
+        numberOfLatest = Int32.Parse(e.Value.ToString());
+        latestList = (await (_ns.GetRecentlyEditedOrCreatedNotesAsync(userId, numberOfLatest))).ToList();
+        await BrowserStorage.SetAsync("numberOfLatestNotes", numberOfLatest);
     }
 }
