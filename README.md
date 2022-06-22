@@ -8,7 +8,6 @@ Web application which allows user to take notes and share them across all of the
  - [Technologies](#technologies)
  - [Status](#status)
  - [Links](#links)
- - [Coming up soon](#coming-up-soon)
 
 ### General info
 
