@@ -40,7 +40,7 @@
                             </h4>
                         </div>
                         <div class="my-preview">
-                            @((MarkupString)Markdown.ToHtml(Templates.NotesTemplates["To-do list"], pipeline))          //zmienić na note.Content
+                            @((MarkupString)Markdown.ToHtml(note.Content, pipeline))
                         </div>
                     </div>
                 }
@@ -71,29 +71,13 @@
         int numberOfWaits = 1;
         while (flags.getNavMenuLoadingStatus())
         {
-            System.Console.WriteLine($"Thread number {Thread.CurrentThread.ManagedThreadId} from {navigationManager.Uri} -> waits {numberOfWaits++ * 5} [ms] for NavMenu to render.");
-            Thread.Sleep(5); // Wait 5 ms until navbar ends rendering
+            Thread.Sleep(5);
         }
 
         currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (currentUserId is not null)
             sharedNotes = (await _cns.GetAllSharedNotesForUserAsync(currentUserId)).ToList();
-        //initNotes();   //do usunięcia potem
-        pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build(); // Uruchomienie rozszerzeń markdown
-    }
-
-    private void initNotes()
-    {
-        var usr = new ApplicationUser();
-        sharedNotes = new List<Note>()
-            {
-                new Note(null, "Test note 1", "test1", "def-ico", usr, new Directory("Default", usr)),
-                new Note(null, "Test note 2", "test1", "def-ico", usr, new Directory("Default", usr)),
-                new Note(null, "Test note 3", "test1", "def-ico", usr, new Directory("Default", usr)),
-                new Note(null, "Test note 4", "test1", "def-ico", usr, new Directory("Default", usr)),
-                new Note(null, "Test note 5", "test1", "def-ico", usr, new Directory("Default", usr)),
-                new Note(null, "Test note 6", "test1", "def-ico", usr, new Directory("Default", usr))
-            };
+        pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build(); 
     }
 
     private void GoToNote(Guid Id)
