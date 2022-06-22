@@ -307,7 +307,5 @@ namespace NotesRepository.Repositories
             }
             return false;
         }
-
-   
     }
 }

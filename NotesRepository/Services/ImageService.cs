@@ -17,25 +17,45 @@ namespace NotesRepository.Services
         {
             _ir = imageRepository;
         }
-        
-        public ImageService(ImageRepository imageRepository, AzureStorageHelper azureStorageHelper)
-        {
-            _ir = imageRepository;
-            _azureHelper = azureStorageHelper;
-        }
 
+        /// <summary>
+        /// Gets all images attached to given note
+        /// </summary>
+        /// <param name="noteId">ID of the note</param>
+        /// <returns>A collection with images, that are attached to note</returns>
         public async Task<ICollection<Image>> GetAllNoteImagesAsync(Guid noteId)
             => await _ir.GetAllNoteImagesAsync(noteId);
         
+        /// <summary>
+        /// Gets all images for particular user
+        /// </summary>
+        /// <param name="userId">ID of the user</param>
+        /// <returns>A collection with images for particular user</returns>
         public async Task<ICollection<Image>> GetAllUserImagesAsync(string userId)
             => await _ir.GetAllUserImagesAsync(userId);
         
+        /// <summary>
+        /// Gets image entity by ID
+        /// </summary>
+        /// <param name="imageId">ID of the image</param>
+        /// <returns>The image entity</returns>
         public async Task<Image?> GetImageByIdAsync(Guid imageId)
             => await _ir.GetByIdAsync(imageId);
         
+        /// <summary>
+        /// Gets the image entity by URL
+        /// </summary>
+        /// <param name="imageUrl">URL of the image</param>
+        /// <returns>The image entity</returns>
         public async Task<Image?> GetImageByUrlAsync(string imageUrl)
             => await _ir.GetImageByUrlAsync(imageUrl);
 
+        /// <summary>
+        /// Adds image entity to the database
+        /// </summary>
+        /// <param name="image">The image entity</param>
+        /// <param name="file">The file interface</param>
+        /// <returns>Tuple - (was successfully added, file url)</returns>
         public async Task<(bool, string)> AddImageAsync(Image image, IBrowserFile file)
         {
             var url = await _azureHelper.UploadFileToAzureAsync(file, containerName, image.Name);
@@ -55,21 +75,6 @@ namespace NotesRepository.Services
         /// <returns></returns>
         public async Task<bool> AddImageWithoutAzureUploadAsync(Image image)
             => await _ir.AddAsync(image);
-
-        public async Task<bool> AddImagesAsync(ICollection<Tuple<Image, IBrowserFile>> images)
-        {
-            foreach(var image in images)
-            {
-                var url = await _azureHelper.UploadFileToAzureAsync(image.Item2, containerName, image.Item1.Name);
-                if (!string.IsNullOrEmpty(url))
-                {
-                    image.Item1.FileUrl = url;
-                }
-                else
-                    return false;
-            }
-            return await _ir.AddManyAsync(images.Select(x => x.Item1).ToList());
-        } 
         
         /// <summary>
         /// Should be used only for unit testing
@@ -80,6 +85,11 @@ namespace NotesRepository.Services
         public async Task<bool> AddImagesWithoutAzureUploadAsync(ICollection<Image> images)
             => await _ir.AddManyAsync(images);
         
+        /// <summary>
+        /// Deletes an image entity from the database
+        /// </summary>
+        /// <param name="image">The image entity</param>
+        /// <returns>True if successfully deleted; otherwise false</returns>
         public async Task<bool> DeleteImageAsync(Image image)
         {
             await _azureHelper.DeleteImageFromAzure(image.Name, containerName);
@@ -93,33 +103,6 @@ namespace NotesRepository.Services
         /// <returns></returns>
         public async Task<bool> DeleteImageWithoutAzureAsync(Image image)
             => await _ir.DeleteAsync(image);
-
-        public async Task<bool> DeleteImageByIdAsync(Guid imageId)
-        {
-            var image = await _ir.GetByIdAsync(imageId);
-            if(image is not null)
-            {
-                await _azureHelper.DeleteImageFromAzure(image.Name, containerName);
-                return await _ir.DeleteByIdAsync(imageId);
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Should be used only in unit testing
-        /// </summary>
-        /// <param name="imageId"></param>
-        /// <returns></returns>
-        public async Task<bool> DeleteImageByIdWithoutAzureAsync(Guid imageId)
-            => await _ir.DeleteByIdAsync(imageId);
-
-        public async Task<bool> DeleteImagesAsync(ICollection<Tuple<Image, IBrowserFile>> images)
-        {
-            foreach (var image in images)
-                await _azureHelper.DeleteImageFromAzure(image.Item1.Name, containerName);
-
-            return await _ir.DeleteManyAsync(images.Select(x => x.Item1).ToList());
-        }
         
         /// <summary>
         /// Should be used only in unit testing

@@ -54,20 +54,6 @@ namespace NotesRepository.Repositories
         }
 
         /// <summary>
-        /// Removes a note entity from the database
-        /// </summary>
-        /// <param name="note">The note entity</param>
-        /// <returns>true if note was successfully removed; otherwise false</returns>
-        public bool Delete(Note note)
-        {
-            if (note.Event is not null)
-                note.Event = null;
-            ctx.Notes.Remove(note);
-            var result = ctx.SaveChanges();
-            return result > 0;
-        }
-
-        /// <summary>
         /// Removes multiple notes entities from the database
         /// </summary>
         /// <param name="note">The note entity</param>
@@ -128,12 +114,6 @@ namespace NotesRepository.Repositories
             return result > 0;
         }
 
-        public void UpdateSync(Note note)
-        {
-            ctx.Notes.Update(note);
-            ctx.SaveChanges();
-        }
-
         /// <summary>
         /// Gets all notes from the database, that are assigned to specific user 
         /// </summary>
@@ -181,7 +161,8 @@ namespace NotesRepository.Repositories
         {
             var note = await ctx.Notes.FirstOrDefaultAsync(n => n.NoteId == noteId);
 
-            ctx.Entry(note).Reload();
+            if(note is not null)
+                ctx.Entry(note).Reload();
 
             return await ctx.Notes
                 .Include(d => d.Directory)
