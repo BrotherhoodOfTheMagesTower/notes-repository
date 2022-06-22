@@ -24,7 +24,13 @@
         </HeadContent>
         @if ((sharedNotes is null) || (sharedNotes.Count() == 0))
         {
-            @localizer["noSharedNotes"]
+            <div class="my-container">
+            <div class="my-sub-container p-2 ">
+                <center>
+                    <h3>@localizer["noSharedNotes"]</h3>
+                </center>
+            </div>
+        </div>
         }
         else
         {

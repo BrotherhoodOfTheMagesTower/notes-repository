@@ -160,19 +160,26 @@
 
                     if (DirectoryFromDB.Name != inputFromUser.Title)
                     {
-                        bool result = false;
-                        await ValidateEditingName(inputFromUser.Title, currentUserId);
-                        var folderExists = await _ds.CheckIfTheFolderTitleExistsForParticularUserAsync(inputFromUser.Title, currentUserId);
-                        if (folderExists == false)
+                        if (DirectoryFromDB.Name != "Default")
                         {
-                            DirectoryFromDB.Name = inputFromUser.Title;
-                            result = await _ds.UpdateAsync(DirectoryFromDB);
-                        }
 
-                        if (result)
-                            toastService.ShowSuccess(localizer["directoryNameUpdated"], localizer["congrats"]);
+                            bool result = false;
+                            await ValidateEditingName(inputFromUser.Title, currentUserId);
+                            var folderExists = await _ds.CheckIfTheFolderTitleExistsForParticularUserAsync(inputFromUser.Title, currentUserId);
+                            if (folderExists == false)
+                            {
+                                DirectoryFromDB.Name = inputFromUser.Title;
+                                result = await _ds.UpdateAsync(DirectoryFromDB);
+                            }
+
+                            if (result)
+                                toastService.ShowSuccess(localizer["directoryNameUpdated"], localizer["congrats"]);
+                            else
+                                toastService.ShowError(localizer["errorWhileRenaming"], "OOPS!");
+                        }
                         else
                             toastService.ShowError(localizer["errorWhileRenaming"], "OOPS!");
+                            
                     }
 
 
