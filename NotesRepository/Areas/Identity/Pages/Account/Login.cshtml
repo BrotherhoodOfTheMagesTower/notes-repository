@@ -1,8 +1,11 @@
 ﻿@page
+@using NotesRepository.Shared.Resources
+
+@inject Microsoft.Extensions.Localization.IStringLocalizer<Resource> localizer;
 @model LoginModel
 
 @{
-    ViewData["Title"] = "Log in";
+    ViewData["Title"] = @localizer["logIn"];
 }
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
@@ -13,7 +16,7 @@
     <div class="col-md-5">
         <section>
             <form id="account" method="post">
-                <h3 class="text-center">Use a local account to log in.</h3>
+                <h3 class="text-center">@localizer["localAccount"]</h3>
                 <hr />
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="form-floating">
@@ -23,29 +26,23 @@
                 </div>
                 <div class="form-floating">
                     <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" />
-                    <label asp-for="Input.Password" class="form-label"></label>
+                    <label class="form-label">@localizer["password"]</label>
                     <span asp-validation-for="Input.Password" class="text-danger"></span>
                 </div>
                 <div>
                     <div class="checkbox">
                         <label asp-for="Input.RememberMe" class="form-label">
                             <input class="form-check-input" asp-for="Input.RememberMe" />
-                            @Html.DisplayNameFor(m => m.Input.RememberMe)
+                            @localizer["rememberMe"]
                         </label>
                     </div>
                 </div>
                 <div>
-                    <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
+                    <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary">@localizer["logIn"]</button>
                 </div>
                 <div>
                     <p>
-                        <a id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a>
-                    </p>
-                    <p>
-                        <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Register as a new user</a>
-                    </p>
-                    <p>
-                        <a id="resend-confirmation" asp-page="./ResendEmailConfirmation">Resend email confirmation</a>
+                        <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">@localizer["newUser"]</a>
                     </p>
                 </div>
             </form>
@@ -53,7 +50,7 @@
     </div>
     <div class="col-md-6 col-md-offset-2">
         <section>
-            <h3 class="text-center">Use another service to log in.</h3>
+            <h3 class="text-center">@localizer["serviceLogIn"]</h3>
             <hr />
             @{
                 <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
@@ -63,7 +60,7 @@
                             {
                                 <button type="submit" class="fa fa-google" name="provider"
                                         value="@provider.Name" title="Log in using your @provider.DisplayName account">
-                                    <span class="si-text">Log in with @provider.DisplayName</span>
+                                    <span class="si-text">@localizer["loginWithGoogle"]</span>
                                 </button>
                             }
                         </p>

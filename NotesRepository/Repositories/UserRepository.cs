@@ -61,6 +61,16 @@ namespace NotesRepository.Repositories
                 .FirstOrDefaultAsync(u => u.Id == userId.ToString());
         }
 
+        public ApplicationUser? GetUserByIdSync(string userId)
+        {
+            return ctx.Users
+                .Include(n => n.Notes)
+                .Include(cn => cn.CollaboratorsNotes)
+                .Include(e => e.Events)
+                .FirstOrDefault(u => u.Id == userId.ToString());
+        }
+
+
         public async Task<ICollection<ApplicationUser>> GetUsersByFirstAndLastNameAsync(string firstName, string lastName)
         {
             return await ctx.Users

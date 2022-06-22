@@ -90,16 +90,16 @@ namespace Tests.Services
             await _nr.AddAsync(note9);
 
 
-            await _dr.ChangeParentDirectoryForSubDirectory(directory2.DirectoryId, directory1.DirectoryId);
-            await _dr.ChangeParentDirectoryForSubDirectory(directory3.DirectoryId, directory1.DirectoryId);
-            await _dr.ChangeParentDirectoryForSubDirectory(directory4.DirectoryId, directory2.DirectoryId);
-            await _dr.ChangeParentDirectoryForSubDirectory(directory5.DirectoryId, directory3.DirectoryId);
-            await _dr.ChangeParentDirectoryForSubDirectory(directory6.DirectoryId, directory5.DirectoryId);
+            await _dr.ChangeParentDirectoryForSubDirectoryAsync(directory2.DirectoryId, directory1.DirectoryId);
+            await _dr.ChangeParentDirectoryForSubDirectoryAsync(directory3.DirectoryId, directory1.DirectoryId);
+            await _dr.ChangeParentDirectoryForSubDirectoryAsync(directory4.DirectoryId, directory2.DirectoryId);
+            await _dr.ChangeParentDirectoryForSubDirectoryAsync(directory5.DirectoryId, directory3.DirectoryId);
+            await _dr.ChangeParentDirectoryForSubDirectoryAsync(directory6.DirectoryId, directory5.DirectoryId);
 
             var dirFromDatabase = await ds.GetDirectoryByIdAsync(directory1.DirectoryId);
 
             // Act
-            var result = await ds.MoveDirectorySubdirectoriesAndNotesToBin(dirFromDatabase.DirectoryId);
+            var result = await ds.MoveDirectoryWithStructureOfSubdirectoriesAndNotesToBinAsync(dirFromDatabase.DirectoryId);
 
             var dirFromDatabase1 = await ds.GetDirectoryByIdAsync(directory1.DirectoryId);
             var dirFromDatabase2 = await ds.GetDirectoryByIdAsync(directory2.DirectoryId);
@@ -150,7 +150,7 @@ namespace Tests.Services
             Assert.Equal(9, notes.Count);
 
             // Act
-            var result2 = ds.RemoveDirectoriesSubdirectoriesAndNotesFromBinAndDbByDate(0);
+            var result2 = ds.CascadeRemoveDirectoriesWithStructureOfSubdirectoriesAndNotesFromBinAndDbByDaysSync(0);
             Assert.True(result2);
 
             var directories2 = await ds.GetAllDirectoriesForParticularUserAsync(binFromDatabase.User.Id);
@@ -209,16 +209,16 @@ namespace Tests.Services
             await _nr.AddAsync(note9);
 
 
-            await _dr.ChangeParentDirectoryForSubDirectory(directory2.DirectoryId, directory1.DirectoryId);
-            await _dr.ChangeParentDirectoryForSubDirectory(directory3.DirectoryId, directory1.DirectoryId);
-            await _dr.ChangeParentDirectoryForSubDirectory(directory4.DirectoryId, directory2.DirectoryId);
-            await _dr.ChangeParentDirectoryForSubDirectory(directory5.DirectoryId, directory3.DirectoryId);
-            await _dr.ChangeParentDirectoryForSubDirectory(directory6.DirectoryId, directory5.DirectoryId);
+            await _dr.ChangeParentDirectoryForSubDirectoryAsync(directory2.DirectoryId, directory1.DirectoryId);
+            await _dr.ChangeParentDirectoryForSubDirectoryAsync(directory3.DirectoryId, directory1.DirectoryId);
+            await _dr.ChangeParentDirectoryForSubDirectoryAsync(directory4.DirectoryId, directory2.DirectoryId);
+            await _dr.ChangeParentDirectoryForSubDirectoryAsync(directory5.DirectoryId, directory3.DirectoryId);
+            await _dr.ChangeParentDirectoryForSubDirectoryAsync(directory6.DirectoryId, directory5.DirectoryId);
 
             var dirFromDatabase = await ds.GetDirectoryByIdAsync(directory1.DirectoryId);
 
             // Act
-            var result = await ds.MoveDirectorySubdirectoriesAndNotesToBin(dirFromDatabase.DirectoryId);
+            var result = await ds.MoveDirectoryWithStructureOfSubdirectoriesAndNotesToBinAsync(dirFromDatabase.DirectoryId);
 
             var dirFromDatabase1 = await ds.GetDirectoryByIdAsync(directory1.DirectoryId);
             var dirFromDatabase2 = await ds.GetDirectoryByIdAsync(directory2.DirectoryId);
@@ -269,7 +269,7 @@ namespace Tests.Services
             Assert.Equal(9, notes.Count);
 
             // Act
-            var result2 = await ds.RemoveDirectoriesSubdirectoriesAndNotesFromBin(dirFromDatabase1.DirectoryId);
+            var result2 = await ds.CascadeRemoveDirectoryWithStructureOfSubdirectoriesAndNotesFromBinAsync(dirFromDatabase1.DirectoryId);
             Assert.True(result2);
 
             var directories2 = await ds.GetAllDirectoriesForParticularUserAsync(binFromDatabase.User.Id);
@@ -331,19 +331,19 @@ namespace Tests.Services
             await _nr.AddAsync(note9);
 
 
-            await _dr.ChangeParentDirectoryForSubDirectory(directory2.DirectoryId, directory1.DirectoryId);
-            await _dr.ChangeParentDirectoryForSubDirectory(directory3.DirectoryId, directory1.DirectoryId);
-            await _dr.ChangeParentDirectoryForSubDirectory(directory4.DirectoryId, directory2.DirectoryId);
-            await _dr.ChangeParentDirectoryForSubDirectory(directory5.DirectoryId, directory3.DirectoryId);
-            await _dr.ChangeParentDirectoryForSubDirectory(directory6.DirectoryId, directory5.DirectoryId);
+            await _dr.ChangeParentDirectoryForSubDirectoryAsync(directory2.DirectoryId, directory1.DirectoryId);
+            await _dr.ChangeParentDirectoryForSubDirectoryAsync(directory3.DirectoryId, directory1.DirectoryId);
+            await _dr.ChangeParentDirectoryForSubDirectoryAsync(directory4.DirectoryId, directory2.DirectoryId);
+            await _dr.ChangeParentDirectoryForSubDirectoryAsync(directory5.DirectoryId, directory3.DirectoryId);
+            await _dr.ChangeParentDirectoryForSubDirectoryAsync(directory6.DirectoryId, directory5.DirectoryId);
 
             var dirFromDatabase = await ds.GetDirectoryByIdAsync(directory1.DirectoryId);
             var parentDirFromDatabase = await ds.GetDirectoryByIdAsync(parentDir.DirectoryId);
 
             // Act
-            await ds.MoveDirectorySubdirectoriesAndNotesToBin(dirFromDatabase.DirectoryId);
+            await ds.MoveDirectoryWithStructureOfSubdirectoriesAndNotesToBinAsync(dirFromDatabase.DirectoryId);
 
-            var result = await ds.RestoreADirectorySubdirectoriesAndNotesFromBinToDirectory(dirFromDatabase.DirectoryId, parentDirFromDatabase.DirectoryId);
+            var result = await ds.CascadeRestoreDirectoryWithStructureOfSubdirectoriesAndNotesFromBinToDirectoryAsync(dirFromDatabase.DirectoryId, parentDirFromDatabase.DirectoryId);
 
             var dirFromDatabase1 = await ds.GetDirectoryByIdAsync(directory1.DirectoryId);
             var dirFromDatabase2 = await ds.GetDirectoryByIdAsync(directory2.DirectoryId);

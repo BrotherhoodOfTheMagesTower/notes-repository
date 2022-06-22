@@ -17,7 +17,11 @@
 
 
 <div class="home-page">
-    <div class="my-image">
+    @*<div class="my-image"></div>*@
+    <div>
+        <video autoplay muted loop id="myVideo">
+            <source src="video/makingNotes.mp4" type="video/mp4">
+        </video>
     </div>
     <h2 class="my-header my-text">@localizer["homePage"]</h2>
     <div class="user-view">
@@ -67,7 +71,7 @@
                             <center>
                                 <h5>@context.Title</h5>
                                 <br>
-                                <h6>@context.CreatedAt</h6>
+                                <h6>@context.EditedAt</h6>
                             </center>
                         </div>
                     </Dropzone>
@@ -152,9 +156,8 @@
             if (usr is not null && directory is not null)
             {
                 // Save new note
-                //var note = new Note(null, "Brudnopis", content, usr, directory);
 
-                var note = new Note(null, content, usr, directory);
+                var note = new Note(null, content, usr, usr, directory);
                 var noteWithGeneratedTitle = await _ns.GenerateTitleForNoteFromDraft(note, usr.Id);
                 var result = await _ns.AddNoteAsync(noteWithGeneratedTitle);
                 if (result)

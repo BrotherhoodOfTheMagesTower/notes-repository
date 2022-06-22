@@ -20,11 +20,26 @@ namespace NotesRepository.Data.Models
             Directory = directory;
         }
 
-        public Note(Guid? noteId,  string content, ApplicationUser owner, Directory directory)
+        public Note(Guid? noteId, string title, string content, string iconName, ApplicationUser owner, ApplicationUser editedBy, Directory directory)
+        {
+            NoteId = noteId ?? Guid.NewGuid();
+            Title = title;
+            Content = content;
+            IconName = iconName;
+            CreatedAt = DateTime.Now;
+            EditedAt = DateTime.Now;
+            EditedBy = editedBy;
+            Owner = owner;
+            Directory = directory;
+        }
+
+        public Note(Guid? noteId,  string content, ApplicationUser owner, ApplicationUser editedBy, Directory directory)
         {
             NoteId = noteId ?? Guid.NewGuid();
             Content = content;
             CreatedAt = DateTime.Now;
+            EditedAt = DateTime.Now;
+            EditedBy = editedBy;
             Owner = owner;
             Directory = directory;
         }

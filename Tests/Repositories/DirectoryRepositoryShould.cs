@@ -236,7 +236,7 @@ namespace Tests.Repositories
             await nr.AddAsync(subDirectory1);
 
             // Act
-            var result = await nr.ChangeParentDirectoryForSubDirectory(subDirectory1.DirectoryId, directory1.DirectoryId);  
+            var result = await nr.ChangeParentDirectoryForSubDirectoryAsync(subDirectory1.DirectoryId, directory1.DirectoryId);  
             
             // Assert
             var directories = await _context.Directories.ToListAsync();

@@ -21,39 +21,50 @@
 @inject IJSRuntime JSRuntime;
 
 <PageTitle>@title</PageTitle>
-<HeadContent>
-    <meta name="description" content="@description">
-</HeadContent>
+<AuthorizeView Context="Authorize">
+    <Authorized>
+        <HeadContent>
+            <meta name="description" content="@description">
+        </HeadContent>
 
-@if (content is null || imagesFromUser is null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <div class="my-container">
-        @if (!@noteIsInBin)
+        @if (content is null || imagesFromUser is null)
         {
-            <div class="my-sub-container p-2 ">
-                <center>
-                    @if (@validId && @noteFromDb is not null)
-                    {
-                        <h3>@noteFromDb.Title @noteFromDb.IconName</h3>
-                    }
-                    else
-                    {
-                        <h3>@localizer["content"]</h3>
-                    }
-                </center>
-                <textarea class="my-text-area" id="my-text-area-id" @bind-value="content" @bind-value:event="oninput"></textarea>
-            </div>
+            <p><em>Loading...</em></p>
         }
-        <div class="my-sub-container p-2">
-            <center><h3>@localizer["preview"]</h3></center>
-            <div class="my-preview" id="my-preview-id">
-                @((MarkupString)Markdown.ToHtml(content, pipeline))
-            </div>
-        </div>
+        else
+        {
+            @if (@validId && @noteFromDb is not null)
+            {
+                <center>
+                    <h2>@noteFromDb.Title @noteFromDb.IconName</h2>
+                </center>
+                <div class="my-tables" style="display:flex;">
+                    <div class="my-table" style="display:flow-root;">
+                        <h6>@localizer["owner"]: @noteFromDb.Owner</h6>
+                        <h6>@localizer["createdDate"]: @noteFromDb.CreatedAt</h6>
+                    </div>
+                    <div class="my-table" style="display:flow-root;">
+                        <h6>@localizer["lastEditedUser"]: @noteFromDb.EditedBy</h6>
+                        <h6>@localizer["lastEditedDate"]: @noteFromDb.EditedAt</h6>
+                    </div>
+                </div>
+            }
+            <div class="my-container">
+                @if (!@noteIsInBin)
+                {
+                    <div class="my-sub-container p-2 ">
+                        <center>
+                            <h3>@localizer["content"]</h3>
+                        </center>
+                        <textarea class="my-text-area" id="my-text-area-id" @bind-value="content" @bind-value:event="oninput"></textarea>
+                    </div>
+                }
+                <div class="my-sub-container p-2">
+                    <center><h3>@localizer["preview"]</h3></center>
+                    <div class="my-preview" id="my-preview-id">
+                        @((MarkupString)Markdown.ToHtml(content, pipeline))
+                    </div>
+                </div>
 
         @if (!@noteIsInBin)
         {
@@ -69,8 +80,17 @@ else
                     }
                     <button type="button" class="btn btn-primary" @onclick="saveNote">@localizer["save"]</button>
                 </div>
+
                 <div class="my-sub-input-container">
                     @if (@validId && @noteFromDb is not null)
+                    {
+                        <label>Odblokuj notatkę, aby inni mogli ją edytować</label>
+                        <button type="button" class="btn btn-primary" @onclick="unlockNote">Odblokuj notatkę</button>
+                    }
+                </div>
+
+                <div class="my-sub-input-container">
+                    @if (@validId && @noteFromDb is not null && editedByOwner)
                     {
                         <input class="d-block mb-1 ml-1 input-margin" @bind-value="collaboratorEmail"></input>
                         <button type="button" class="btn btn-primary" @onclick="() => addCollaboratorToNote()">@localizer["add"]</button>
@@ -104,35 +124,49 @@ else
                     }
                 </div>
 
-                <div class="my-table">
-                    @if (collaborators.Count > 0)
-                    {
-                        <div>
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>@localizer["collabEmail"]</th>
-                                        <th>@localizer["collabNameSurname"]</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var collaborator in collaborators)
-                                    {
-                                        <tr>
-                                            <th>@collaborator.Email</th>
-                                            <th>@collaborator.FirstName @collaborator.LastName</th>
-                                            <th><button type="button" class="button-margin btn btn-primary" @onclick="() => deleteCollaboratorFromNote(collaborator)">@localizer["delete"]</button></th>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
+                        <div class="my-table">
+                            @if (collaborators.Count > 0)
+                            {
+                                <div>
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>@localizer["collabEmail"]</th>
+                                                <th>@localizer["collabNameSurname"]</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var collaborator in collaborators)
+                                            {
+                                                <tr>
+                                                    <th>@collaborator.Email</th>
+                                                    <th>@collaborator.FirstName @collaborator.LastName</th>
+                                                    @if (editedByOwner)
+                                                    {
+                                                        <th><button type="button" class="button-margin btn btn-primary" @onclick="() => deleteCollaboratorFromNote(collaborator)">@localizer["delete"]</button></th>
+                                                    }
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
                         </div>
-                    }
-                </div>
+                    </div>
+                }
             </div>
         }
-    </div>
-}
+    </Authorized>
+    <NotAuthorized>
+        <div class="my-container">
+            <div class="my-sub-container p-2 ">
+                <center>
+                    <h3>Log in, to edit a note.</h3>
+                </center>
+            </div>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
 
 @code
 {
@@ -150,6 +184,7 @@ else
     private List<Image> imagesFromUser;
     private List<ApplicationUser> collaborators;
     private IJSObjectReference _jsModule;
+    private bool editedByOwner = true;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -168,8 +203,47 @@ else
         collaborators = new List<ApplicationUser>();
         _jsModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./scripts/editNote.js");
         ChangePreviewWidth();
+        StateHasChanged();
         content = templateIndex == "newNote" ? "" : await init();
+
+        if (noteFromDb != null)
+        {
+            // navigationManager.NavigateTo("/editNote/{noteFromDb.NoteId}");
+            string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var currentUser = await _ur.GetUserByIdAsync(currentUserId);
+            var note = _ns.GetNoteById(Guid.Parse(templateIndex));
+            StateHasChanged();
+            if (note.IsCurrentlyEdited == false)
+            {
+                note.IsCurrentlyEdited = true;
+                note.EditedBy = currentUser;
+                await _ns.UpdateNoteAsync(note);
+            }
+            else if (!(note.EditedBy.Id.Equals(currentUserId) && note.IsCurrentlyEdited == true))
+            {
+                toastService.ShowError("Note is currently edited by another user! You have to wait", "OOPS!");
+                var waitInfo = "Wait for user " + note.EditedBy + " to finish editing the note.";
+                navigationManager.NavigateTo("/waitPage/" + templateIndex + "/" + waitInfo);
+                
+                StateHasChanged();
+            }
+        }
         pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build(); // Uruchomienie rozszerzeń markdown
+    }
+
+    private async Task unlockNote()
+    {
+        if (noteFromDb != null)
+        {
+            if (noteFromDb.IsCurrentlyEdited == true)
+            {
+                noteFromDb.IsCurrentlyEdited = false;
+                var updated = await _ns.UpdateNoteAsync(noteFromDb);
+                if (updated)
+                    toastService.ShowSuccess("Note has been correctly unlocked!");
+                navigationManager.NavigateTo("/editNote/newNote");
+            }
+        }
     }
 
     private async Task saveNote()
@@ -237,9 +311,12 @@ else
                 if (currentUserId != null)
                 {
                     noteFromDb = await _ns.GetNoteByIdAsync(Guid.Parse(templateIndex));
-
                     if (noteFromDb is not null)
                     {
+
+                        if (!noteFromDb.Owner.Id.Equals(currentUserId))
+                            editedByOwner = false;
+
                         noteIsInBin = noteFromDb.IsMarkedAsDeleted;
                         var collaborators = (await _cns.GetAllCollaboratorsForNoteAsync(noteFromDb.NoteId)).ToList();
                         if (collaborators.Count > 0)

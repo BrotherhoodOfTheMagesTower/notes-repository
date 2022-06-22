@@ -17,17 +17,30 @@
 <HeadContent>
     <meta name="description" content="@description">
 </HeadContent>
+<AuthorizeView>
+    <Authorized>
+        <div class="Calendar" style="display:flex; align-items:center; justify-content:center;">
+            <RadzenExample Name="Scheduler" AdditionalSourceCodePages=@(new List<string>() { "AddEventPage.razor", "EditEventPage.razor" }) />
+            <RadzenScheduler @ref=@scheduler LoadData=@OnLoad SlotRender=@OnSlotRender style="height: 768px; width:70%;" TItem="Event" Data=@data StartProperty="StartAt" EndProperty="EndAt"
+                             TextProperty="Content" SelectedIndex="2"
+                             SlotSelect=@OnSlotSelect AppointmentSelect=@OnEventSelect AppointmentRender=@OnEventRender>
+                <RadzenDayView Text=@localizer["Day"] />
+                <RadzenWeekView Text=@localizer["Week"] />
+                <RadzenMonthView Text=@localizer["Month"] />
+            </RadzenScheduler>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <div class="my-container">
+            <div class="my-sub-container p-2 ">
+                <center>
+                    <h3>Log in, to visit your calendar.</h3>
+                </center>
+            </div>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
 
-<div class = "Calendar" style="display:flex; align-items:center; justify-content:center;">
-<RadzenExample Name="Scheduler" AdditionalSourceCodePages=@(new List<string>() { "AddEventPage.razor", "EditEventPage.razor" })/>
-    <RadzenScheduler @ref=@scheduler LoadData=@OnLoad SlotRender=@OnSlotRender style="height: 768px; width:70%;" TItem="Event" Data=@data StartProperty="StartAt" EndProperty="EndAt"
-        TextProperty="Content" SelectedIndex="2"
-        SlotSelect=@OnSlotSelect AppointmentSelect=@OnEventSelect AppointmentRender=@OnEventRender>
-        <RadzenDayView Text=@localizer["Day"] />
-        <RadzenWeekView Text=@localizer["Week"] />
-        <RadzenMonthView Text=@localizer["Month"] />
-    </RadzenScheduler>
-</div>
 @code {
     RadzenScheduler<Event> scheduler;
     Dictionary<DateTime, string> events = new Dictionary<DateTime, string>();
@@ -40,7 +53,7 @@
 
 
 
-    void OnSlotRender(SchedulerSlotRenderEventArgs args) 
+    void OnSlotRender(SchedulerSlotRenderEventArgs args)
     {
 
         if (args.View.Text == @localizer["Month"] && args.Start.Date == DateTime.Today)
@@ -66,13 +79,13 @@
     {
         if (args.Start < DateTime.Now.AddDays(-1))
         {
-            toastService.ShowError("You cannot add an event before today","OOPS!");
+            toastService.ShowError("You cannot add an event before today", "OOPS!");
         }
         else
         {
             Event datas = await DialogService.OpenAsync<AddEventPage>(@localizer["addEvent"],
                 new Dictionary<string, object> { { "StartAt", args.Start }, { "EndAt", args.End } });
-          
+
             if (datas != null)
             {
                 data.Add(datas);
@@ -81,22 +94,22 @@
             }
         }
     }
-      async Task OnEventSelect(SchedulerAppointmentSelectEventArgs<Event> args)
+    async Task OnEventSelect(SchedulerAppointmentSelectEventArgs<Event> args)
     {
 
 
         await DialogService.OpenAsync<EditEventPage>(@localizer["editEvent"], new Dictionary<string, object> { { "Event", args.Data } });
         await scheduler.Reload();
-        
+
     }
 
     void OnEventRender(SchedulerAppointmentRenderEventArgs<Event> args)
     {
 
         // Manually styling when reminder exists
-        if (args.Data.ReminderAt!=null)
+        if (args.Data.ReminderAt != null)
         {
-           args.Attributes["style"] = "background: rgba(232,73,73,0.8);";
+            args.Attributes["style"] = "background: rgba(232,73,73,0.8);";
         }
     }
 

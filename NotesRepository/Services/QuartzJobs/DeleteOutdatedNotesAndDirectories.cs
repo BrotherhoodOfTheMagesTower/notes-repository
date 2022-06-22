@@ -34,7 +34,7 @@ public class DeleteOutdatedNotesAndDirectories : IJob
                 var _ir = new ImageRepository(ctx);
                 var _ds = new DirectoryService(_nr, _dr, _ur, _ir);
 
-                var result = _ds.RemoveDirectoriesSubdirectoriesAndNotesFromBinAndDbByDate();
+                var result = _ds.CascadeRemoveDirectoriesWithStructureOfSubdirectoriesAndNotesFromBinAndDbByDaysSync();
                 if (result == true)
                     Console.WriteLine($"Successfully removed some directories/notes from bin");
                 else

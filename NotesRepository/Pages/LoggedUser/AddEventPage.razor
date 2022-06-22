@@ -12,71 +12,84 @@
 @inject Microsoft.Extensions.Localization.IStringLocalizer<Resource> localizer
 
 
-
-<RadzenTemplateForm TItem="Event" Data="@model" Submit="async () => await OnSubmit()">
-    <div class="row" style="margin-bottom: 16px">
-        <div class="col-md-3">
-            <RadzenLabel Text=@localizer["Text"] />
-        </div>
-        <div class="col">
-            <RadzenTextBox @bind-Value="@model.Content" Name="Content" />
-            <RadzenRequiredValidator Text=@localizer["titleIsRequired"] Component="Content" />
-        </div>
-    </div>
-    <div class="row" style="margin-bottom: 16px">
-        <div class="col-md-3">
-            <RadzenLabel Text=@localizer["Start"] />
-        </div>
-        <div class="col">
-            <RadzenDatePicker @bind-Value="@model.StartAt" Name="StartAt" ShowTime="true" />
-            <RadzenRequiredValidator Text=@localizer["startIsRequired"] Component="StartAt" />
-        </div>
-    </div>
-    <div class="row" style="margin-bottom: 16px">
-        <div class="col-md-3">
-            <RadzenLabel Text=@localizer["End"] />
-        </div>
-        <div class="col">
-            <RadzenDatePicker Name="EndAt" @bind-Value="@model.EndAt" ShowTime="true" />
-            <RadzenRequiredValidator Component="EndAt" Text=@localizer["endIsRequired"] />
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-3"></div>
-        <div class="col">
-            <div class="form-check my-2">
-                <input class="form-check-input" type="checkbox" @bind-value="IsAgreeToGetReminder" 
-                       id="checkingReminder"> 
-                <label class="form-check-label" for="flexCheckDefault">
-                    @localizer["setReminder"]
-                </label>
-                @if (@IsAgreeToGetReminder)
-                {
-                    <div class="col">
-                        <RadzenDatePicker @bind-Value="@model.ReminderAt" Name="ReminderAt" ShowTime="true" DateFormat="dd/MM/yyyy HH:mm" HourFormat="24" />
+<AuthorizeView Context="Authorize">
+    <Authorized>
+        <RadzenTemplateForm TItem="Event" Data="@model" Submit="async () => await OnSubmit()">
+            <div class="row" style="margin-bottom: 16px">
+                <div class="col-md-3">
+                    <RadzenLabel Text=@localizer["Text"] />
+                </div>
+                <div class="col">
+                    <RadzenTextBox @bind-Value="@model.Content" Name="Content" />
+                    <RadzenRequiredValidator Text=@localizer["titleIsRequired"] Component="Content" />
+                </div>
+            </div>
+            <div class="row" style="margin-bottom: 16px">
+                <div class="col-md-3">
+                    <RadzenLabel Text=@localizer["Start"] />
+                </div>
+                <div class="col">
+                    <RadzenDatePicker @bind-Value="@model.StartAt" Name="StartAt" ShowTime="true" />
+                    <RadzenRequiredValidator Text=@localizer["startIsRequired"] Component="StartAt" />
+                </div>
+            </div>
+            <div class="row" style="margin-bottom: 16px">
+                <div class="col-md-3">
+                    <RadzenLabel Text=@localizer["End"] />
+                </div>
+                <div class="col">
+                    <RadzenDatePicker Name="EndAt" @bind-Value="@model.EndAt" ShowTime="true" />
+                    <RadzenRequiredValidator Component="EndAt" Text=@localizer["endIsRequired"] />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3"></div>
+                <div class="col">
+                    <div class="form-check my-2">
+                        <input class="form-check-input" type="checkbox" @bind-value="IsAgreeToGetReminder"
+                               id="checkingReminder">
+                        <label class="form-check-label" for="flexCheckDefault">
+                            @localizer["setReminder"]
+                        </label>
+                        @if (@IsAgreeToGetReminder)
+                        {
+                            <div class="col">
+                                <RadzenDatePicker @bind-Value="@model.ReminderAt" Name="ReminderAt" ShowTime="true" DateFormat="dd/MM/yyyy HH:mm" HourFormat="24" />
+                            </div>
+                        }
                     </div>
-                }
+                </div>
+                <div class="col">
+                    <RadzenLabel Text=@localizer["noteTitle"] />
+                    <InputSelect @bind-Value="@noteId">
+                        <option selected value=>---</option>
+                        @foreach (var note in allNotes)
+                        {
+                            <option value=@note.NoteId>@note.Title</option>
+                        }
+                    </InputSelect>
+                    @*<RadzenTextBox Placeholder ="to do"  Name="Note Title" />*@
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3"></div>
+                <div class="col">
+                    <RadzenButton ButtonType="ButtonType.Submit" Text=@localizer["saveEvent"] />
+                </div>
+            </div>
+        </RadzenTemplateForm>
+    </Authorized>
+    <NotAuthorized>
+        <div class="my-container">
+            <div class="my-sub-container p-2 ">
+                <center>
+                    <h3>Log in, to visit your calendar.</h3>
+                </center>
             </div>
         </div>
-        <div class="col">
-            <RadzenLabel Text=@localizer["noteTitle"] />
-            <InputSelect @bind-Value="@noteId">
-                <option selected value=>---</option>
-                @foreach (var note in allNotes)
-                {
-                    <option value=@note.NoteId>@note.Title</option>
-                }
-            </InputSelect>
-            @*<RadzenTextBox Placeholder ="to do"  Name="Note Title" />*@
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-3"></div>
-        <div class="col">
-            <RadzenButton ButtonType="ButtonType.Submit" Text=@localizer["saveEvent"] />
-        </div>
-    </div>
-</RadzenTemplateForm>
+    </NotAuthorized>
+</AuthorizeView>
+
 @code {
     [Parameter]
     public DateTime StartAt { get; set; }
@@ -107,10 +120,10 @@
     {
         model.StartAt = StartAt;
         model.EndAt = EndAt;
-       if(IsAgreeToGetReminder)
-       {
+        if (IsAgreeToGetReminder)
+        {
             model.ReminderAt = ReminderAt;
-       }
+        }
     }
 
     async Task OnSubmit()

@@ -123,6 +123,9 @@
   <data name="aboutNotesRepositoryDescryption" xml:space="preserve">
     <value>Aplikacja webowa, która umożliwia tworzenie notatek i otwieranie ich na wszystkich rodzajach urządzeń. Celem aplikacji jest zapewnienie użytkownikowi kompleksowego sposobu tworzenia notatek. Notes Repository wykorzystuje moc Markdowna, który pozwala na szybkie i efektywne tworzenie notatek, a także na zagnieżdżanie html.</value>
   </data>
+  <data name="account" xml:space="preserve">
+    <value>konto</value>
+  </data>
   <data name="add" xml:space="preserve">
     <value>Dodaj</value>
   </data>
@@ -135,14 +138,35 @@
   <data name="addNote" xml:space="preserve">
     <value>Dodaj notatkę</value>
   </data>
+  <data name="anotherRegister" xml:space="preserve">
+    <value>Użyj innej usługi do rejestracji</value>
+  </data>
+  <data name="associateYour" xml:space="preserve">
+    <value>Powiąż swoje</value>
+  </data>
   <data name="calendar" xml:space="preserve">
     <value>Kalendarz</value>
+  </data>
+  <data name="changeAccountSettings" xml:space="preserve">
+    <value>Zmień ustawienia konta</value>
+  </data>
+  <data name="changeEmail" xml:space="preserve">
+    <value>Zmień email</value>
   </data>
   <data name="changeFolder" xml:space="preserve">
     <value>Zmień folder</value>
   </data>
+  <data name="changePassword" xml:space="preserve">
+    <value>Zmień hasło</value>
+  </data>
   <data name="clear" xml:space="preserve">
     <value>Wyczyść</value>
+  </data>
+  <data name="clickLogout" xml:space="preserve">
+    <value>Kliknij tu by się wylogować</value>
+  </data>
+  <data name="closeAccount" xml:space="preserve">
+    <value>Usuń dane i zamknij moje konto</value>
   </data>
   <data name="collabEmail" xml:space="preserve">
     <value>E-mail współpracownika</value>
@@ -155,6 +179,9 @@
   </data>
   <data name="content" xml:space="preserve">
     <value>Treść</value>
+  </data>
+  <data name="createAccount" xml:space="preserve">
+    <value>Stwórz nowe konto</value>
   </data>
   <data name="crossPlatform" xml:space="preserve">
     <value>Wieloplatformowość</value>
@@ -183,6 +210,9 @@
   <data name="deleteNotePermanently" xml:space="preserve">
     <value>Usuń notatkę permenentnie</value>
   </data>
+  <data name="deletePersonalData" xml:space="preserve">
+    <value>Usuń dane osobowe</value>
+  </data>
   <data name="directory" xml:space="preserve">
     <value>Folder</value>
   </data>
@@ -195,7 +225,7 @@
   <data name="directoryNameUpdated" xml:space="preserve">
     <value>Zaaktualizowano nazwę folderu!</value>
   </data>
-	<data name="directoryChanged" xml:space="preserve">
+  <data name="directoryChanged" xml:space="preserve">
     <value>Folder został zmieniony!</value>
   </data>
   <data name="directoryUpdated" xml:space="preserve">
@@ -209,6 +239,12 @@
   </data>
   <data name="dontUpcomingEvents" xml:space="preserve">
     <value>Nie masz żadnych wydarzeń w najbliższym czasie</value>
+  </data>
+  <data name="download" xml:space="preserve">
+    <value>Pobierz</value>
+  </data>
+  <data name="downloadYourData" xml:space="preserve">
+    <value>Pobierz swoje dane</value>
   </data>
   <data name="draft" xml:space="preserve">
     <value>Brudnopis</value>
@@ -243,11 +279,17 @@
   <data name="EditNoteMessageWrongFormat" xml:space="preserve">
     <value>Zły format pliku!</value>
   </data>
+  <data name="emailConfirmation" xml:space="preserve">
+    <value>Wyślij potwierdzenie na email</value>
+  </data>
   <data name="End" xml:space="preserve">
     <value>Koniec</value>
   </data>
   <data name="endIsRequired" xml:space="preserve">
     <value>Koniec jest wymagany.</value>
+  </data>
+  <data name="enterEmail" xml:space="preserve">
+    <value>Wprowadź swój email</value>
   </data>
   <data name="error" xml:space="preserve">
     <value>Błąd!</value>
@@ -267,10 +309,10 @@
   <data name="errorWhileSavingNote" xml:space="preserve">
     <value>Błąd podczas zapisywania notatki!</value>
   </data>
-	<data name="errorWhileChangingNoteTitle" xml:space="preserve">
+  <data name="errorWhileChangingNoteTitle" xml:space="preserve">
     <value>Błąd podczas ustawiania tytułu notatki. Notatka o podanym tytule już istnieje!</value>
   </data>
-	<data name="errorWhileChangingFolder" xml:space="preserve">
+  <data name="errorWhileChangingFolder" xml:space="preserve">
     <value>Błąd podczas zmiany folderu!</value>
   </data>
   <data name="eventPlanning" xml:space="preserve">
@@ -279,21 +321,11 @@
   <data name="eventPlanningDescryption" xml:space="preserve">
     <value>Czy zdarza Ci się zapominać o nadchodzących wydarzeniach? Jeśli tak, to Notes Repository jest właśnie dla Ciebie.</value>
   </data>
-	<data name="emojiChanged" xml:space="preserve">
-    <value>Emoji zostało zmienione!</value>
+  <data name="externalLogins" xml:space="preserve">
+    <value>Logowanie zewnętrzne</value>
   </data>
-
   <data name="features" xml:space="preserve">
     <value>funkcjonalność</value>
-  </data>
-  <data name="folderCantBeDeleted" xml:space="preserve">
-    <value>Tego folderu nie można usunąć!</value>
-  </data>
-  <data name="folderCreated" xml:space="preserve">
-    <value>Utworzono folder.</value>
-  </data>
-  <data name="folderExists" xml:space="preserve">
-    <value>Folder już istnieje!</value>
   </data>
   <data name="folders" xml:space="preserve">
     <value>Foldery</value>
@@ -301,8 +333,11 @@
   <data name="folderStructure" xml:space="preserve">
     <value>Struktura folderów</value>
   </data>
-	<data name="folderChanged" xml:space="preserve">
+  <data name="folderChanged" xml:space="preserve">
     <value>Folder został zmieniony.</value>
+  </data>
+  <data name="forgotPassword" xml:space="preserve">
+    <value>Zapomniałeś hasła?</value>
   </data>
   <data name="folderStructureDescryption" xml:space="preserve">
     <value>Wszytskie notatki znajdują się w folderach, a te z kolei mogą być zagnieżdżone w innych.</value>
@@ -328,8 +363,23 @@
   <data name="image" xml:space="preserve">
     <value>Zdjęcie</value>
   </data>
+  <data name="localAccount" xml:space="preserve">
+    <value>Użyj lokalnego konta aby się zalogować</value>
+  </data>
+  <data name="localPasswordOrLogin" xml:space="preserve">
+    <value>Nie masz lokajnej nazwy użytkownika/hasła dla tej witryny. Dodaj lokalne konto, dzięki czemu możesz zalogować się bez zewnętrznego loginu.</value>
+  </data>
   <data name="logIn" xml:space="preserve">
     <value>Zaloguj się</value>
+  </data>
+  <data name="logout" xml:space="preserve">
+    <value>Wyloguj się</value>
+  </data>
+  <data name="manageAccount" xml:space="preserve">
+    <value>Zarządzaj kontem</value>
+  </data>
+  <data name="manageEmail" xml:space="preserve">
+    <value>Zarządzaj email</value>
   </data>
   <data name="markdownDescryption" xml:space="preserve">
     <value>Doświadcz potęgę Markdowna! Pisz notatki szybko i wygodnie.</value>
@@ -343,6 +393,9 @@
   <data name="newNote" xml:space="preserve">
     <value>Nowa notatka</value>
   </data>
+  <data name="newUser" xml:space="preserve">
+    <value>Zarejestruj się jako nowy użytkownik</value>
+  </data>
   <data name="noSearchResults" xml:space="preserve">
     <value>Nie znaleziono </value>
   </data>
@@ -355,11 +408,8 @@
   <data name="noteTitle" xml:space="preserve">
     <value>Tytuł notatki</value>
   </data>
-	<data name="noteTitleChanged" xml:space="preserve">
-    <value>Tytuł notatki został zmieniony!</value>
-  </data>
   <data name="noteUpdated" xml:space="preserve">
-    <value>Notatka zostła zaaktualizowana!</value>
+    <value>Notatka została zaaktualizowana!</value>
   </data>
   <data name="pageNotFound" xml:space="preserve">
     <value>Nie znaleziono!</value>
@@ -367,20 +417,38 @@
   <data name="pageNotFoundDesc" xml:space="preserve">
     <value>Przepraszamy! Strona, którą próbujesz wyszukać nie istnieje. Upewnij się, że wprowadzony link jest poprawny i spróbuj ponownie.</value>
   </data>
+  <data name="password" xml:space="preserve">
+    <value>Hasło</value>
+  </data>
+  <data name="permanentlyRemove" xml:space="preserve">
+    <value>Usunięcie tych danych spowoduje trwałe usunięcie twojego konta i nie będzie można go odzyskać.</value>
+  </data>
+  <data name="personalData" xml:space="preserve">
+    <value>Dane osobiste</value>
+  </data>
   <data name="pinned" xml:space="preserve">
-    <value>Przypiete</value>
+    <value>Przypięte</value>
   </data>
   <data name="pinNote" xml:space="preserve">
     <value>przypnij</value>
   </data>
+  <data name="pleaseEnter" xml:space="preserve">
+    <value>Wprowadź poniżej adres e-mail dla tej witryny i kliknij przycisk Zarejestruj się, aby zakończyć logowanie.</value>
+  </data>
   <data name="preview" xml:space="preserve">
     <value>Podgląd</value>
+  </data>
+  <data name="profile" xml:space="preserve">
+    <value>Profil</value>
   </data>
   <data name="register" xml:space="preserve">
     <value>Zarejestruj się</value>
   </data>
   <data name="renameFolder" xml:space="preserve">
     <value>Zmień nazwę</value>
+  </data>
+  <data name="resetPassword" xml:space="preserve">
+    <value>Zresetuj hasło</value>
   </data>
   <data name="restoreFolder" xml:space="preserve">
     <value>Przywróć folder</value>
@@ -409,11 +477,20 @@
   <data name="search" xml:space="preserve">
     <value>Szukaj</value>
   </data>
-  <data name="searchByContentOrTitle" xml:space="preserve">
-    <value>szukaj po treści lub tytule</value>
+  <data name="sendEmail" xml:space="preserve">
+    <value>Wyślij email weryfikacyjny</value>
+  </data>
+  <data name="serviceLogIn" xml:space="preserve">
+    <value>Użyj innego serwisu, żeby się zalogować</value>
+  </data>
+  <data name="setPassword" xml:space="preserve">
+    <value>Ustaw hasło</value>
   </data>
   <data name="setReminder" xml:space="preserve">
     <value>Ustaw przypomnienie</value>
+  </data>
+  <data name="searchByContentOrTitle" xml:space="preserve">
+    <value>szukaj po treści lub tytule</value>
   </data>
   <data name="shared" xml:space="preserve">
     <value>Udostępnione</value>
@@ -426,6 +503,12 @@
   </data>
   <data name="startIsRequired" xml:space="preserve">
     <value>Początek jest wymagany.</value>
+  </data>
+  <data name="successfullyAuthenticated" xml:space="preserve">
+    <value>Pomyślnie uwierzytelniono za pomocą </value>
+  </data>
+  <data name="successfullyLogged" xml:space="preserve">
+    <value>Zalogowałeś się poprawnie do aplikacji</value>
   </data>
   <data name="templates" xml:space="preserve">
     <value>Szablony</value>
@@ -454,11 +537,17 @@
   <data name="trash" xml:space="preserve">
     <value>Kosz</value>
   </data>
+  <data name="twoFactorAuthentication" xml:space="preserve">
+    <value>Uwierzytelnianie dwuskładnikowe</value>
+  </data>
   <data name="unPinNote" xml:space="preserve">
     <value>odepnij</value>
   </data>
   <data name="upcomingEvents" xml:space="preserve">
     <value>Nadchodzące wydarzenia</value>
+  </data>
+  <data name="updatePassword" xml:space="preserve">
+    <value>Aktualizuj hasło</value>
   </data>
   <data name="userFriendlyUI" xml:space="preserve">
     <value>Przyjazny dla użytkownika UI</value>
@@ -473,6 +562,75 @@
     <value>Tydzień</value>
   </data>
   <data name="welcomeToNotes" xml:space="preserve">
-    <value>Witaj w Notes Repository!</value>
+    <value>Witaj w Repozytorium Notatek!</value>
+  </data>
+  <data name="noChangesDetected" xml:space="preserve">
+    <value>Nie wykryto żadnych nowych zmian!</value>
+  </data>
+  <data name="yourAccountPersonalData" xml:space="preserve">
+    <value>Twoje konto zawiera dane osobowe, które nam przekazałeś. Ta strona umożliwia pobranie lub usunięcie tych danych.</value>
+  </data>
+  <data name="loginWithGoogle" xml:space="preserve">
+    <value>Zaloguj się przy pomocy Google</value>
+  </data>
+  <data name="registerWithGoogle" xml:space="preserve">
+    <value>Zarejestruj się przy pomocy Google</value>
+  </data>
+  <data name="rememberMe" xml:space="preserve">
+    <value>Zapamiętaj mnie</value>
+  </data>
+  <data name="confirmPassword" xml:space="preserve">
+    <value>Potwierdź hasło</value>
+  </data>
+  <data name="firstName" xml:space="preserve">
+    <value>Imię</value>
+  </data>
+  <data name="lastName" xml:space="preserve">
+    <value>Nazwisko</value>
+  </data>
+  <data name="addAnotherServiceToLogIn" xml:space="preserve">
+    <value>Dodaj kolejny zewnętrzny serwis </value>
+  </data>
+  <data name="confirmNewPassword" xml:space="preserve">
+    <value>Potwierdź nowe hasło</value>
+  </data>
+  <data name="currentPassword" xml:space="preserve">
+    <value>Aktualne hasło</value>
+  </data>
+  <data name="hello" xml:space="preserve">
+    <value>Cześć</value>
+  </data>
+  <data name="newEmail" xml:space="preserve">
+    <value>Nowy email</value>
+  </data>
+  <data name="newPassword" xml:space="preserve">
+    <value>Nowe hasło</value>
+  </data>
+  <data name="phoneNumber" xml:space="preserve">
+    <value>Numer telefonu</value>
+  </data>
+  <data name="username" xml:space="preserve">
+    <value>Nazwa użytkownika</value>
+  </data>
+  <data name="notesRepository" xml:space="preserve">
+    <value>Repozytorium Notatek</value>
+  </data>
+  <data name="registeredLogins" xml:space="preserve">
+    <value>Zarejestrowane logowania zewnętrzne</value>
+  </data>
+  <data name="createdDate" xml:space="preserve">
+    <value>Data utworzenia</value>
+  </data>
+  <data name="lastEditedDate" xml:space="preserve">
+    <value>Data ostatniej edycji</value>
+  </data>
+  <data name="lastEditedUser" xml:space="preserve">
+    <value>Ostatnio edytujący użytkownik</value>
+  </data>
+  <data name="owner" xml:space="preserve">
+    <value>Właściciel</value>
+  </data>
+  <data name="wait" xml:space="preserve">
+    <value>Proszę czekać</value>
   </data>
 </root>

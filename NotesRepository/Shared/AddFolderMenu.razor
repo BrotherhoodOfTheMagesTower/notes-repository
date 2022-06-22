@@ -60,7 +60,7 @@
                 if (currentUserId != null)
                 {
                     var usr = await _ur.GetUserByIdAsync(currentUserId);
-                    var folderExists = await _ds.CheckIfTheFolderTitleExistsForParticularUser(inputFromUser.Title, currentUserId);
+                    var folderExists = await _ds.CheckIfTheFolderTitleExistsForParticularUserAsync(inputFromUser.Title, currentUserId);
 
                     if (folderExists == true)
                         toastService.ShowError(localizer["errorWhileRenaming"], "OOPS!");

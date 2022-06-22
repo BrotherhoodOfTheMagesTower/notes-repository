@@ -31,22 +31,25 @@ else
                     <ValidationMessage For="() => inputFromUser.Title" />
                 </row>
             </div>
-            <div>
-                <row>@localizer["directory"]</row>
-                <row>
-                    <InputSelect id="noteDirecotry" @bind-Value="@inputFromUser.Directory" class="my-input">
-                        @foreach (var direcotry in directoriesList)
-                        {
+            @if (editedByOwner)
+            {
+                <div>
+                    <row>@localizer["directory"]</row>
+                    <row>
+                        <InputSelect id="noteDirecotry" @bind-Value="@inputFromUser.Directory" class="my-input">
+                            @foreach (var direcotry in directoriesList)
+                            {
                         <option value="@direcotry.Name">@direcotry.Name</option>
-                        }
+                            }
                 </InputSelect>
             </row>
         </div>
-        <div>
-            <row>Emoji</row>
-            <row>
-                <InputSelect id="emoji" @bind-Value="inputFromUser.Emoji">
-                    @foreach (var e in Emoji.emoji)
+            }
+            <div>
+                <row>Emoji</row>
+                <row>
+                    <InputSelect id="emoji" @bind-Value="inputFromUser.Emoji">
+                        @foreach (var e in Emoji.emoji)
                         {
                         <option value="@e">@e</option>
                         }
@@ -68,6 +71,7 @@ else
     [Parameter] public string IconName { get; set; } = Emoji.getRandomEmoji();
     [Parameter] public Note? noteFromDb { get; set; } = null;
     private Directory? selectedDirectory;
+    private bool editedByOwner = true;
     private NoteValidation inputFromUser;
     private List<Directory>? directoriesList;
 
@@ -75,6 +79,12 @@ else
     {
         inputFromUser = noteFromDb == null ? new NoteValidation(Title, IconName, "Default") : new NoteValidation(noteFromDb.Title, noteFromDb.IconName, noteFromDb.Directory.Name);
         var currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (noteFromDb != null)
+        {
+            if (!noteFromDb.Owner.Id.Equals(currentUserId))
+                editedByOwner = false;
+        }
 
         directoriesList = (await _ds.GetAllNotDeletedDirectoriesForParticularUserAsync(currentUserId)).ToList();
 
@@ -97,26 +107,31 @@ else
         {
             try
             {
-                await validateDirectory(inputFromUser.Directory);
+                if (editedByOwner)
+                    await validateDirectory(inputFromUser.Directory);
                 string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if (currentUserId != null)
                 {
                     var usr = await _ur.GetUserByIdAsync(currentUserId);
-                    if (usr is not null && selectedDirectory is not null)
+                    if (usr is not null)
                     {
                         if (noteFromDb == null)
                         {
+                            if (selectedDirectory is not null)
                             // Save new note
-                            var noteExists = await _ns.CheckIfTheNoteTitleExistsForParticularUser(inputFromUser.Title, currentUserId);
-                            if (noteExists == true)
-                                toastService.ShowError(localizer["errorWhileChangingNoteTitle"], "OOPS!");
-                            else
                             {
-                                var note = new Note(null, inputFromUser.Title, content, inputFromUser.Emoji, usr, selectedDirectory);
-                                var result = await _ns.AddNoteAsync(note);
-                                if (result)
-                                    toastService.ShowSuccess(localizer["SaveNoteMessageSaved"], localizer["congrats"]);
-                                submitForm(note);
+                                var noteExists = await _ns.CheckIfTheNoteTitleExistsForParticularUser(inputFromUser.Title, currentUserId);
+                                if (noteExists == true)
+                                    toastService.ShowError(localizer["errorWhileChangingNoteTitle"], "OOPS!");
+                                else
+                                {
+                                    var note = new Note(null, inputFromUser.Title, content, inputFromUser.Emoji, usr, usr, selectedDirectory);
+                                    note.IsCurrentlyEdited = true;
+                                    var result = await _ns.AddNoteAsync(note);
+                                    if (result)
+                                        toastService.ShowSuccess(localizer["SaveNoteMessageSaved"], localizer["congrats"]);
+                                    submitForm(note);
+                                }
                             }
                         }
                         else
@@ -137,17 +152,20 @@ else
                                 //    inputFromUser.Title == noteFromDb.Title &&
                                 //    inputFromUser.Emoji == noteFromDb.IconName)
                                 //{
-                                if (noteFromDb.Directory.Name != inputFromUser.Directory)
+                                if (editedByOwner)
                                 {
-                                    Directory? tempDirectory = await _ds.GetDirectoryByNameAsync(inputFromUser.Directory, currentUserId);
-                                    if (tempDirectory is not null)
+                                    if (noteFromDb.Directory.Name != inputFromUser.Directory)
                                     {
-                                        var changed = await _ns.ChangeNoteDirectoryAsync(noteFromDb.NoteId, tempDirectory.DirectoryId);
-                                        if (changed)
-                                            toastService.ShowSuccess(localizer["folderChanged"], localizer["congrats"]);
-                                        else
+                                        Directory? tempDirectory = await _ds.GetDirectoryByNameAsync(inputFromUser.Directory, currentUserId);
+                                        if (tempDirectory is not null)
                                         {
-                                            toastService.ShowError(localizer["errorWhileChangingFolder"], "OOPS!");
+                                            var changed = await _ns.ChangeNoteDirectoryAsync(noteFromDb.NoteId, tempDirectory.DirectoryId);
+                                            if (changed)
+                                                toastService.ShowSuccess(localizer["folderChanged"], localizer["congrats"]);
+                                            else
+                                            {
+                                                toastService.ShowError(localizer["errorWhileChangingFolder"], "OOPS!");
+                                            }
                                         }
                                     }
                                 }
@@ -157,9 +175,12 @@ else
                                     noteFromDb.Title = inputFromUser.Title;
                                 if (noteFromDb.IconName != inputFromUser.Emoji)
                                     noteFromDb.IconName = inputFromUser.Emoji;
+
+                                    noteFromDb.EditedBy = usr;
+                                    noteFromDb.EditedAt = DateTime.Now;
                                 var result = await _ns.UpdateNoteAsync(noteFromDb);
                                 if (result)
-                                    toastService.ShowSuccess(localizer["SaveNoteMessageOverwritten"], localizer["congrats"]);
+                                toastService.ShowSuccess(localizer["SaveNoteMessageOverwritten"], localizer["congrats"]);
                                 submitForm(noteFromDb);
                                 //}
                                 //else // Save existing note in another place (nie wiem czy potrzebne, narazie zostawię)

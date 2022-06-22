@@ -2,6 +2,7 @@
 
 @using Markdig
 @using NotesRepository.Data.Models
+@using NotesRepository.Repositories
 @using NotesRepository.Services
 @using System.Security.Claims
 @using Data.Constants
@@ -11,56 +12,70 @@
 @inject NavigationManager navigationManager
 @inject Data.Flags flags;
 @inject CollaboratorsNotesService _cns;
+@inject NoteService _ns;
+@inject UserRepository _ur;
+@inject IToastService toastService;
 
 <PageTitle>@title</PageTitle>
-<HeadContent>
-    <meta name="description" content="@description">
-</HeadContent>
-
-@if ((sharedNotes is null) || (sharedNotes.Count() == 0))
-{
-    @localizer["noSharedNotes"]
-}
-else
-{
-    <h2>Shared notes</h2>
-    <div class="my-container">
-
-        @foreach (var note in sharedNotes)
+<AuthorizeView Context="Authorize">
+    <Authorized>
+        <HeadContent>
+            <meta name="description" content="@description">
+        </HeadContent>
+        @if ((sharedNotes is null) || (sharedNotes.Count() == 0))
         {
-            <div class="my-sub-container p-2">
-                <div class="my-nav-link">
-                    <h4>
-                        <span class="oi oi-pencil" aria-hidden="true"></span>  @note.Title
-                    </h4>
-                </div>
-                <div class="my-preview">
-                    @((MarkupString)Markdown.ToHtml(Templates.NotesTemplates["To-do list"], pipeline))          //zmienić na note.Content
-                </div>
-            </div>
-
+            @localizer["noSharedNotes"]
         }
-    </div>
+        else
+        {
+            <h2>Shared notes</h2>
+            <div class="my-container">
 
+                @foreach (var note in sharedNotes)
+                {
+                    <div @onclick="()=> GoToNote(note.NoteId)" class="my-sub-container p-2">
+                        <div class="my-nav-link">
+                            <h4>
+                                <span class="oi oi-pencil" aria-hidden="true"></span>  @note.Title
+                            </h4>
+                        </div>
+                        <div class="my-preview">
+                            @((MarkupString)Markdown.ToHtml(Templates.NotesTemplates["To-do list"], pipeline))          //zmienić na note.Content
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </Authorized>
+    <NotAuthorized>
+        <div class="my-container">
+            <div class="my-sub-container p-2 ">
+                <center>
+                    <h3>Log in, to see your shared notes.</h3>
+                </center>
+            </div>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
 
-}
 @code {
 
     private MarkdownPipeline? pipeline;
     private List<Note>? sharedNotes = null;
     private string description = "View/edit shared notes page";
     private string title = "shared notes";
+    string currentUserId;
 
     protected override async Task OnInitializedAsync()
     {
         int numberOfWaits = 1;
-        while(flags.getNavMenuLoadingStatus())
+        while (flags.getNavMenuLoadingStatus())
         {
             System.Console.WriteLine($"Thread number {Thread.CurrentThread.ManagedThreadId} from {navigationManager.Uri} -> waits {numberOfWaits++ * 5} [ms] for NavMenu to render.");
             Thread.Sleep(5); // Wait 5 ms until navbar ends rendering
         }
 
-        string? currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        currentUserId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (currentUserId is not null)
             sharedNotes = (await _cns.GetAllSharedNotesForUserAsync(currentUserId)).ToList();
         //initNotes();   //do usunięcia potem
@@ -79,5 +94,10 @@ else
                 new Note(null, "Test note 5", "test1", "def-ico", usr, new Directory("Default", usr)),
                 new Note(null, "Test note 6", "test1", "def-ico", usr, new Directory("Default", usr))
             };
+    }
+
+    private void GoToNote(Guid Id)
+    {
+           navigationManager.NavigateTo($"/editNote/{Id}"/*, forceLoad:true*/);
     }
 }

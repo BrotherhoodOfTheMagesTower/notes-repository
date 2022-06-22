@@ -81,7 +81,7 @@ namespace NotesRepository.Repositories
             var result = await ctx.SaveChangesAsync();
             return result > 0;
         }
-        
+
         /// <summary>
         /// Removes multiple notes entities from the database
         /// </summary>
@@ -126,6 +126,12 @@ namespace NotesRepository.Repositories
             ctx.Notes.Update(note);
             var result = await ctx.SaveChangesAsync();
             return result > 0;
+        }
+
+        public void UpdateSync(Note note)
+        {
+            ctx.Notes.Update(note);
+            ctx.SaveChanges();
         }
 
         /// <summary>
@@ -173,6 +179,10 @@ namespace NotesRepository.Repositories
         /// <returns>A note entity if it exists in the db; otherwise null</returns>
         public async Task<Note?> GetByIdAsync(Guid noteId)
         {
+            var note = await ctx.Notes.FirstOrDefaultAsync(n => n.NoteId == noteId);
+
+            ctx.Entry(note).Reload();
+
             return await ctx.Notes
                 .Include(d => d.Directory)
                 .Include(o => o.Owner)
@@ -181,6 +191,22 @@ namespace NotesRepository.Repositories
                 .Include(ev => ev.Event)
                 .Include(c => c.CollaboratorsNotes)
                 .FirstOrDefaultAsync(i => i.NoteId == noteId);
+        }
+
+        public Note? GetByIdSync(Guid noteId)
+        {
+            var note = ctx.Notes.FirstOrDefault(n => n.NoteId == noteId);
+
+            ctx.Entry(note).Reload();
+
+            return ctx.Notes
+                .Include(d => d.Directory)
+                .Include(o => o.Owner)
+                .Include(i => i.Images)
+                .Include(e => e.EditedBy)
+                .Include(ev => ev.Event)
+                .Include(c => c.CollaboratorsNotes)
+                .FirstOrDefault(i => i.NoteId == noteId);
         }
 
         /// <summary>
@@ -219,7 +245,7 @@ namespace NotesRepository.Repositories
                 .Include(c => c.CollaboratorsNotes)
                 .ToListAsync();
         }
-        
+
         /// <summary>
         /// Gets all notes from the database, that are assigned to specific directory 
         /// </summary>
@@ -227,6 +253,11 @@ namespace NotesRepository.Repositories
         /// <returns>A collection of notes assigned to particular directory, that are currently stored in the database</returns>
         public ICollection<Note> GetAllNotesForParticularDirectory(Guid directoryId)
         {
+            var notes = ctx.Notes.Where(d => d.Directory.DirectoryId == directoryId).ToList();
+
+            foreach(var note in notes)
+            ctx.Entry(note).Reload();
+
             return ctx.Notes
                 .Where(d => d.Directory.DirectoryId == directoryId)
                 .Include(d => d.Directory)
@@ -357,10 +388,10 @@ namespace NotesRepository.Repositories
         /// <param name="userId"></param>
         /// <param name="count"></param>
         /// <returns>Returns <paramref name="count"/> recently edited or created notes of a particular user</returns>
-        public async Task<ICollection<Note>> GetRecentlyEditedOrCreatedNotesAsync(string userId, int count)
+        public async Task<ICollection<Note>> GetRecentlyEditedNotesAsync(string userId, int count)
         {
             var allNotes = (await GetAllUserNotesAsync(userId)).Where(b => b.IsMarkedAsDeleted == false);
-            return allNotes.OrderByDescending(x => x.EditedAt).ThenByDescending(x => x.CreatedAt).Take(count).ToArray();
+            return allNotes.OrderByDescending(x => x.EditedAt).Take(count).ToArray();
         }
 
         /// <summary>
@@ -369,8 +400,8 @@ namespace NotesRepository.Repositories
         /// <returns>An ICollection of Note entities, which were transferred 'in bulk' to bin at least 30 days ago</returns>
         public ICollection<Note> GetAllSingleNotesWhichShouldBeRemovedFromDb(int daysOld = 30)
             => ctx.Notes
-            .Where(x => x.DeletedAt < DateTime.Now.AddDays(-daysOld) 
-                && x.Directory.Name == "Bin" 
+            .Where(x => x.DeletedAt < DateTime.Now.AddDays(-daysOld)
+                && x.Directory.Name == "Bin"
                 && x.IsMarkedAsDeleted == true)
             .ToArray();
     }
