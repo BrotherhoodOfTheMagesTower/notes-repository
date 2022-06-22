@@ -136,7 +136,7 @@
         {
             pinnedList = (await _ns.GetAllPinnedNotesFromUserAsync(userId)).ToList();
 
-            latestList = (await (_ns.GetRecentlyEditedOrCreatedNotesAsync(userId, 10))).ToList();
+            latestList = (await (_ns.GetRecentlyEditedNotesAsync(userId, 10))).ToList();
 
             upcomingEventsList = (await (_es.GetIncomingEventsAsync(10, userId))).ToList();
         }
@@ -187,6 +187,6 @@
     private async Task DisplayLatest(ChangeEventArgs e)
     {
         j = Int32.Parse(e.Value.ToString());
-        latestList = (await (_ns.GetRecentlyEditedOrCreatedNotesAsync(userId, j))).ToList();
+        latestList = (await (_ns.GetRecentlyEditedNotesAsync(userId, j))).ToList();
     }
 }

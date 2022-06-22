@@ -18,21 +18,52 @@ namespace NotesRepository.Services
             _er = eventRepository;
         }
 
+        /// <summary>
+        /// Gets all user events
+        /// </summary>
+        /// <param name="userId">ID of the user</param>
+        /// <returns>A collection with events for particular user</returns>
         public async Task<ICollection<Event>> GetAllUserEventsAsync(string userId)
             => await _er.GetAllUserEventsAsync(userId);
 
+        /// <summary>
+        /// Gets all events by content
+        /// </summary>
+        /// <param name="content">Content of the event</param>
+        /// <returns>A collection with events with particular content</returns>
         public async Task<ICollection<Event>> GetEventsByContentAsync(string content)
             => await _er.GetEventsByContentAsync(content);
 
+        /// <summary>
+        /// Gets events by start date
+        /// </summary>
+        /// <param name="date">The start date of event</param>
+        /// <returns></returns>
         public async Task<ICollection<Event>> GetEventsByStartDateAsync(DateTime date)
             => await _er.GetEventsByStartDateAsync(date);
 
+        /// <summary>
+        /// Gets all upcoming events for particular user
+        /// </summary>
+        /// <param name="eventCount">Amount of events to return</param>
+        /// <param name="userId">ID of the user</param>
+        /// <returns>A collection with upcoming events</returns>
         public async Task<ICollection<Event>> GetIncomingEventsAsync(int eventCount, string userId)
             => await _er.GetIncomingEventsAsync(eventCount, userId);
 
+        /// <summary>
+        /// Gets the event entity by ID
+        /// </summary>
+        /// <param name="eventId">ID of the event</param>
+        /// <returns>The event entity</returns>
         public async Task<Event?> GetByIdAsync(Guid eventId)
             => await _er.GetByIdAsync(eventId);
 
+        /// <summary>
+        /// Adds the event entity to the database
+        /// </summary>
+        /// <param name="_event">The event entity</param>
+        /// <returns>True if successfully added; otherwise false</returns>
         public async Task<bool> AddAsync(Event _event)
         {
             if (_event.EndAt < _event.StartAt || _event.StartAt < DateTime.Now)
@@ -48,6 +79,11 @@ namespace NotesRepository.Services
             return await _er.AddAsync(_event);
         }
 
+        /// <summary>
+        /// Updates the event entity
+        /// </summary>
+        /// <param name="_event">The event entity</param>
+        /// <returns>True if successfully updated; otherwise false</returns>
         public async Task<bool> UpdateAsync(Event _event)
         {
             if (_event.EndAt < _event.StartAt || _event.StartAt < DateTime.Now)
@@ -68,6 +104,11 @@ namespace NotesRepository.Services
             return await _er.UpdateAsync(_event);
         }
 
+        /// <summary>
+        /// Deletes the event entity
+        /// </summary>
+        /// <param name="_event">The event entity</param>
+        /// <returns>True if successfully deleted; otherwise false</returns>
         public async Task<bool> DeleteAsync(Event _event)
         {
             if (_event.ReminderAt is not null && _event.ReminderAt > DateTime.Now)
@@ -77,6 +118,11 @@ namespace NotesRepository.Services
             return await _er.DeleteAsync(_event);
         }
 
+        /// <summary>
+        /// Deletes the event entity
+        /// </summary>
+        /// <param name="eventId">ID of the event</param>
+        /// <returns>True if successfully deleted; otherwise false</returns>
         public async Task<bool> DeleteByIdAsync(Guid eventId)
         {
             var _event = _er.GetById(eventId);
@@ -87,9 +133,20 @@ namespace NotesRepository.Services
             return await _er.DeleteByIdAsync(eventId);
         }
 
+        /// <summary>
+        /// Deletes event entities
+        /// </summary>
+        /// <param name="eventIds">IDs of the events</param>
+        /// <returns>True if successfully deleted; otherwise false</returns>
         public async Task<bool> DeleteManyAsync(ICollection<Guid> eventIds)
             => await _er.DeleteManyAsync(eventIds);
 
+        /// <summary>
+        /// Attached the note to event
+        /// </summary>
+        /// <param name="eventId">ID of the event</param>
+        /// <param name="noteId">ID of the note</param>
+        /// <returns>True if successfully attached; otherwise false</returns>
         public async Task<bool> AttachNoteToEventAsync(Guid eventId, Guid noteId)
         {
             var _event = await _er.GetByIdAsync(eventId);
@@ -101,6 +158,11 @@ namespace NotesRepository.Services
             return false;
         }
 
+        /// <summary>
+        /// Deletes the note from event
+        /// </summary>
+        /// <param name="eventId">ID of the event</param>
+        /// <returns>True if successfully deleted; otherwise false</returns>
         public async Task<bool> DeleteNoteFromEventAsync(Guid eventId)
         {
             var _event = await _er.GetByIdAsync(eventId);
@@ -112,6 +174,10 @@ namespace NotesRepository.Services
             return false;
         }
 
+        /// <summary>
+        /// Schedules an event reminder
+        /// </summary>
+        /// <param name="_event">The event entity</param>
         private async Task ScheduleEventReminderAsync(Event _event)
         {
             var serviceCollection = new ServiceCollection();
@@ -148,6 +214,10 @@ namespace NotesRepository.Services
             await scheduler.ScheduleJob(job, trigger);
         }
 
+        /// <summary>
+        /// Edits an event reminder: unschedules the previous reminder & schedules a new
+        /// </summary>
+        /// <param name="_event">The event entity</param>
         public async Task EditEventReminderAsync(Event _event)
         {
             StdSchedulerFactory factory = new StdSchedulerFactory();
@@ -160,6 +230,10 @@ namespace NotesRepository.Services
             await ScheduleEventReminderAsync(_event);
         }
 
+        /// <summary>
+        /// Unschedules an event reminder
+        /// </summary>
+        /// <param name="_event">The event entity</param>
         private async Task UnscheduleEventReminder(Event _event)
         {
             StdSchedulerFactory factory = new StdSchedulerFactory();
@@ -171,6 +245,10 @@ namespace NotesRepository.Services
             await scheduler.UnscheduleJob(new TriggerKey($"{_event.EventId}-trigger", _event.User.Email));
         }
 
+        /// <summary>
+        /// Canceles an event reminder
+        /// </summary>
+        /// <param name="_event">The event entity</param>
         public async Task CancelEventReminderAsync(Event _event)
         {
             var serviceCollection = new ServiceCollection();
