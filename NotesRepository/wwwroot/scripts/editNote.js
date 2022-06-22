@@ -12,6 +12,8 @@ function changeWidth() {
     var viewport_width = window.innerWidth;
     let myPreview = document.getElementById('my-preview-id');
 
+    if (myPreview == null) return;
+
     if (viewport_width < 641) {
 
         var width = document.getElementById('my-text-area-id').clientWidth;

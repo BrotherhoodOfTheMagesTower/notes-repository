@@ -156,7 +156,7 @@ div.note h5 {
     box-shadow: 5px 5px 5px #009BBF;
 }
 
-@media (max-width: 750px) {
+@media (max-width: 641px) {
 
     .user-view {
         display: block;
@@ -168,7 +168,7 @@ div.note h5 {
     }
 
     .notes {
-        max-width: 90%;
+        max-width: 90vw;
     }
 
     .draft {

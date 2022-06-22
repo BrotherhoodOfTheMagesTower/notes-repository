@@ -28,16 +28,6 @@ namespace NotesRepository.Services
             _ir = imageRepository;
         }
 
-        public NoteService(NoteRepository noteRepository, UserRepository userRepository, EventRepository eventRepository, DirectoryRepository directoryRepository, ImageRepository imageRepository, AzureStorageHelper azureStorageHelper)
-        {
-            _nr = noteRepository;
-            _ur = userRepository;
-            _er = eventRepository;
-            _dr = directoryRepository;
-            _ir = imageRepository;
-            _azureHelper = azureStorageHelper;
-        }
-
         public async Task<Note?> GetNoteByIdAsync(Guid noteId)
             => await _nr.GetByIdAsync(noteId);
 
@@ -52,14 +42,6 @@ namespace NotesRepository.Services
 
         public async Task<Note?> GetNoteByTitleAsync(string title, string userId)
             => await _nr.GetNoteByTitleAsync(title, userId);
-
-        /// <summary>
-        /// Gets all notes from the database, that are assigned to specific directory 
-        /// </summary>
-        /// <param name="directoryId">The unique ID of Directory, which notes will be returned</param>
-        /// <returns>A collection of notes assigned to particular directory, that are currently stored in the database</returns>
-        public async Task<ICollection<Note>> GetAllNotesForParticularDirectoryAsync(Guid directoryId)
-            => await _nr.GetAllNotesForParticularDirectoryAsync(directoryId);
 
         /// <summary>
         /// Gets all notes from the database, that are assigned to specific directory 
@@ -85,24 +67,49 @@ namespace NotesRepository.Services
         public async Task<ICollection<Note>> GetAllPinnedNotesFromUserAsync(string userId)
             => await _nr.GetAllPinnedNotesFromUserAsync(userId);
 
-        public async Task<ICollection<Note>> GetRecentlyEditedOrCreatedNotesAsync(string userId, int count = 10)
+        /// <summary>
+        /// Gets recently edited notes
+        /// </summary>
+        /// <param name="userId">ID of the user</param>
+        /// <param name="count">Amount of notes to return</param>
+        /// <returns>A collection of recently edited notes</returns>
+        public async Task<ICollection<Note>> GetRecentlyEditedNotesAsync(string userId, int count = 10)
             => await _nr.GetRecentlyEditedNotesAsync(userId, count);
 
+
+        /// <summary>
+        /// Gets notes by title and content
+        /// </summary>
+        /// <param name="searchText">The phrase which should be searched</param>
+        /// <param name="userId">ID of the user</param>
+        /// <returns>A list with results (if any)</returns>
         public async Task<List<Note>> SearchNotesByTitleAndContentAsync(string searchText, string userId)
             => await _nr.SearchNoteByTitleAndContentAsync(searchText, userId);
 
+        /// <summary>
+        /// Adds a note entity to the database
+        /// </summary>
+        /// <param name="note">The note entity</param>
+        /// <returns>True if successfully added; otherwise false</returns>
         public async Task<bool> AddNoteAsync(Note note)
             => await _nr.AddAsync(note);
 
         public async Task<bool> AddNotesAsync(ICollection<Note> notes)
             => await _nr.AddManyAsync(notes);
 
+        /// <summary>
+        /// Updates a note entity
+        /// </summary>
+        /// <param name="note">The note entity</param>
+        /// <returns>True if successfully updated; otherwise false</returns>
         public async Task<bool> UpdateNoteAsync(Note note)
             => await _nr.UpdateAsync(note);
 
-        public void UpdateNoteSync(Note note)
-            => _nr.UpdateSync(note);
-
+        /// <summary>
+        /// Deletes a note entity from the database
+        /// </summary>
+        /// <param name="note">The note entity</param>
+        /// <returns>True if successfully deleted; otherwise false</returns>
         public async Task<bool> DeleteNoteAsync(Note note)
         {
             var imagesAttachedToNote = await _ir.GetAllNoteImagesAsync(note.NoteId);    // podpięte zdjęcia pod daną notatkę
@@ -117,20 +124,11 @@ namespace NotesRepository.Services
             return await _nr.DeleteAsync(note); // Jeżeli nie to usuwamy odrazu notatkę
         }
 
-        public bool DeleteNote(Note note)
-        {
-            var imagesAttachedToNote = _ir.GetAllNoteImages(note.NoteId);
-            if (imagesAttachedToNote != null)
-            {
-                foreach (var image in imagesAttachedToNote)
-                {
-                    _azureHelper.DeleteImageFromAzureNotAsync(image.Name, containerName);
-                    _ir.Delete(image);
-                }
-            }
-            return _nr.Delete(note);
-        }
-
+        /// <summary>
+        /// Deletes a note entity from the database
+        /// </summary>
+        /// <param name="noteId">ID of the note</param>
+        /// <returns>True if successfully deleted; otherwise false</returns>
         public async Task<bool> DeleteNoteByIdAsync(Guid noteId)
         {
             var imagesAttachedToNote = await _ir.GetAllNoteImagesAsync(noteId);
@@ -145,6 +143,11 @@ namespace NotesRepository.Services
             return await _nr.DeleteByIdAsync(noteId);
         }
 
+        /// <summary>
+        /// Deletes note entities from the database
+        /// </summary>
+        /// <param name="notes">A collection of note entities</param>
+        /// <returns>True if successfully deleted; otherwise false</returns>
         public async Task<bool> DeleteNotesAsync(ICollection<Note> notes)
         {
             foreach (var note in notes)
@@ -162,12 +165,29 @@ namespace NotesRepository.Services
             return await _nr.DeleteManyAsync(notes);
         }
 
+        /// <summary>
+        /// Marks the note as currently being edited
+        /// </summary>
+        /// <param name="noteId">ID of the note</param>
+        /// <returns>True if successfully marked as currently edited; otherwise false</returns>
         public async Task<bool> SetNoteAsCurrentlyEditedAsync(Guid noteId)
             => await _nr.MarkNoteAsCurrentlyEditedAsync(noteId);
 
+        /// <summary>
+        /// Marks the note as currently not being edited
+        /// </summary>
+        /// <param name="noteId">ID of the note</param>
+        /// <returns>True if successfully marked as currently not edited; otherwise false</returns>
         public async Task<bool> SetNoteAsCurrentlyNotEditedAsync(Guid noteId)
             => await _nr.MarkNoteAsCurrentlyNotEditedAsync(noteId);
 
+        /// <summary>
+        /// Sets the last edited time and user
+        /// </summary>
+        /// <param name="editedAt">Time at which it was edited</param>
+        /// <param name="userId">ID of the user, which edited the note</param>
+        /// <param name="noteId">ID of the note</param>
+        /// <returns>True if successfully set; otherwise false</returns>
         public async Task<bool> SetLastEditedTimeAndUserAsync(DateTime editedAt, string userId, Guid noteId)
         {
             var user = await _ur.GetUserByIdAsync(userId);
@@ -223,6 +243,11 @@ namespace NotesRepository.Services
             return false;
         }
 
+        /// <summary>
+        /// Pins a note
+        /// </summary>
+        /// <param name="noteId">ID of the note</param>
+        /// <returns>True if successfully pinned; otherwise false</returns>
         public async Task<bool> PinNoteAsync(Guid noteId)
         {
             var note = await _nr.GetByIdAsync(noteId);
@@ -234,17 +259,12 @@ namespace NotesRepository.Services
             return false;
         }
 
-        public async Task<bool> UnpinNoteAsync(Guid noteId)
-        {
-            var note = await _nr.GetByIdAsync(noteId);
-            if (note is not null)
-            {
-                note.IsPinned = false;
-                return await _nr.UpdateAsync(note);
-            }
-            return false;
-        }
-
+        /// <summary>
+        /// Edits the note content
+        /// </summary>
+        /// <param name="noteId">ID of the note</param>
+        /// <param name="newContent">The new content</param>
+        /// <returns>True if successfully edited; otherwise false</returns>
         public async Task<bool> EditNoteContentAsync(Guid noteId, string newContent)
         {
             var note = await _nr.GetByIdAsync(noteId);
@@ -256,6 +276,12 @@ namespace NotesRepository.Services
             return false;
         }
 
+        /// <summary>
+        /// Edits the note title
+        /// </summary>
+        /// <param name="noteId">ID of the note</param>
+        /// <param name="newTitle">The new title</param>
+        /// <returns>True if successfully edited; otherwise false</returns>
         public async Task<bool> EditNoteTitleAsync(Guid noteId, string newTitle)
         {
             var note = await _nr.GetByIdAsync(noteId);
@@ -267,6 +293,12 @@ namespace NotesRepository.Services
             return false;
         }
 
+        /// <summary>
+        /// Changes the note directory
+        /// </summary>
+        /// <param name="noteId">ID of the note</param>
+        /// <param name="newDirectoryId">ID of the new directory</param>
+        /// <returns>True if successfully changed; otherwise false</returns>
         public async Task<bool> ChangeNoteDirectoryAsync(Guid noteId, Guid newDirectoryId)
         {
             var note = await _nr.GetByIdAsync(noteId);
@@ -279,14 +311,27 @@ namespace NotesRepository.Services
             return false;
         }
 
+        /// <summary>
+        /// Checks if a note with particular title exists for given user
+        /// </summary>
+        /// <param name="title">Title of the note</param>
+        /// <param name="userId">ID of the user</param>
+        /// <returns>True if exists; otherwise false</returns>
         public async Task<bool> CheckIfTheNoteTitleExistsForParticularUser(string title, string userId)
         {
-            var directory = await _nr.GetNoteByTitleAsync(title, userId);
-            if (directory == null)
+            var note = await _nr.GetNoteByTitleAsync(title, userId);
+            if (note == null)
                 return false;
             else return true;
         }
 
+
+        /// <summary>
+        /// Generates a random title from note saved from draft
+        /// </summary>
+        /// <param name="note">The note entity</param>
+        /// <param name="userId">ID of the user</param>
+        /// <returns>The note entity</returns>
         public async Task<Note> GenerateTitleForNoteFromDraft(Note note, string userId)
         {
             var title = "SavedFromDraft_" + note.CreatedAt.Year + "-" + note.CreatedAt.Month + "-" + note.CreatedAt.Day;

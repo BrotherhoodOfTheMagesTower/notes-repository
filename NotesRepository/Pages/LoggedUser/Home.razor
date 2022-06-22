@@ -139,7 +139,7 @@
             numberOfLatest = result.Success ? result.Value : 10;
             pinnedList = (await _ns.GetAllPinnedNotesFromUserAsync(userId)).ToList();
 
-            latestList = (await (_ns.GetRecentlyEditedOrCreatedNotesAsync(userId, numberOfLatest))).ToList();
+            latestList = (await (_ns.GetRecentlyEditedNotesAsync(userId, numberOfLatest))).ToList();
 
             upcomingEventsList = (await (_es.GetIncomingEventsAsync(10, userId))).ToList();
         }
@@ -189,7 +189,8 @@
     private async Task DisplayLatest(ChangeEventArgs e)
     {
         numberOfLatest = Int32.Parse(e.Value.ToString());
-        latestList = (await (_ns.GetRecentlyEditedOrCreatedNotesAsync(userId, numberOfLatest))).ToList();
+        latestList = (await (_ns.GetRecentlyEditedNotesAsync(userId, numberOfLatest))).ToList();
         await BrowserStorage.SetAsync("numberOfLatestNotes", numberOfLatest);
+
     }
 }
