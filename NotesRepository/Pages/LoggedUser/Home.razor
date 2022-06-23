@@ -19,7 +19,7 @@
 
 
 <div class="home-page">
-    <div>
+    <div class="my-image">
         <video autoplay muted loop id="myVideo">
             <source src="video/makingNotes.mp4" type="video/mp4">
         </video>
@@ -32,7 +32,7 @@
             <div class="notes">
                 @if (pinnedList != null)
                 {
-                    <Dropzone Class="my-dragdrop" Items="pinnedList" InstantReplace=" true ">
+                    <Dropzone Class="my-dragdrop" Items="pinnedList" MaxItems=@pinnedList.Count InstantReplace=" true ">
                         <div class="note" @onclick="()=>NavigateToNote(context.NoteId.ToString())">
                             <center>
                                 <h5>@context.Title</h5>
@@ -67,12 +67,12 @@
             <div class="notes">
                 @if (latestList != null)
                 {
-                    <Dropzone Class="my-dragdrop" Items="latestList" InstantReplace=" true ">
+                    <Dropzone Class="my-dragdrop" Items="latestList" MaxItems=@latestList.Count InstantReplace=" true ">
                         <div class="note" @onclick="()=>NavigateToNote(context.NoteId.ToString())">
                             <center>
                                 <h5>@context.Title</h5>
                                 <br>
-                                <h6>@context.EditedAt</h6>
+                                <h6>@context.CreatedAt</h6>
                             </center>
                         </div>
                     </Dropzone>

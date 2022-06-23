@@ -1,3 +1,4 @@
+using Azure.Identity;
 using Blazored.Modal;
 using Blazored.Toast;
 using Microsoft.AspNetCore.Components.Authorization;
