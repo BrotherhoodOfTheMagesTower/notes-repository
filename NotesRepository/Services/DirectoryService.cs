@@ -14,12 +14,26 @@ namespace NotesRepository.Services
         private readonly string containerName = "imagecontainer";
         private AzureStorageHelper _azureHelper;
 
+        public DirectoryService(DirectoryRepository directoryRepository)
+        {
+            _dr = directoryRepository;
+        }
+
         public DirectoryService(NoteRepository noteRepository, DirectoryRepository directoryRepository, UserRepository userRepository, ImageRepository imageRepository)
         {
             _nr = noteRepository;
             _ur = userRepository;
             _dr = directoryRepository;
             _ir = imageRepository;
+        }
+
+        public DirectoryService(NoteRepository noteRepository, DirectoryRepository directoryRepository, UserRepository userRepository, ImageRepository imageRepository, AzureStorageHelper azureStorageHelper)
+        {
+            _nr = noteRepository;
+            _ur = userRepository;
+            _dr = directoryRepository;
+            _ir = imageRepository;
+            _azureHelper = azureStorageHelper;
         }
 
         /// <summary>
