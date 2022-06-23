@@ -18,6 +18,12 @@ namespace NotesRepository.Services
             _ir = imageRepository;
         }
 
+        public ImageService(ImageRepository imageRepository, AzureStorageHelper azureStorageHelper)
+        {
+            _ir = imageRepository;
+            _azureHelper = azureStorageHelper;
+        }
+
         /// <summary>
         /// Gets all images attached to given note
         /// </summary>

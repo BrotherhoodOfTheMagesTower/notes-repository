@@ -54,15 +54,10 @@ which allows quick and effective text formatting as well as nesting html code in
 
 ### Status
 
-Development in progress
+Development finished
 
 ### Links
 
 - website: https://notesrepository.azurewebsites.net
 - dockerhub repository: https://hub.docker.com/r/domidep479/notesrepository
 
-### Coming up soon
-
-- enhanced UI
-- new templates
-- email notifications about incoming events

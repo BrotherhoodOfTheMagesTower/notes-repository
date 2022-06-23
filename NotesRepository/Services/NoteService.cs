@@ -28,6 +28,16 @@ namespace NotesRepository.Services
             _ir = imageRepository;
         }
 
+        public NoteService(NoteRepository noteRepository, UserRepository userRepository, EventRepository eventRepository, DirectoryRepository directoryRepository, ImageRepository imageRepository, AzureStorageHelper azureStorageHelper)
+        {
+            _nr = noteRepository;
+            _ur = userRepository;
+            _er = eventRepository;
+            _dr = directoryRepository;
+            _ir = imageRepository;
+            _azureHelper = azureStorageHelper;
+        }
+
         public async Task<Note?> GetNoteByIdAsync(Guid noteId)
             => await _nr.GetByIdAsync(noteId);
 
