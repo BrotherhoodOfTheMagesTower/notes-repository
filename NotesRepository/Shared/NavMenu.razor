@@ -48,23 +48,23 @@
             }
             <br />
             <div class="nav-item px-3">
-                <NavLink class="nav-link" href="/editNote/newNote">
+                <NavLink class="nav-link" href="/editNote/newNote" data-ref="new-note-btn">
                     <span class="oi oi-copywriting" aria-hidden="true"></span> @localizer["newNote"]
                 </NavLink>
             </div>
 
             <div class="nav-item px-3">
-                <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">
+                <NavLink class="nav-link" href="/" data-ref="home-btn" Match="NavLinkMatch.All">
                     <span class="oi oi-home" aria-hidden="true"></span> @localizer["homePage"]
                 </NavLink>
             </div>
             <div class="nav-item px-3">
-                <NavLink class="nav-link" href="/calendar">
+                <NavLink class="nav-link" href="/calendar" data-ref="calendar-btn">
                     <span class="oi oi-calendar" aria-hidden="true"></span> @localizer["calendar"]
                 </NavLink>
             </div>
             <div class="nav-item px-3">
-                <NavLink class="dropdown-toggle nav-link" @onclick="() => ToggleSubmenu()">
+                <NavLink class="dropdown-toggle nav-link" data-ref="main-dir-btn" @onclick="() => ToggleSubmenu()">
                     <span class="oi oi-folder" aria-hidden="true"></span>@localizer["folders"]
                 </NavLink>
             </div>
@@ -78,17 +78,17 @@
                 }
             }
             <div class="nav-item px-3">
-                <NavLink class="nav-link" href="/selectTemplate">
+                <NavLink class="nav-link" href="/selectTemplate" data-ref="templates-btn">
                     <span class="oi oi-text" aria-hidden="true"></span> @localizer["templates"]
                 </NavLink>
             </div>
             <div class="nav-item px-3">
-                <NavLink class="dropdown-toggle nav-link" @onclick="()=> NavigateToShared()">
+                <NavLink class="dropdown-toggle nav-link" data-ref="shared-btn" @onclick="()=> NavigateToShared()">
                     <span class="oi oi-share" aria-hidden="true"></span> @localizer["shared"]
                 </NavLink>
             </div>
             <div class="nav-item px-3">
-                <NavLink class="dropdown-toggle nav-link" @onclick="()=> ToggleTrash()">
+                <NavLink class="dropdown-toggle nav-link" data-ref="bin-btn" @onclick="()=> ToggleTrash()">
                     <span class="oi oi-trash" aria-hidden="true"></span> @localizer["trash"]
                 </NavLink>
                 @if (areTrashToggled)
