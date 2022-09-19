@@ -56,12 +56,12 @@
                         <center>
                             <h3>@localizer["content"]</h3>
                         </center>
-                        <textarea class="my-text-area" id="my-text-area-id" @bind-value="content" @bind-value:event="oninput"></textarea>
+                        <textarea data-ref="note-input" class="my-text-area" id="my-text-area-id" @bind-value="content" @bind-value:event="oninput"></textarea>
                     </div>
                 }
                 <div class="my-sub-container p-2">
                     <center><h3>@localizer["preview"]</h3></center>
-                    <div class="my-preview" id="my-preview-id">
+                    <div data-ref="note-preview" class="my-preview" id="my-preview-id">
                         @((MarkupString)Markdown.ToHtml(content, pipeline))
                     </div>
                 </div>
@@ -78,22 +78,22 @@
                     {
                         <h4 class="px-3">@localizer["toUpload"]</h4>
                     }
-                    <button type="button" class="btn btn-primary" @onclick="saveNote">@localizer["save"]</button>
+                    <button data-ref="save-note" type="button" class="btn btn-primary" @onclick="saveNote">@localizer["save"]</button>
                 </div>
 
                 <div class="my-sub-input-container">
                     @if (@validId && @noteFromDb is not null)
                     {
                         <label>Odblokuj notatkę, aby inni mogli ją edytować</label>
-                        <button type="button" class="btn btn-primary" @onclick="unlockNote">Odblokuj notatkę</button>
+                        <button data-ref="unlock-note" type="button" class="btn btn-primary" @onclick="unlockNote">Odblokuj notatkę</button>
                     }
                 </div>
 
                 <div class="my-sub-input-container">
                     @if (@validId && @noteFromDb is not null && editedByOwner)
                     {
-                        <input class="d-block mb-1 ml-1 input-margin" @bind-value="collaboratorEmail"></input>
-                        <button type="button" class="btn btn-primary" @onclick="() => addCollaboratorToNote()">@localizer["add"]</button>
+                        <input data-ref="collaborator-input" class="d-block mb-1 ml-1 input-margin" @bind-value="collaboratorEmail"></input>
+                        <button data-ref="add-collaborator" type="button" class="btn btn-primary" @onclick="() => addCollaboratorToNote()">@localizer["add"]</button>
                     }
                 </div>
             </div>
@@ -115,7 +115,7 @@
                                         <tr>
                                             <th>@image.Name</th>
                                             <th>@image.FileUrl</th>
-                                            <th><button type="button" class="btn btn-primary" @onclick="() => deleteImageFromNote(image)">@localizer["delete"]</button></th>
+                                            <th><button data-ref="delete-img-from-db" type="button" class="btn btn-primary" @onclick="() => deleteImageFromNote(image)">@localizer["delete"]</button></th>
                                         </tr>
                                     }
                                 </tbody>
@@ -143,7 +143,7 @@
                                                     <th>@collaborator.FirstName @collaborator.LastName</th>
                                                     @if (editedByOwner)
                                                     {
-                                                        <th><button type="button" class="button-margin btn btn-primary" @onclick="() => deleteCollaboratorFromNote(collaborator)">@localizer["delete"]</button></th>
+                                                        <th><button data-ref="delete-collaborator" type="button" class="button-margin btn btn-primary" @onclick="() => deleteCollaboratorFromNote(collaborator)">@localizer["delete"]</button></th>
                                                     }
                                                 </tr>
                                             }

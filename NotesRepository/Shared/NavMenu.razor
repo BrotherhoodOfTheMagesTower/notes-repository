@@ -28,6 +28,7 @@
         <Authorized>
             <div class="my-search-wrapper">
                 <BlazoredTypeahead SearchMethod="NotesSearch"
+                                   data-ref="search-bar"
                                    @bind-Value="searchPhrase"
                                    placeholder=" @localizer["searchByContentOrTitle"]">
                     <SelectedTemplate Context="searchContext">
@@ -183,13 +184,13 @@
 
     private RenderFragment ToggleFolders(Directory? directory) => __builder =>
     {
-        @if (directory == null)
+    @if (directory == null)
         {
-            <div class="my-options d-flex justify-content-center my-btn-add-main-folder my-custom-nav-item">
-                <div class="my-options-child">
-                    <i class="fa-solid fa-plus " @onclick="()=> HandleAddingFolderPopup(null)"></i>
-                </div>
-            </div>
+    <div class="my-options d-flex justify-content-center my-btn-add-main-folder my-custom-nav-item">
+                    <div class="my-options-child">
+                        <i data-ref="add-new-dir" class="fa-solid fa-plus" @onclick="()=> HandleAddingFolderPopup(null)"></i>
+                    </div>
+    </div>
             allCurrentSubdirectiories = _ds.GetAllDirectoriesWithoutParentDirectoryForParticularUserSync(currentUserId);
         }
         else
@@ -197,51 +198,51 @@
             allCurrentSubdirectiories = _ds.GetAllSubDirectoriesOfParticularDirectorySync(directory.DirectoryId);
         }
 
-        @if (allCurrentSubdirectiories is not null && allCurrentSubdirectiories.Count() > 0)
+    @if (allCurrentSubdirectiories is not null && allCurrentSubdirectiories.Count() > 0)
         {
-            <div class="folder-note-margin-left">
-                @foreach (var dir in allCurrentSubdirectiories)
+    <div class="folder-note-margin-left">
+                    @foreach (var dir in allCurrentSubdirectiories)
                 {
                     var notesFromCurrentSubirectory = _ns.GetAllNotesForParticularDirectory(dir.DirectoryId);
-                    <div class="d-flex align-items-baseline justify-content-between nav-item my-nav-item dropdown-toggle nav-link my-custom-nav-item">
-                        <div class="folder-child " @onclick="@(() => ToggleSubDirectory(dir))">
-                            <i class="oi oi-folder" aria-hidden="true"></i>
-                            @PrintName(dir.Name)
-                            @if (dir.SubDirectories != null && dir.SubDirectories.Count() > 0 || notesFromCurrentSubirectory != null && notesFromCurrentSubirectory.Count() > 0)
+                        <div class="d-flex align-items-baseline justify-content-between nav-item my-nav-item dropdown-toggle nav-link my-custom-nav-item">
+                            <div data-ref="dir-@dir.DirectoryId" class="folder-child " @onclick="@(() => ToggleSubDirectory(dir))">
+                                <i class="oi oi-folder" aria-hidden="true"></i>
+                                @PrintName(dir.Name)
+                                @if (dir.SubDirectories != null && dir.SubDirectories.Count() > 0 || notesFromCurrentSubirectory != null && notesFromCurrentSubirectory.Count() > 0)
                             {
                                 if (!dir.IsToggled)
                                 {
-                                    <i class="fa-solid fa-chevron-down"></i>
+                                        <i class="fa-solid fa-chevron-down"></i>
 
                                 }
                                 else
                                 {
-                                    <i class="fa-solid fa-chevron-up"></i>
+                                        <i class="fa-solid fa-chevron-up"></i>
                                 }
 
                             }
-                        </div>
-                        <div class="my-options d-flex">
-                            <div class="my-options-child">
-                                <i class="fa-solid fa-plus " @onclick="()=> HandleAddingFolderPopup(dir)"></i>
                             </div>
-                            <div class="my-options-child">
-                                <i class="fa-solid fa-ellipsis " @onclick="()=> HandleFolderPopup(dir)"></i>
+                            <div class="my-options d-flex">
+                                <div class="my-options-child">
+                                    <i data-ref="add-subdir-for-@dir.DirectoryId" class="fa-solid fa-plus " @onclick="()=> HandleAddingFolderPopup(dir)"></i>
+                                </div>
+                                <div class="my-options-child">
+                                    <i data-ref="open-menu-for-@dir.DirectoryId" class="fa-solid fa-ellipsis " @onclick="()=> HandleFolderPopup(dir)"></i>
+                                </div>
                             </div>
+
                         </div>
 
-                    </div>
-
-                    @if (dir.IsToggled)
+                        @if (dir.IsToggled)
                     {
-                        @ToggleFolders(dir)
+                            @ToggleFolders(dir)
                         ;
                     }
                 }
-            </div>
+    </div>
 
         }
-        @GetNotesForCurrentDirectory(directory)
+    @GetNotesForCurrentDirectory(directory)
         ;
 
     };
@@ -252,54 +253,54 @@
            allCurrentSubdirectiories = _ds.GetAllSubDirectoriesOfParticularDirectorySync(binDirectory.DirectoryId); ;
            //parentDirsCountForBin = CountParentDir(binDirectory);
 
-           @if (allCurrentSubdirectiories is not null)
+    @if (allCurrentSubdirectiories is not null)
            {
-               <div class="folder-note-margin-left">
-                   @foreach (var dir in allCurrentSubdirectiories)
+    <div class="folder-note-margin-left">
+                       @foreach (var dir in allCurrentSubdirectiories)
                    {
-                       <div class="d-flex align-items-baseline justify-content-between nav-item my-nav-item dropdown-toggle nav-link my-custom-nav-item" @onclick="@(() => ToggleSubDirectory(dir))">
-                           <div class="folder-child">
-                               <i class="oi oi-folder" aria-hidden="true"></i>
-                               @PrintName(dir.Name)
-                               @if (dir.SubDirectories != null && dir.SubDirectories.Count() > 0)
+                           <div class="d-flex align-items-baseline justify-content-between nav-item my-nav-item dropdown-toggle nav-link my-custom-nav-item" @onclick="@(() => ToggleSubDirectory(dir))">
+                               <div class="folder-child">
+                                   <i class="oi oi-folder" aria-hidden="true"></i>
+                                   @PrintName(dir.Name)
+                                   @if (dir.SubDirectories != null && dir.SubDirectories.Count() > 0)
                                {
                                    if (!dir.IsToggled)
                                    {
-                                       <i class="fa-solid fa-chevron-down"></i>
+                                           <i class="fa-solid fa-chevron-down"></i>
                                    }
                                    else
                                    {
-                                       <i class="fa-solid fa-chevron-up"></i>
+                                           <i class="fa-solid fa-chevron-up"></i>
                                    }
                                }
+                               </div>
+                               <i class="fa-solid fa-ellipsis " @onclick="()=> HandleDeletedFolderPopup(dir)"></i>
                            </div>
-                           <i class="fa-solid fa-ellipsis " @onclick="()=> HandleDeletedFolderPopup(dir)"></i>
-                       </div>
 
-                       @if (dir.IsToggled)
+                           @if (dir.IsToggled)
                        {
-                           @ToggleFoldersInTrash(dir)
+                               @ToggleFoldersInTrash(dir)
                            ;
                        }
                    }
-               </div>
+    </div>
            }
-           @GetNotesForCurrentDirectory(binDirectory)
+    @GetNotesForCurrentDirectory(binDirectory)
            ;
 
        };
 
     private RenderFragment PrintName(string name) => __builder =>
     {
-        @if (name.Count() > 10)
+    @if (name.Count() > 10)
         {
             name = name.Remove(9);
             name += "...";
-            <span class="p-1">@name</span>
+    <span class="p-1">@name</span>
         }
         else
         {
-            <span class="p-1">@name</span>
+    <span class="p-1">@name</span>
         }
     };
 
@@ -411,29 +412,29 @@
         var notes = _ns.GetAllNotesForParticularDirectory(directory!.DirectoryId);
         if (notes is not null && notes.Count() > 0)
         {
-            <div class="folder-note-margin-left">
-                @foreach (var note in notes)
+    <div class="folder-note-margin-left">
+                    @foreach (var note in notes)
                 {
-                    <div class="d-flex align-items-baseline justify-content-between nav-item my-nav-item dropdown-toggle nav-link my-custom-nav-item">
-                        <div class="folder-child" @onclick="() => GoToNote(note.NoteId.ToString())">
-                            <i>@note.IconName</i>
-                            @PrintName(note.Title)
-                        </div>
-                        <div class="my-options">
-                            <div class="my-options-child">
-                                @if (note.IsMarkedAsDeleted)
+                        <div class="d-flex align-items-baseline justify-content-between nav-item my-nav-item dropdown-toggle nav-link my-custom-nav-item">
+                            <div data-ref="note-@note.NoteId" class="folder-child" @onclick="() => GoToNote(note.NoteId.ToString())">
+                                <i>@note.IconName</i>
+                                @PrintName(note.Title)
+                            </div>
+                            <div class="my-options">
+                                <div class="my-options-child">
+                                    @if (note.IsMarkedAsDeleted)
                                 {
-                                    <i class="fa-solid fa-ellipsis " @onclick="()=> HandleDeletedNotesPopup(note)"></i>
+                                        <i class="fa-solid fa-ellipsis " @onclick="()=> HandleDeletedNotesPopup(note)"></i>
                                 }
                                 else
                                 {
-                                    <i class="fa-solid fa-ellipsis " @onclick="()=> HandleNotesPopup(note)"></i>
+                                        <i data-ref="note-menu-@note.NoteId" class="fa-solid fa-ellipsis " @onclick="()=> HandleNotesPopup(note)"></i>
                                 }
+                                </div>
                             </div>
                         </div>
-                    </div>
                 }
-            </div>
+    </div>
         }
     };
 }

@@ -29,11 +29,11 @@
         <div class="user-notes">
             <br />
             <h5 class="my-text">@localizer["pinned"]</h5>
-            <div class="notes">
+            <div class="notes" data-ref="pinned-notes-container">
                 @if (pinnedList != null)
                 {
                     <Dropzone Class="my-dragdrop" Items="pinnedList" MaxItems=@pinnedList.Count InstantReplace=" true ">
-                        <div class="note" @onclick="()=>NavigateToNote(context.NoteId.ToString())">
+                        <div data-ref="pinned-note-@context.NoteId" class="note" @onclick="()=>NavigateToNote(context.NoteId.ToString())">
                             <center>
                                 <h5>@context.Title</h5>
                                 <br>
@@ -50,7 +50,7 @@
             <br />
             <div class="my-title">
                 <h5 class="my-text">@localizer["theLatest"]</h5>
-                <select @onchange="DisplayLatest" class="my-select">
+                <select @onchange="DisplayLatest" class="my-select" data-ref="last-edited">
                     @for (int i = 5; i < 50; i = i + 5)
                     {
                         @if (i == numberOfLatest)
@@ -64,11 +64,12 @@
                     }
                 </select>
             </div>
-            <div class="notes">
+            <div class="notes" data-ref="last-edited-notes-container">
                 @if (latestList != null)
                 {
                     <Dropzone Class="my-dragdrop" Items="latestList" MaxItems=@latestList.Count InstantReplace=" true ">
-                        <div class="note" @onclick="()=>NavigateToNote(context.NoteId.ToString())">
+                        <div class="note" @onclick="()=>NavigateToNote(context.NoteId.ToString())"
+                             data-ref="last-edited-note-@context.NoteId">
                             <center>
                                 <h5>@context.Title</h5>
                                 <br>
@@ -84,12 +85,12 @@
             </div>
             <br />
             <h5 class="my-text">@localizer["upcomingEvents"]</h5>
-            <div class="notes">
+            <div class="notes" data-ref="events-container">
                 @if (upcomingEventsList != null)
                 {
                     @foreach (var e in upcomingEventsList)
                     {
-                        <div class="note">
+                        <div class="note" data-ref="last-edited-event-@e.EventId">
                             <center>
                                 <h5>@e.Content</h5>
                                 <br>
@@ -107,14 +108,14 @@
 
 
 
-        <div class="draft">
+        <div class="draft" data-ref="draf-container">
             <br />
             <h5 class="my-text">@localizer["draft"]</h5>
             <div class="button-bar">
                 <a class="my-button" @onclick="ClearDraft">@localizer["clear"]</a>
                 <a class="my-button" @onclick="SaveDraft">@localizer["save"]</a>
             </div>
-            <textarea class="my-text-area" @bind-value="content" @bind-value:event="oninput"></textarea>
+            <textarea data-ref="draf-text-area" class="my-text-area" @bind-value="content" @bind-value:event="oninput"></textarea>
         </div>
     </div>
 </div>
