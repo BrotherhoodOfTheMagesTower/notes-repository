@@ -17,14 +17,10 @@ using Radzen;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var keyVaultEndpoint = new Uri("https://noterepo.vault.azure.net/");
-var conf = builder.Configuration.AddAzureKeyVault(keyVaultEndpoint, new DefaultAzureCredential()).Build();
+//var keyVaultEndpoint = new Uri("https://noterepo.vault.azure.net/");
+//var conf = builder.Configuration.AddAzureKeyVault(keyVaultEndpoint, new DefaultAzureCredential()).Build();
 
-#if DEBUG
 var connectionString = builder.Configuration.GetConnectionString("LocalApplicationDbContextConnection");
-#else
-var connectionString = builder.Configuration.GetConnectionString("ApplicationDbContextConnection");
-#endif
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
 
 builder.Services
