@@ -1,27 +1,24 @@
-using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Remote;
-using SeleniumTests.Constants;
-using SeleniumTests.Infrastructure;
-using System;
+using SeleniumTests.Fixtures;
+using SeleniumTests.Extensions;
 
 namespace SeleniumTests.Tests
 {
-    public class Test
+    [Collection(BaseRemoteFixture.CollectionName)]
+    public class Test : IClassFixture<BaseRemoteFixture>
     {
-        private IWebDriver driver;
-        private string hubUrl;
+        private readonly RemoteWebDriver driver;
 
-        [Theory]
-        [InlineData(BrowserType.Chrome)]
-        public void Test1(BrowserType browser)
+        public Test(BaseRemoteFixture fixture)
         {
-            ChromeOptions chromeOptions = new ChromeOptions();
-            var driver = new RemoteWebDriver(new Uri("http://localhost:4445"), chromeOptions);
-            driver.Navigate().GoToUrl("http://localhost:8000");
+            driver = fixture.WebDriver;
+        }
+
+        [Fact]
+        public void UserIsAbleToOpenWelcomePage()
+        {
+            driver.GoToWelcomePage();
             var t = driver.FindElementByClassName("page");
-            var halo =  t.Text;
             driver.Quit();
         }
     }

@@ -7,14 +7,19 @@ services:
             ACCEPT_EULA: "Y"
         ports:
           - "1433:1433"
+        extra_hosts:
+          - "host.docker.internal:host-gateway"
 #        volumes:
 #          -  notesdb:/var/opt/mssql/data
+
     web:
         build: .
         ports:
           - "8000:80"
         depends_on:
           - notesdb
+        extra_hosts:
+          - "host.docker.internal:host-gateway"
 #volumes:
 #  notesdb:
     
