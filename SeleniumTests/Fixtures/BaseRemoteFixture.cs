@@ -1,10 +1,11 @@
 ﻿using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Remote;
+using SeleniumTests.Constants;
+using SeleniumTests.Infrastructure.Builders;
 
 namespace SeleniumTests.Fixtures;
 
-[CollectionDefinition(CollectionName)]
-public class BaseRemoteFixture : ICollectionFixture<BaseRemoteFixture>
+public class BaseRemoteFixture : IDisposable
 {
     public const string CollectionName = "Tests on basic remote fixture";
 
@@ -12,6 +13,11 @@ public class BaseRemoteFixture : ICollectionFixture<BaseRemoteFixture>
 
     public BaseRemoteFixture()
 	{
-        WebDriver = new RemoteWebDriver(new Uri("http://localhost:4445"), new ChromeOptions());
+        WebDriver = new RemoteWebDriver(new Uri(Urls.seleniumHub), new ChromeOptions());
+    }
+    
+    public void Dispose()
+    {
+        // ... clean up test data from the database ...
     }
 }

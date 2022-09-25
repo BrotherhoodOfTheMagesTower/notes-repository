@@ -4,7 +4,6 @@ using SeleniumTests.Extensions;
 
 namespace SeleniumTests.Tests
 {
-    [Collection(BaseRemoteFixture.CollectionName)]
     public class Test : IClassFixture<BaseRemoteFixture>
     {
         private readonly RemoteWebDriver driver;
