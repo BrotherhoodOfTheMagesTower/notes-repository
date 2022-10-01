@@ -33,6 +33,7 @@ public class ApplicationUserBuilder
         _user.NormalizedEmail = email.ToUpper();
         _user.NormalizedUserName = email.ToUpper();
         _user.EmailConfirmed = true;
+        _user.SecurityStamp = Guid.NewGuid().ToString();
         return this;
     }
 }

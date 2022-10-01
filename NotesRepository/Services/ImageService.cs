@@ -75,6 +75,24 @@ namespace NotesRepository.Services
         }
         
         /// <summary>
+        /// Adds image entity from specified file path to the database
+        /// </summary>
+        /// <param name="image">The image entity</param>
+        /// <param name="file">The file interface</param>
+        /// <returns>Tuple - (was successfully added, file url)</returns>
+        public async Task<(bool, string)> AddImageFromPathAsync(Image image, string filePath, string storageConnectionString)
+        {
+            var url = await _azureHelper.UploadFileFromPathToAzureAsync(filePath, containerName, image.Name, storageConnectionString);
+            if (!string.IsNullOrEmpty(url))
+            {
+                image.FileUrl = url;
+                var result = await _ir.AddAsync(image);
+                return (result, url);
+            }
+            return (false,"");
+        }
+        
+        /// <summary>
         /// Should be used only for unit testing
         /// </summary>
         /// <param name="image"></param>
