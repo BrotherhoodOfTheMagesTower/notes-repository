@@ -7,15 +7,15 @@ using System.Diagnostics;
 
 namespace SeleniumTests.Fixtures;
 
-public class BaseRemoteFixture : IAsyncLifetime
+public class BaseLocalFixture : IAsyncLifetime
 {
     public IWebDriver WebDriver { get; }
     public BasicSeedingTask BasicSeedingTask { get; private set; }
     public BasicSeedingReport BasicSeedingReport { get; private set; }
-
-    public BaseRemoteFixture()
-	{
-        WebDriver = new RemoteWebDriver(new Uri(Urls.seleniumHub), new ChromeOptions());
+        
+    public BaseLocalFixture()
+    {
+        WebDriver = new ChromeDriver(new ChromeOptions());
     }
 
     public async Task InitializeAsync()

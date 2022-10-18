@@ -15,15 +15,23 @@
         <form id="profile-form" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-floating">
-                <input asp-for="Username" class="form-control" disabled />
-                 <label class="form-label">@localizer["username"]</label>
+                <input asp-for="Username" data-ref="username" class="form-control" disabled />
+                <label class="form-label">@localizer["username"]</label>
             </div>
             <div class="form-floating">
-                <input asp-for="Input.PhoneNumber" class="form-control" />
+                <input asp-for="FirstName" data-ref="first-name" class="form-control" disabled />
+                <label class="form-label">First name</label>
+            </div>
+            <div class="form-floating">
+                <input asp-for="LastName" data-ref="last-name" class="form-control" disabled />
+                <label class="form-label">Last name</label>
+            </div>
+            <div class="form-floating">
+                <input asp-for="Input.PhoneNumber" data-ref="phone-number" class="form-control" />
                 <label class="form-label">@localizer["phoneNumber"]</label>
                 <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
             </div>
-            <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">@localizer["save"]</button>
+            <button id="update-profile-button" data-ref="update" type="submit" class="w-100 btn btn-lg btn-primary">@localizer["save"]</button>
         </form>
     </div>
 </div>

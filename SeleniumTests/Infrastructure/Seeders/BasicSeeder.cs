@@ -45,6 +45,15 @@ public static class BasicSeeder
             await ur.DeleteUserByIdAsync(userId.ToString());
         }
     }
+    
+    public static async Task RemoveUser(string userEmail)
+    {
+        using var context = new ApplicationDbContext(DbOptionsFactory.DbContextOptions);
+        var ur = new UserRepository(context);
+        var user = await ur.GetUserByEmailAsync(userEmail);
+        if (user != null)
+            await ur.DeleteUserByIdAsync(user.Id.ToString());
+    }
 
 
     private static (NoteService, DirectoryService, EventService, ImageService, CollaboratorsNotesService, UserRepository) CreateServices(

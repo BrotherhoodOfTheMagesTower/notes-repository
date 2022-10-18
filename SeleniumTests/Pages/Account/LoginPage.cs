@@ -1,6 +1,6 @@
 ﻿using OpenQA.Selenium;
 
-namespace SeleniumTests.Pages;
+namespace SeleniumTests.Pages.Account;
 
 public class LoginPage
 {
