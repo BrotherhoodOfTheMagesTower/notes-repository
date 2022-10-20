@@ -17,7 +17,7 @@
         <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
             <h3 class="text-center">@localizer["createAccount"]</h3>
             <hr />
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div asp-validation-summary="ModelOnly" data-ref="summary-validation" class="text-danger"></div>
             <div class="form-floating">
                 <input asp-for="Input.FirstName" data-ref="first-name" class="form-control" autocomplete="firstname" aria-required="true" />
                 <label>@localizer["firstName"]</label>
@@ -31,17 +31,17 @@
             <div class="form-floating">
                 <input asp-for="Input.Email" data-ref="e-mail" class="form-control" autocomplete="username" aria-required="true" />
                 <label asp-for="Input.Email"></label>
-                <span asp-validation-for="Input.Email" class="text-danger"></span>
+                <span asp-validation-for="Input.Email" data-ref="email-validation" class="text-danger"></span>
             </div>
             <div class="form-floating">
                 <input asp-for="Input.Password" data-ref="password" class="form-control" autocomplete="new-password" aria-required="true" />
                 <label>@localizer["password"]</label>
-                <span asp-validation-for="Input.Password" class="text-danger"></span>
+                <span asp-validation-for="Input.Password" data-ref="password-validation" class="text-danger"></span>
             </div>
             <div class="form-floating">
                 <input asp-for="Input.ConfirmPassword" data-ref="confirm-password" class="form-control" autocomplete="new-password" aria-required="true" />
                 <label>@localizer["confirmPassword"]</label>
-                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                <span asp-validation-for="Input.ConfirmPassword" data-ref="confirm-password-validation" class="text-danger"></span>
             </div>
             <button id="registerSubmit" data-ref="register" type="submit" class="w-100 btn btn-lg btn-primary">@localizer["register"]</button>
         </form>

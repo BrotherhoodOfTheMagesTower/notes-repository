@@ -7,7 +7,11 @@ public class RegisterPage
     private IWebDriver driver;
 
     private By InputSelector(string dataRef) => By.XPath($"//input[@data-ref='{dataRef}']");
-    private By registerButton => By.XPath($"//button[@data-ref='register']");
+    private By summaryValidation => By.XPath("//div[@data-ref='summary-validation']");
+    private By confirmationPasswordValidation => By.XPath("//span[@data-ref='confirm-password-validation']");
+    private By passwordValidation => By.XPath("//span[@data-ref='password-validation']");
+    private By emailValidation => By.XPath("//span[@data-ref='email-validation']");
+    private By registerButton => By.XPath("//button[@data-ref='register']");
     private By firstNameInput => InputSelector("first-name");
     private By lastNameInput => InputSelector("last-name");
     private By emailInput => InputSelector("e-mail");
@@ -60,4 +64,19 @@ public class RegisterPage
 
         return new HomePage(driver);
     }
+    
+    public RegisterPage RegisterAndStay()
+    {
+        driver.FindElement(registerButton).Click();
+
+        return this;
+    }
+
+    public string GetSummaryErrors() => driver.FindElement(summaryValidation).Text;
+
+    public string GetConfirmationPasswordErrors() => driver.FindElement(confirmationPasswordValidation).Text;
+
+    public string GetPasswordErrors() => driver.FindElement(passwordValidation).Text;
+
+    public string GetEmailErrors() => driver.FindElement(emailValidation).Text;
 }

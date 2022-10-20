@@ -18,14 +18,14 @@
             <form id="account" method="post">
                 <h3 class="text-center">@localizer["localAccount"]</h3>
                 <hr />
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div asp-validation-summary="ModelOnly" data-ref="summary-validation" class="text-danger"></div>
                 <div class="form-floating">
-                    <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" />
+                    <input asp-for="Input.Email" data-ref="username" class="form-control" autocomplete="username" aria-required="true" />
                     <label asp-for="Input.Email" class="form-label"></label>
                     <span asp-validation-for="Input.Email" class="text-danger"></span>
                 </div>
                 <div class="form-floating">
-                    <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" />
+                    <input asp-for="Input.Password" data-ref="password" class="form-control" autocomplete="current-password" aria-required="true" />
                     <label class="form-label">@localizer["password"]</label>
                     <span asp-validation-for="Input.Password" class="text-danger"></span>
                 </div>
@@ -38,7 +38,7 @@
                     </div>
                 </div>
                 <div>
-                    <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary">@localizer["logIn"]</button>
+                    <button id="login-submit" data-ref="login" type="submit" class="w-100 btn btn-lg btn-primary">@localizer["logIn"]</button>
                 </div>
                 <div>
                     <p>
