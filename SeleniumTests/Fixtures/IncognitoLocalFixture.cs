@@ -4,15 +4,19 @@ using SeleniumTests.Infrastructure.Seeders;
 
 namespace SeleniumTests.Fixtures;
 
-public class BaseLocalFixture : IAsyncLifetime
+public class IncognitoLocalFixture : IAsyncLifetime
 {
     public IWebDriver WebDriver { get; }
+    public IWebDriver IncognitoWebDriver { get; }
     public BasicSeedingTask BasicSeedingTask { get; private set; }
     public BasicSeedingReport BasicSeedingReport { get; private set; }
-        
-    public BaseLocalFixture()
+
+    public IncognitoLocalFixture()
     {
         WebDriver = new ChromeDriver(new ChromeOptions());
+        var options = new ChromeOptions();
+        options.AddArgument("incognito");
+        IncognitoWebDriver = new ChromeDriver(options);
     }
 
     public async Task InitializeAsync()
@@ -31,5 +35,6 @@ public class BaseLocalFixture : IAsyncLifetime
     {
         await BasicSeeder.CleanEnvironment(BasicSeedingReport);
         WebDriver.Quit();
+        IncognitoWebDriver.Quit();
     }
 }

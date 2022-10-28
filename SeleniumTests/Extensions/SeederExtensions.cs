@@ -220,7 +220,7 @@ public static class SeederExtensions
         return directoriesTags;
     }
 
-    private static void HashPassword(this ApplicationUser user, string psswd = "Password123!")
+    private static void HashPassword(this ApplicationUser user, string psswd = SeederData.password)
     {
         var password = new PasswordHasher<ApplicationUser>();
         var hashed = password.HashPassword(user, psswd);

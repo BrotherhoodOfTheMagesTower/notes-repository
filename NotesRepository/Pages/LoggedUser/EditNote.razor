@@ -84,8 +84,8 @@
                 <div class="my-sub-input-container">
                     @if (@validId && @noteFromDb is not null)
                     {
-                        <label>Odblokuj notatkę, aby inni mogli ją edytować</label>
-                        <button data-ref="unlock-note" type="button" class="btn btn-primary" @onclick="unlockNote">Odblokuj notatkę</button>
+                        <label>Unlock the note so others can edit it</label>
+                        <button data-ref="unlock-note" type="button" class="btn btn-primary" @onclick="unlockNote">Unlock note</button>
                     }
                 </div>
 
@@ -139,7 +139,7 @@
                                             @foreach (var collaborator in collaborators)
                                             {
                                                 <tr>
-                                                    <th>@collaborator.Email</th>
+                                                    <th data-ref="collaborator-email">@collaborator.Email</th>
                                                     <th>@collaborator.FirstName @collaborator.LastName</th>
                                                     @if (editedByOwner)
                                                     {

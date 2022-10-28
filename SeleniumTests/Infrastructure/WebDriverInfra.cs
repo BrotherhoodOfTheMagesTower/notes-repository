@@ -3,6 +3,7 @@ using OpenQA.Selenium.Edge;
 using OpenQA.Selenium;
 using SeleniumTests.Constants;
 using OpenQA.Selenium.Remote;
+using OpenQA.Selenium.Support.UI;
 
 namespace SeleniumTests.Infrastructure;
 
@@ -34,6 +35,20 @@ public static class WebDriverInfra
                 return GetWebDriver(hubUrl, options.ToCapabilities());
             default: 
                 throw new ArgumentOutOfRangeException(nameof(browserType), browserType, null);
+        }
+    }
+
+    public static IWebElement WaitUntilElementExists(this IWebDriver driver, By elementLocator, int timeout = 10)
+    {
+        try
+        {
+            var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(timeout));
+            return wait.Until(x => x.FindElement(elementLocator));
+        }
+        catch (NoSuchElementException)
+        {
+            Console.WriteLine("Element with locator: '" + elementLocator + "' was not found in current context page.");
+            throw;
         }
     }
 
