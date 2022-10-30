@@ -13,6 +13,9 @@ public static class BasicSeeder
     {
         if (task.ImagesPerAccountCount > 0 && task.NotesPerAccountCount == 0)
             throw new ArgumentException($"In order to create images {nameof(task.NotesPerAccountCount)} needs to be higher than 0.");
+        
+        if (task.AccountsCount % 2 != 0)
+            throw new ArgumentException($"In order to create accounts {nameof(task.AccountsCount)} needs to be an even number");
 
         using var context = new ApplicationDbContext(DbOptionsFactory.DbContextOptions);
 
@@ -24,14 +27,10 @@ public static class BasicSeeder
         var notes = await ns.CreateNotesForDefaultDirectory(task.NotesPerAccountCount, users, ur, ds);
         var events = await es.CreateEvents(task.EventsPerAccountCount, users, ur);
         var images = await ims.CreateImages(task.ImagesPerAccountCount, users, ns, config);
+        var collaborators = await cns.CreateCollaborators(task.AccountsCount, users, ns, ur, ds);
 
 
-        return new BasicSeedingReport(
-            users: users,
-            directories: directories,
-            notes: notes,
-            events: events,
-            images: images);
+        return new BasicSeedingReport(users, directories, notes, events, images, collaborators);
     }
 
     public static async Task CleanEnvironment(BasicSeedingReport report)

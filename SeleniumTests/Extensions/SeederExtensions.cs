@@ -5,6 +5,7 @@ using NotesRepository.Repositories;
 using NotesRepository.Services;
 using SeleniumTests.Constants;
 using SeleniumTests.Infrastructure.Builders;
+using System;
 
 namespace SeleniumTests.Extensions;
 
@@ -193,6 +194,42 @@ public static class SeederExtensions
         }
 
         return imagesTags;
+    }
+    
+    /// <summary>
+    /// Creates collaborators
+    /// </summary>
+    /// <param name="cns">the CollaboratorsNotesService object</param>
+    /// <param name="amountOfAccounts">Amount of accounts - for each pair will be a shared note created</param>
+    /// <param name="users">Users, for which shared notes will be created</param>
+    /// <param name="ns">The note service object</param>
+    /// <returns>A collectiono of tuples, that contain a pair of user emails, that that have shared notes - Item1 is the Owner, Item2 is the collaborator</returns>
+    public static async Task<IReadOnlyCollection<Tuple<string, string>>> CreateCollaborators(this CollaboratorsNotesService cns, int amountOfAccounts, IReadOnlyCollection<Tag> users,
+        NoteService ns, UserRepository ur, DirectoryService ds)
+    {
+        var collaborators = new List<Tuple<string, string>>();
+        for (int i = 0; i < users.Count; i = i + 2)
+        {
+            var userObj = await ur.GetUserByIdAsync(users.ElementAt(i).Id.ToString());
+            var collaborator = await ur.GetUserByIdAsync(users.ElementAt(i + 1).Id.ToString());
+            var title = SeederData.sharedNoteTitle;
+            var dir = await ds.GetDirectoryByNameAsync("Default", users.ElementAt(i).Id.ToString());
+            var noteId = Guid.NewGuid();
+            var note = new NoteBuilder()
+                .WithNoteId(noteId)
+                .WithTitle(title)
+                .WithContent(SeederData.sharedNoteContent)
+                .WithCreatedAt(new DateTime(2019, 1, 12, 1, 0, 58, 0))
+                .WithEditedAt(new DateTime(2021, 1, 12, 1, 0, 58, 0))
+                .WithOwner(userObj!)
+                .WithDirectory(dir!)
+                .Build();
+            await ns.AddNoteAsync(note);
+            await cns.AddCollaboratorToNoteAsync(collaborator.Id.ToString(), noteId);
+            collaborators.Add(new Tuple<string, string>(userObj.Email, collaborator.Email));
+        }
+
+        return collaborators;
     }
 
     private static async Task<List<Tag>> CreateDefaultDirectoryAndBin(this DirectoryService ds, Guid userId, UserRepository ur, List<Tag> directoriesTags)
