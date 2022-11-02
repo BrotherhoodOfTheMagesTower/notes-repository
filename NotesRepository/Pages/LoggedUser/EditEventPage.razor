@@ -119,7 +119,7 @@
                     <RadzenButton ButtonType="ButtonType.Submit" Text=@localizer["saveEvent"] />
                 </div>
                 <div class="col">
-                    <RadzenButton Click=@(args => OnClickDelete(model)) Text=@localizer["deleteEvent"] ButtonStyle="ButtonStyle.Danger" />
+                    <RadzenButton data-ref="delete-button" Click=@(args => OnClickDelete(model)) Text=@localizer["deleteEvent"] ButtonStyle="ButtonStyle.Danger" />
                 </div>
             </div>
         </RadzenTemplateForm>

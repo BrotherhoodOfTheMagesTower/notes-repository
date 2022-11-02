@@ -21,12 +21,12 @@ public class BaseRemoteFixture : IAsyncLifetime
     public async Task InitializeAsync()
     {
         BasicSeedingTask = new BasicSeedingTask(
-            accountsCount: 10,
+            accountsCount: 12,
             notesPerAccountCount: 1,
             directoriesPerAccountCount: 1,
             eventsPerAccountCount: 1,
             imagesPerAccountCount: 1,
-            createCollaborators: false);
+            createCollaborators: true);
         BasicSeedingReport = await BasicSeeder.CreateEnvironment(BasicSeedingTask);
     }
 

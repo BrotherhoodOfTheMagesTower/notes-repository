@@ -28,11 +28,11 @@ public class SharedNotesPage
 	public string[] GetAllVisibleSharedNoteContents()
 		=> driver.FindElements(sharedNotesContent).Select(x => x.Text).ToArray();
 
-	public EditNotePage ClickFirstSharedNote()
+	public EditNotePage ClickFirstSharedNote(bool waitForEditNotePage = true)
 	{
 		driver.FindElement(sharedNotesContent).Click();
 
-		return new EditNotePage(driver);
+		return new EditNotePage(driver, waitForEditNotePage);
 
     }
 }

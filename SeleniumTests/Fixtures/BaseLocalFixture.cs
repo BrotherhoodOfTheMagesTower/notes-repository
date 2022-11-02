@@ -18,7 +18,7 @@ public class BaseLocalFixture : IAsyncLifetime
     public async Task InitializeAsync()
     {
         BasicSeedingTask = new BasicSeedingTask(
-            accountsCount: 10,
+            accountsCount: 12,
             notesPerAccountCount: 1,
             directoriesPerAccountCount: 1,
             eventsPerAccountCount: 1,

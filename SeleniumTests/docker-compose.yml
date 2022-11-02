@@ -9,6 +9,7 @@ services:
       - "4443:4443"
 
   ChromeService:
+    container_name: chromeService
     image: selenium/node-chrome:105.0.5195.52
     shm_size: "2gb"
     ports:
@@ -18,7 +19,7 @@ services:
       - SE_EVENT_BUS_HOST=seleniumHub
       - SE_EVENT_BUS_PUBLISH_PORT=4442
       - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
-      - SE_NODE_MAX_SESSIONS=3
+      - SE_NODE_MAX_SESSIONS=5
     depends_on:
       - HubService
  

@@ -14,9 +14,8 @@ public class SaveNoteModal
 
 	public SaveNoteModal(IWebDriver driver)
 	{
-        driver.WaitUntilElementExists(modalSelector);
-        modal = driver.FindElement(modalSelector);
         this.driver = driver;
+        modal = driver.WaitUntilElementExists(modalSelector);
     }
 
 	public SaveNoteModal InsertTitle(string title)

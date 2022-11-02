@@ -9,6 +9,7 @@ namespace SeleniumTests.Pages.Note;
 public class EditNotePage
 {
     private IWebDriver driver;
+    private readonly By editNotePageSelector = By.XPath("//h3[text()='Content']");
     private readonly By noteContentInput = By.XPath("//textarea[@data-ref='note-input']");
     private readonly By saveButton = By.XPath("//button[@data-ref='save-note']");
     private readonly By addCollaboratorButton = By.XPath("//button[@data-ref='add-collaborator']");
@@ -18,10 +19,13 @@ public class EditNotePage
     private readonly By toastMessage = By.ClassName("blazored-toast-message");
     private readonly By toastCloseButton = By.ClassName("blazored-toast-close-icon");
     private readonly By waitMessage = By.XPath("//h3[@data-ref='wait-message']");
+    private readonly By noteTitle = By.XPath("//h2[@data-ref='note-title']");
 
-    public EditNotePage(IWebDriver driver)
+    public EditNotePage(IWebDriver driver, bool waitForEditNotePage = true)
     {
         this.driver = driver;
+        if(waitForEditNotePage)
+            driver.WaitUntilElementExists(editNotePageSelector);
     }
 
     public EditNotePage InsertNoteContent(string content)
@@ -90,6 +94,9 @@ public class EditNotePage
 
     public string GetWaitMessage()
         => driver.WaitUntilElementExists(waitMessage).Text;
+    
+    public string GetNoteTitle()
+        => driver.WaitUntilElementExists(noteTitle).Text;
 
     private void CloseToastMessageIfExists()
     {

@@ -628,4 +628,10 @@
   <data name="wait" xml:space="preserve">
     <value>Please wait</value>
   </data>
+  <data name="addEvent" xml:space="preserve">
+    <value>Add Event</value>
+  </data>
+  <data name="deleteEvent" xml:space="preserve">
+    <value>Delete Event</value>
+  </data>
 </root>

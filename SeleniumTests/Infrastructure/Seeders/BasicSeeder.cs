@@ -27,7 +27,9 @@ public static class BasicSeeder
         var notes = await ns.CreateNotesForDefaultDirectory(task.NotesPerAccountCount, users, ur, ds);
         var events = await es.CreateEvents(task.EventsPerAccountCount, users, ur);
         var images = await ims.CreateImages(task.ImagesPerAccountCount, users, ns, config);
-        var collaborators = await cns.CreateCollaborators(task.AccountsCount, users, ns, ur, ds);
+        var collaborators = new List<Tuple<string, string>>();
+        if (task.CreateCollaborators)
+            collaborators = (await cns.CreateCollaborators(task.AccountsCount, users, ns, ur, ds)).ToList();
 
 
         return new BasicSeedingReport(users, directories, notes, events, images, collaborators);

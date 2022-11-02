@@ -97,7 +97,7 @@ public static class SeederExtensions
             for (int i = 0; i < notesPerAccountCount; i++)
             {
                 var id = Guid.NewGuid();
-                var title = Faker.Identification.UkNationalInsuranceNumber();
+                var title = SeederData.NoteTitle(i + 1);
                 var dir = await ds.GetDirectoryByNameAsync("Default", user.Id.ToString());
                 var note = new NoteBuilder()
                     .WithNoteId(id)
@@ -137,17 +137,16 @@ public static class SeederExtensions
             for (int i = 0; i < eventsPerAccountCount; i++)
             {
                 var id = Guid.NewGuid();
-                var content = Faker.Identification.UkNationalInsuranceNumber();
                 var startAt = DateTime.Now.AddDays(random.Next(minValue: 2, maxValue: 14));
                 var _event = new EventBuilder()
                     .WithEventId(id)
-                    .WithContent(content)
+                    .WithContent(SeederData.EventContent(i + 1))
                     .WithStartAt(startAt)
                     .WithEndAt(startAt.AddDays(2).AddHours(random.Next(minValue: 1, maxValue: 3)))
                     .WithUser(userObj!)
                     .Build();
                 await es.AddAsync(_event);
-                eventTags.Add(new Tag(id, content));
+                eventTags.Add(new Tag(id, SeederData.EventContent(i + 1)));
             }
         }
 
