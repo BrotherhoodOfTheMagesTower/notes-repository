@@ -20,8 +20,8 @@ var builder = WebApplication.CreateBuilder(args);
 //var keyVaultEndpoint = new Uri("https://noterepo.vault.azure.net/");
 //var conf = builder.Configuration.AddAzureKeyVault(keyVaultEndpoint, new DefaultAzureCredential()).Build();
 
-var connectionString = builder.Configuration.GetConnectionString("LocalApplicationDbContextConnection");
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+var connectionString = builder.Configuration.GetConnectionString("PostgresConnectionString");
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString));
 
 builder.Services
     .AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
