@@ -86,7 +86,7 @@ builder.Services.AddScoped<DialogService>();
 
 builder.Services.AddBlazorDragDrop();
 var app = builder.Build();
-
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -118,7 +118,7 @@ app.UseCookiePolicy(new CookiePolicyOptions()
 var serviceProvider = app.Services?.GetService<IServiceScopeFactory>()?.CreateScope().ServiceProvider;
 serviceProvider!.GetService<ApplicationDbContext>()!.Database.Migrate();
 
-serviceProvider!.SeedDefaultEntities();
-serviceProvider!.SeedCollaboratorsWithSharedNotes();
+//serviceProvider!.SeedDefaultEntities();
+//serviceProvider!.SeedCollaboratorsWithSharedNotes();
 
 app.Run();
