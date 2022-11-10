@@ -9,10 +9,10 @@ public static class DbOptionsFactory
         var config = new ConfigurationBuilder()
             .AddJsonFile("appsettings.json")
             .Build();
-        var connectionString = config.GetSection("ConnectionStrings")["LocalConnectionString"];
+        var connectionString = config.GetSection("ConnectionStrings")["PostgresConnectionString"];
 
         DbContextOptions = new DbContextOptionsBuilder<ApplicationDbContext>()
-        .UseSqlServer(connectionString)
+        .UseNpgsql(connectionString)
             .Options;
     }
 
