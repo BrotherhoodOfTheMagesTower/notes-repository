@@ -20,8 +20,8 @@ var builder = WebApplication.CreateBuilder(args);
 //var keyVaultEndpoint = new Uri("https://noterepo.vault.azure.net/");
 //var conf = builder.Configuration.AddAzureKeyVault(keyVaultEndpoint, new DefaultAzureCredential()).Build();
 
-var connectionString = builder.Configuration.GetConnectionString("LocalApplicationDbContextConnection");
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+var connectionString = builder.Configuration.GetConnectionString("PostgresConnectionString");
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString));
 
 builder.Services
     .AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
@@ -86,7 +86,7 @@ builder.Services.AddScoped<DialogService>();
 
 builder.Services.AddBlazorDragDrop();
 var app = builder.Build();
-
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -118,7 +118,7 @@ app.UseCookiePolicy(new CookiePolicyOptions()
 var serviceProvider = app.Services?.GetService<IServiceScopeFactory>()?.CreateScope().ServiceProvider;
 serviceProvider!.GetService<ApplicationDbContext>()!.Database.Migrate();
 
-serviceProvider!.SeedDefaultEntities();
-serviceProvider!.SeedCollaboratorsWithSharedNotes();
+//serviceProvider!.SeedDefaultEntities();
+//serviceProvider!.SeedCollaboratorsWithSharedNotes();
 
 app.Run();

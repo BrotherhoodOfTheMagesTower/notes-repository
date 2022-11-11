@@ -11,13 +11,12 @@
     "NotesRepository": {
       "commandName": "Project",
       "launchBrowser": true,
+      "applicationUrl": "https://localhost:7272;http://localhost:5272",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "VaultUri": "https://noterepo.vault.azure.net/",
         "AZURE_USERNAME": "domidep479@student.polsl.pl"
-      },
-      "applicationUrl": "https://localhost:7272;http://localhost:5272",
-      "dotnetRunMessages": true
+      }
     },
     "IIS Express": {
       "commandName": "IISExpress",
@@ -36,9 +35,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development",
         "VaultUri": "https://noterepo.vault.azure.net/",
         "AZURE_USERNAME": "domidep479@student.polsl.pl"
-      },
-      "publishAllPorts": true,
-      "useSSL": true
+      }
     }
   }
 }

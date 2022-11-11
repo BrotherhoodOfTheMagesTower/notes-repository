@@ -142,7 +142,7 @@ namespace NotesRepository.Services
         public async Task<bool> DeleteNoteByIdAsync(Guid noteId)
         {
             var imagesAttachedToNote = await _ir.GetAllNoteImagesAsync(noteId);
-            if (imagesAttachedToNote != null)
+            if (imagesAttachedToNote != null && imagesAttachedToNote.Any())
             {
                 foreach (var image in imagesAttachedToNote)
                 {

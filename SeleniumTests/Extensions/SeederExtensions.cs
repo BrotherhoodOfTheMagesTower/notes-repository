@@ -103,8 +103,8 @@ public static class SeederExtensions
                     .WithNoteId(id)
                     .WithTitle(title)
                     .WithContent(Faker.Lorem.Sentence())
-                    .WithCreatedAt(new DateTime(2019, random.Next(1, 12), random.Next(1, 28), random.Next(0, 12), random.Next(0, 58), 0))
-                    .WithEditedAt(new DateTime(2021, random.Next(1, 12), random.Next(1, 28), random.Next(0, 12), random.Next(0, 58), 0))
+                    .WithCreatedAt(new DateTime(2019, random.Next(1, 12), random.Next(1, 28), random.Next(0, 12), random.Next(0, 58), 0, DateTimeKind.Utc))
+                    .WithEditedAt(new DateTime(2021, random.Next(1, 12), random.Next(1, 28), random.Next(0, 12), random.Next(0, 58), 0, DateTimeKind.Utc))
                     .WithOwner(userObj!)
                     .WithDirectory(dir!)
                     .Build();
@@ -137,7 +137,8 @@ public static class SeederExtensions
             for (int i = 0; i < eventsPerAccountCount; i++)
             {
                 var id = Guid.NewGuid();
-                var startAt = DateTime.Now.AddDays(random.Next(minValue: 2, maxValue: 14));
+                var startAt = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.AddDays(random.Next(minValue: 2, maxValue: 14)).Day,
+                    DateTime.Now.Hour, DateTime.Now.Minute, 0, DateTimeKind.Utc);
                 var _event = new EventBuilder()
                     .WithEventId(id)
                     .WithContent(SeederData.EventContent(i + 1))
@@ -178,7 +179,7 @@ public static class SeederExtensions
                 var imgName = FileNames.defaultImages.ElementAt(random.Next(0, 2));
                 var image = new ImageBuilder()
                     .WithImageId(id)
-                    .WithName(imgName)
+                    .WithName($"{Faker.Identification.UkNationalInsuranceNumber()}{imgName}")
                     .WithNote(noteObj)
                     .Build();
 
@@ -218,8 +219,8 @@ public static class SeederExtensions
                 .WithNoteId(noteId)
                 .WithTitle(title)
                 .WithContent(SeederData.sharedNoteContent)
-                .WithCreatedAt(new DateTime(2019, 1, 12, 1, 0, 58, 0))
-                .WithEditedAt(new DateTime(2021, 1, 12, 1, 0, 58, 0))
+                .WithCreatedAt(new DateTime(2019, 1, 12, 1, 0, 58, 0, DateTimeKind.Utc))
+                .WithEditedAt(new DateTime(2021, 1, 12, 1, 0, 58, 0, DateTimeKind.Utc))
                 .WithOwner(userObj!)
                 .WithDirectory(dir!)
                 .Build();

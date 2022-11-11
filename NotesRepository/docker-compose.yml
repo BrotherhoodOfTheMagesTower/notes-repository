@@ -1,16 +1,15 @@
 ﻿version: "3.9"
 services:
     notesdb:
-        image: "mcr.microsoft.com/mssql/server:2017-latest-ubuntu"
+        image: 'postgres:latest'
         environment:
-            MSSQL_SA_PASSWORD: "MyPassword1234!"
-            ACCEPT_EULA: "Y"
+            POSTGRES_USER: admin 
+            POSTGRES_PASSWORD: Admin
+            POSTGRES_DB: notes 
         ports:
-          - "1433:1433"
+          - "5432:5432"
         extra_hosts:
           - "host.docker.internal:host-gateway"
-#        volumes:
-#          -  notesdb:/var/opt/mssql/data
 
     web:
         build: .
@@ -20,6 +19,4 @@ services:
           - notesdb
         extra_hosts:
           - "host.docker.internal:host-gateway"
-#volumes:
-#  notesdb:
     
