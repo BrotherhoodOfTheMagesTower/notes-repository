@@ -10,6 +10,7 @@ namespace NotesRepository.Services.Azure
     {
         IConfiguration configuration;
         string baseUrl = "";
+        private readonly string cloudStorageConnectionString;
         CloudStorageAccount cloudStorageAccount;
 
         public AzureStorageHelper(IConfiguration _configuration)
@@ -23,6 +24,7 @@ namespace NotesRepository.Services.Azure
         {
             baseUrl = storageBaseUrl;
             cloudStorageAccount = CloudStorageAccount.Parse(cloudStorageConnectionString);
+            this.cloudStorageConnectionString = cloudStorageConnectionString;
         }
 
         public async Task<List<string>> GetFileUrls(string containerName)
@@ -161,10 +163,10 @@ namespace NotesRepository.Services.Azure
         {
             try
             {
-                string setting = configuration["StorageConnectionString"];
+                string? connectionString = configuration?["StorageConnectionString"];
 
                 // Create a BlobServiceClient object which will be used to create a container client
-                BlobServiceClient blobServiceClient = new BlobServiceClient(setting);
+                BlobServiceClient blobServiceClient = new BlobServiceClient(connectionString ?? cloudStorageConnectionString);
 
                 // Create the container and return a container client object
                 return blobServiceClient.GetBlobContainerClient(containerName);

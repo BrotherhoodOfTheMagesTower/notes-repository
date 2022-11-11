@@ -40,9 +40,18 @@ public static class BasicSeeder
         var userIds = report.Users.Select(x => x.Id);
         using var context = new ApplicationDbContext(DbOptionsFactory.DbContextOptions);
         var ur = new UserRepository(context);
+        var config = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
+        var storageBaseUrl = config.GetSection("ConnectionStrings")["StorageBaseUrl"];
+        var storageConnectionString = config.GetSection("ConnectionStrings")["StorageConnectionString"];
+        var ns = new NoteService(new NoteRepository(context), ur, new EventRepository(context), new DirectoryRepository(context),
+            new ImageRepository(context), new AzureStorageHelper(storageBaseUrl, storageConnectionString));
 
         foreach (var userId in userIds)
         {
+            var notes = await ns.GetAllUserNotesByIdAsync(userId.ToString());
+            foreach (var note in notes)
+                await ns.DeleteNoteByIdAsync(note.NoteId);
+
             await ur.DeleteUserByIdAsync(userId.ToString());
         }
     }
